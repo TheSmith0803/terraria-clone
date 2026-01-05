@@ -43,6 +43,10 @@ class Game:
                 self.pos[0] += 1
             if keys_pressed[pygame.K_a]:
                 self.pos[0] -= 1
+            if keys_pressed[pygame.K_s]:
+                self.pos[1] += 1
+            if keys_pressed[pygame.K_w]:
+                self.pos[1] -= 1
                         
 
             self.display.fill((20, 100, 200))
