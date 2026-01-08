@@ -22,7 +22,7 @@ class Game:
         }
 
         self.tiles = {
-            'grass': load_images('assets\\tiles\\grass'),
+            'grass/top': load_images('assets\\tiles\\grass')[0],
         }
 
         self.tilemap = Tilemap(self, 1)
@@ -60,7 +60,7 @@ class Game:
 
             self.display.fill((20, 100, 200))
 
-            self.tilemap.render_tiles()
+            self.tilemap.render_map()
 
             self.display.blit(self.entities['player'], self.pos)
 

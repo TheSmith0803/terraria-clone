@@ -20,8 +20,7 @@ class Tilemap:
         pass
 
     def render_map(self):
-
         countx = 0
         for j in range(50):
-            self.game.display.blit(pygame.transform.scale(self.game.tiles['grass'][0], (self.tile_size, self.tile_size)), (countx + self.tile_size - 16, county + 100))
+            self.game.display.blit(self.game.tiles['grass/top'], (countx + (j * 2) + 20, 100))
             countx += self.tile_size
