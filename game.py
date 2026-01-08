@@ -1,7 +1,11 @@
 import pygame
+from pygame.locals import *
+
 import sys
 
-from scripts.utilities import load_image
+from scripts.tilemap import Tilemap
+
+from scripts.utilities import load_image, load_images
 
 class Game:
     def __init__(self):
@@ -13,14 +17,20 @@ class Game:
 
         self.clock = pygame.time.Clock()
         
-        self.assets = {
+        self.entities = {
             'player': load_image('assets\\entities\\player.png')
         }
+
+        self.tiles = {
+            'grass': load_images('assets\\tiles\\grass'),
+        }
+
+        self.tilemap = Tilemap(self, 1)
 
         self.running = True
         self.pos = [10, 10]
         self.movement = [False, False]
-        print(pygame.key.get_pressed())
+
     def run(self):
         #game loop
         while self.running:
@@ -35,23 +45,24 @@ class Game:
                         pygame.quit()
                         sys.exit()
                         self.running = False
-                    
-            
+
             keys_pressed = pygame.key.get_pressed()
 
-            if keys_pressed[pygame.K_d]:
+            if keys_pressed[K_d]:
                 self.pos[0] += 1
-            if keys_pressed[pygame.K_a]:
+            if keys_pressed[K_a]:
                 self.pos[0] -= 1
-            if keys_pressed[pygame.K_s]:
+            if keys_pressed[K_s]:
                 self.pos[1] += 1
-            if keys_pressed[pygame.K_w]:
+            if keys_pressed[K_w]:
                 self.pos[1] -= 1
                         
 
             self.display.fill((20, 100, 200))
 
-            self.display.blit(self.assets['player'], self.pos)
+            self.tilemap.render_tiles()
+
+            self.display.blit(self.entities['player'], self.pos)
 
             self.screen.blit(pygame.transform.scale(self.display, self.screen.get_size()), (0, 0))
             pygame.display.update()
