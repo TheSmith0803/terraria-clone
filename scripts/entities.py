@@ -1,13 +1,15 @@
 import pygame
 
 class PhysicsEntity:
-    def __init__(self, game, tilemap, e_type, pos, size):
+    def __init__(self, game, tilemap, img, pos, size):
         self.game = game
         self.tilemap = tilemap
         self.pos = list(pos)
         self.size = size
+        self.img = img
         self.velocity = [0, 0]
         self.moving = [False, False]
+        self.flip = False
 
         self.friction = 0.03
         self.deadzone = 0.05
@@ -22,6 +24,7 @@ class PhysicsEntity:
 
     def update(self):
         self.collisions = {'up': False, 'down': False, 'left': False, 'right': False}
+        
 
         entity_rect = self.rect()
         
@@ -62,9 +65,14 @@ class PhysicsEntity:
                 self.pos[1] = entity_rect.y
                 self.velocity[1] = 0
                 break
+        
+        if self.velocity[0] > 0:
+            self.flip = False
+        if self.velocity[0] < 0:
+            self.flip = True
 
     def render(self, surf):
-        surf.blit(self.game.entities['player'], self.pos)
+        surf.blit(pygame.transform.flip(self.img, self.flip, False), self.pos)
 
 class Player(PhysicsEntity):
     def __init__(self):

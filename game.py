@@ -32,7 +32,7 @@ class Game:
         self.pos = [10, 10]
         self.movement = [False, False]
 
-        self.player = PhysicsEntity(self, self.tilemap, 'player', self.pos, self.entities['player'].get_size())
+        self.player = PhysicsEntity(self, self.tilemap, self.entities['player'], self.pos, self.entities['player'].get_size())
 
     def run(self):
         #game loop
