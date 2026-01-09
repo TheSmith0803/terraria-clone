@@ -46,6 +46,19 @@ class Game:
 
             self.player.render(self.display)
 
+            speed = 1
+            keys_pressed = pygame.key.get_pressed()
+            if keys_pressed[K_a]:
+                self.player.moving[0] = True
+                self.player.velocity[0] = -speed
+            else:
+                self.player.moving[0] = False
+            if keys_pressed[K_d]:
+                self.player.moving[0] = True
+                self.player.velocity[0] = speed
+            else:
+                self.player.moving[0] = False
+
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     pygame.quit()
@@ -58,15 +71,8 @@ class Game:
                         sys.exit()
                         self.running = False
 
-                    speed = 1
                     if event.key == K_w:
-                        self.player.velocity[1] += -3
-                    if event.key == K_d:
-                        self.player.moving[0] = True
-                        self.player.velocity[0] = speed
-                    if event.key == K_a:
-                        self.player.moving[0] = True
-                        self.player.velocity[0] = -speed
+                        self.player.velocity[1] = -3
                 
                 if event.type == pygame.KEYUP:
 

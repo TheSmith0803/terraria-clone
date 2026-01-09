@@ -26,8 +26,9 @@ class Tilemap:
                 tiles_around.append(pygame.Rect(self.tile_map[str(int(pos[0] // self.tile_size) + adjacent_tile[0]) + ";" + str(int(pos[1] // self.tile_size) + adjacent_tile[1])]['pos'], (self.tile_size, self.tile_size)))
         return tiles_around
 
-        
-
+    #how the player and other objects can remove tiles in the world
+    def remove_tile(self):
+        pass    
 
     def render_map(self, surf , offset=(0, 0)):
         countx = 0
