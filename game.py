@@ -46,6 +46,11 @@ class Game:
 
             self.player.render(self.display)
 
+            if self.player.minkowski_tiles:
+                pygame.draw.rect(self.display, (255, 0, 0), self.player.rect())
+                for rect in self.player.minkowski_tiles:
+                    pygame.draw.rect(self.display, (255, 0, 0), rect)
+
             speed = 1
             keys_pressed = pygame.key.get_pressed()
             if keys_pressed[K_a]:
