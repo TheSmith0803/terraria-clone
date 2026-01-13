@@ -29,7 +29,7 @@ class Game:
         self.tilemap = Tilemap(self, 1)
 
         self.running = True
-        self.pos = [10, 10]
+        self.pos = [40, 250]
         self.movement = [False, False]
 
         self.player = PhysicsEntity(self, self.tilemap, self.entities['player'], self.pos, self.entities['player'].get_size())
@@ -46,10 +46,10 @@ class Game:
 
             self.player.render(self.display)
 
-            if self.player.minkowski_tiles:
-                pygame.draw.rect(self.display, (255, 0, 0), self.player.rect())
-                for rect in self.player.minkowski_tiles:
-                    pygame.draw.rect(self.display, (255, 0, 0), rect)
+            #if self.player.minkowski_tiles:
+            #    pygame.draw.rect(self.display, (255, 0, 0), self.player.rect())
+            #    for rect in self.player.minkowski_tiles:
+            #        pygame.draw.rect(self.display, (255, 0, 0), rect)
 
             speed = 1
             keys_pressed = pygame.key.get_pressed()

@@ -18,13 +18,17 @@ class PhysicsEntity:
         self.flip = False
 
     def rect(self):
-        return pygame.Rect(*self.pos, *self.size)
+        return pygame.FRect(*self.pos, *self.size)
 
 
     def update(self):
         self.collisions = {'up': False, 'down': False, 'left': False, 'right': False}
 
         entity_rect = self.rect()
+        self.last_frame_x = entity_rect.centerx
+        self.last_frame_y = entity_rect.centery
+
+        self.velocity[1] = min(5, self.velocity[1] + 0.1) #gravity
         
         if not self.moving[0]:
             if abs(self.velocity[0]) < self.deadzone:
@@ -35,47 +39,70 @@ class PhysicsEntity:
         self.minkowski_tiles = []
         if self.tilemap.physics_rects_around(entity_rect.center):
             for tile in self.tilemap.physics_rects_around(entity_rect.center):
-                entity_rect = self.rect()
                 minkowski_size = [tile.w + entity_rect.w, tile.h + entity_rect.h]
-                minkowski_rect = pygame.Rect((tile.topleft[0] - entity_rect.w / 2, tile.topleft[1] - entity_rect.h / 2), minkowski_size)
+                minkowski_rect = pygame.FRect((tile.topleft[0] - entity_rect.w / 2, tile.topleft[1] - entity_rect.h / 2), minkowski_size)
                 self.minkowski_tiles.append(minkowski_rect)
 
-        self.velocity[1] = min(5, self.velocity[1] + 0.1) 
-                
+        self.pos[0] += self.velocity[0]
+        entity_rect = self.rect()
         if self.minkowski_tiles:
             for rect in self.minkowski_tiles:
-                #update palyers position
-                entity_rect = self.rect()
-                
-                if entity_rect.center[0] > rect.left and  entity_rect.center[0] < rect.right and self.velocity[0] > 0:
+                #x axis
+                if (entity_rect.centerx > rect.left and 
+                    self.last_frame_x < rect.left and 
+                    entity_rect.centery > rect.top and
+                    entity_rect.centery < rect.bottom and
+                    self.velocity[0] > 0):
+
                     self.collisions['right'] = True
+                    self.pos[0] = self.last_frame_x - (self.img.get_width() / 2)
                     self.velocity[0] = 0
-                if entity_rect.center[0] > rect.right and entity_rect.center[0] < rect.left and self.velocity[0] < 0:
+                    break
+
+                if (entity_rect.centerx < rect.right and 
+                    self.last_frame_x > rect.right and 
+                    entity_rect.centery > rect.top and
+                    entity_rect.centery < rect.bottom and
+                    self.velocity[0] < 0):
+
                     self.collisions['left'] = True
+                    self.pos[0] = self.last_frame_x - (self.img.get_width() / 2)
                     self.velocity[0] = 0
+                    break
 
-                self.pos[0] += self.velocity[0]
-                
+        self.last_frame_y = entity_rect.centery
 
-                if entity_rect.center[1] <= rect.top and self.velocity[1] > 0:
-                    self.collisions['bottom'] = True
+        self.pos[1] += self.velocity[1]
+        entity_rect = self.rect()
+        if self.minkowski_tiles:
+            for rect in self.minkowski_tiles:
+
+                if (entity_rect.centery > rect.top and
+                    self.last_frame_y < rect.top and 
+                    entity_rect.centerx > rect.left and
+                     entity_rect.centerx < rect.right and
+                    self.velocity[1] > 0):
+
+                    self.collisions['down'] = True
+                    self.pos[1] = self.last_frame_y - (self.img.get_height() / 2)
                     self.velocity[1] = 0
-                if entity_rect.center[1] < rect.bottom and self.velocity[1] < 0:
-                    self.collisions['top'] = True
+                    break
+
+                if (entity_rect.centery < rect.bottom and
+                    self.last_frame_y > rect.bottom and 
+                    entity_rect.centerx > rect.left and
+                     entity_rect.centerx < rect.right and
+                    self.velocity[1] < 0):
+
+                    self.collisions['up'] = True
+                    self.pos[1] = self.last_frame_y - (self.img.get_height() / 2)
                     self.velocity[1] = 0
-                
-                self.pos[1] += self.velocity[1]
-        else:
-            self.pos[0] += self.velocity[0]
-            self.pos[1] += self.velocity[1]
-        
+                    break
 
         if self.velocity[0] > 0:
             self.flip = False
         if self.velocity[0] < 0:
             self.flip = True
-
-        print(self.collisions)
 
     def render(self, surf):
         surf.blit(pygame.transform.flip(self.img, self.flip, False), self.pos)
