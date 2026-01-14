@@ -13,7 +13,7 @@ class PhysicsEntity:
         self.friction = 0.03
         self.deadzone = 0.05
         
-        self.gravity = 1
+        self.gravity = 1.0
 
         self.flip = False
 
@@ -28,7 +28,7 @@ class PhysicsEntity:
         self.last_frame_x = entity_rect.centerx
         self.last_frame_y = entity_rect.centery
 
-        self.velocity[1] = min(5, self.velocity[1] + 0.1) #gravity
+        self.velocity[1] = min(5, self.velocity[1] + (0.1 * self.gravity)) #gravity
         
         if not self.moving[0]:
             if abs(self.velocity[0]) < self.deadzone:
