@@ -1,5 +1,7 @@
 import pygame
 
+from .physics import swept_aabb
+
 class PhysicsEntity:
     def __init__(self, game, tilemap, img, pos, size):
         self.game = game
@@ -10,7 +12,7 @@ class PhysicsEntity:
         self.velocity = [0, 0]
         self.moving = [False, False]
 
-        self.friction = 0.03
+        self.friction = 0.001
         self.deadzone = 0.05
         
         self.gravity = 1.0
@@ -23,10 +25,7 @@ class PhysicsEntity:
 
     def update(self):
         self.collisions = {'up': False, 'down': False, 'left': False, 'right': False}
-
         entity_rect = self.rect()
-        self.last_frame_x = entity_rect.centerx
-        self.last_frame_y = entity_rect.centery
 
         self.velocity[1] = min(5, self.velocity[1] + (0.1 * self.gravity)) #gravity
         
@@ -42,73 +41,44 @@ class PhysicsEntity:
                 minkowski_size = [tile.w + entity_rect.w, tile.h + entity_rect.h]
                 minkowski_rect = pygame.FRect((tile.topleft[0] - entity_rect.w / 2, tile.topleft[1] - entity_rect.h / 2), minkowski_size)
                 self.minkowski_tiles.append(minkowski_rect)
+        
+        px, py = entity_rect.center
+        vx, vy = self.velocity
 
-        self.pos[0] += self.velocity[0]
-        entity_rect = self.rect()
-        if self.minkowski_tiles:
-            for rect in self.minkowski_tiles:
-                #x axis
-                if (entity_rect.centerx > rect.left and 
-                    self.last_frame_x < rect.left and 
-                    entity_rect.centery > rect.top and
-                    entity_rect.centery < rect.bottom and
-                    self.velocity[0] > 0):
+        earliest_time = 1.0
+        hit_normal = (0, 0)
+        nx, ny = 0.0, 0.0
 
-                    self.collisions['right'] = True
-                    self.pos[0] = self.last_frame_x - (self.img.get_width() / 2)
-                    self.velocity[0] = 0
-                    break
+        for tile in self.minkowski_tiles:
+            nx, ny, entry_time = swept_aabb(px, py, vx, vy, tile)
+            if entry_time < earliest_time:
+                earliest_time = entry_time
+                hit_normal = (nx, ny)
 
-                if (entity_rect.centerx < rect.right and 
-                    self.last_frame_x > rect.right and 
-                    entity_rect.centery > rect.top and
-                    entity_rect.centery < rect.bottom and
-                    self.velocity[0] < 0):
+        self.pos[0] += self.velocity[0] * earliest_time
+        self.pos[1] += self.velocity[1] * earliest_time
 
-                    self.collisions['left'] = True
-                    self.pos[0] = self.last_frame_x - (self.img.get_width() / 2)
-                    self.velocity[0] = 0
-                    break
+        remaining = 1.0 - earliest_time
+        dot = vx * nx + vy * ny
+        self.velocity[0] -= dot * nx
+        self.velocity[1] -= dot * ny
 
-        self.last_frame_y = entity_rect.centery
 
-        self.pos[1] += self.velocity[1]
-        entity_rect = self.rect()
-        if self.minkowski_tiles:
-            for rect in self.minkowski_tiles:
-
-                if (entity_rect.centery > rect.top and
-                    self.last_frame_y < rect.top and 
-                    entity_rect.centerx > rect.left and
-                     entity_rect.centerx < rect.right and
-                    self.velocity[1] > 0):
-
-                    self.collisions['down'] = True
-                    self.pos[1] = self.last_frame_y - (self.img.get_height() / 2)
-                    self.velocity[1] = 0
-                    break
-
-                if (entity_rect.centery < rect.bottom and
-                    self.last_frame_y > rect.bottom and 
-                    entity_rect.centerx > rect.left and
-                     entity_rect.centerx < rect.right and
-                    self.velocity[1] < 0):
-
-                    self.collisions['up'] = True
-                    self.pos[1] = self.last_frame_y - (self.img.get_height() / 2)
-                    self.velocity[1] = 0
-                    break
+        self.pos[0] += self.velocity[0] * remaining
+        self.pos[1] += self.velocity[1] * remaining
 
         if self.velocity[0] > 0:
             self.flip = False
         if self.velocity[0] < 0:
             self.flip = True
 
+        #print(self.collisions)
     def render(self, surf):
         surf.blit(pygame.transform.flip(self.img, self.flip, False), self.pos)
 
 class Player(PhysicsEntity):
-    def __init__(self):
+    def __init__(self, game, tilemap, pos):
+        super().__init__(game, tilemap, game.entities['player'], pos, game.entities['player'].get_size())
         pass
 
 class NPC(PhysicsEntity):

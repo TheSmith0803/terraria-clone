@@ -5,7 +5,7 @@ import math
 import sys
 
 from scripts.tilemap import Tilemap
-from scripts.entities import PhysicsEntity
+from scripts.entities import PhysicsEntity, Player
 from scripts.utilities import load_image, load_images
 
 class Game:
@@ -29,15 +29,17 @@ class Game:
         self.tilemap = Tilemap(self, 1)
 
         self.running = True
-        self.pos = [40, 250]
+        self.pos = [40, 275]
         self.movement = [False, False]
 
-        self.player = PhysicsEntity(self, self.tilemap, self.entities['player'], self.pos, self.entities['player'].get_size())
+        self.delta_time = 0.0
+
+        self.player = Player(self, self.tilemap, self.pos)
 
     def run(self):
         #game loop
         while self.running:
-            
+
             self.player.update()
                         
             self.display.fill((20, 100, 200))
@@ -47,9 +49,9 @@ class Game:
             self.player.render(self.display)
 
             #if self.player.minkowski_tiles:
-            #    pygame.draw.rect(self.display, (255, 0, 0), self.player.rect())
+            #    pygame.draw.rect(self.display, (255, 0, 0), pygame.Rect(self.player.rect().center, (1,1)))
             #    for rect in self.player.minkowski_tiles:
-            #        pygame.draw.rect(self.display, (255, 0, 0), rect)
+            #        pygame.draw.rect(self.display, (0, 255, 0), rect)
 
             speed = 1
             keys_pressed = pygame.key.get_pressed()
@@ -88,6 +90,6 @@ class Game:
 
             self.screen.blit(pygame.transform.scale(self.display, self.screen.get_size()), (0, 0))
             pygame.display.update()
-            self.clock.tick(60)
+            self.delta_time = self.clock.tick(60) / 1000.0
 if __name__ == '__main__':
     Game().run()
