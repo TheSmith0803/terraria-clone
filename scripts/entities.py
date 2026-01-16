@@ -12,7 +12,8 @@ class PhysicsEntity:
         self.velocity = [0, 0]
         self.moving = [False, False]
 
-        self.friction = 0.001
+        self.grip = 0.07
+        self.friction = 0.03
         self.deadzone = 0.05
         
         self.gravity = 1.0

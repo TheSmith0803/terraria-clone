@@ -47,22 +47,17 @@ class Game:
             self.tilemap.render_map(self.display)
 
             self.player.render(self.display)
-
-            #if self.player.minkowski_tiles:
-            #    pygame.draw.rect(self.display, (255, 0, 0), pygame.Rect(self.player.rect().center, (1,1)))
-            #    for rect in self.player.minkowski_tiles:
-            #        pygame.draw.rect(self.display, (0, 255, 0), rect)
-
+            
             speed = 1
             keys_pressed = pygame.key.get_pressed()
             if keys_pressed[K_a]:
                 self.player.moving[0] = True
-                self.player.velocity[0] = -speed
+                self.player.velocity[0] = max(-self.player.grip + self.player.velocity[0], -speed)
             else:
                 self.player.moving[0] = False
             if keys_pressed[K_d]:
                 self.player.moving[0] = True
-                self.player.velocity[0] = speed
+                self.player.velocity[0] = min(self.player.grip + self.player.velocity[0], speed)
             else:
                 self.player.moving[0] = False
 
@@ -91,6 +86,6 @@ class Game:
             self.screen.blit(pygame.transform.scale(self.display, self.screen.get_size()), (0, 0))
             pygame.display.update()
             self.delta_time = self.clock.tick(60) / 1000.0
-            
+
 if __name__ == '__main__':
     Game().run()
