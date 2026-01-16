@@ -7,8 +7,8 @@ class PhysicsEntity:
         self.game = game
         self.tilemap = tilemap
         self.pos = list(pos)
-        self.size = size
         self.img = img
+        self.size = size
         self.velocity = [0, 0]
         self.moving = [False, False]
 
@@ -27,7 +27,7 @@ class PhysicsEntity:
         self.collisions = {'up': False, 'down': False, 'left': False, 'right': False}
         entity_rect = self.rect()
 
-        self.velocity[1] = min(5, self.velocity[1] + (0.1 * self.gravity)) #gravity
+        self.velocity[1] = min(5, self.velocity[1] + (0.01 * self.gravity)) #gravity
         
         if not self.moving[0]:
             if abs(self.velocity[0]) < self.deadzone:
@@ -35,38 +35,39 @@ class PhysicsEntity:
             else:
                 self.velocity[0] -= self.friction * (1 if self.velocity[0] > 0 else -1)
 
-        self.minkowski_tiles = []
-        if self.tilemap.physics_rects_around(entity_rect.center):
-            for tile in self.tilemap.physics_rects_around(entity_rect.center):
-                minkowski_size = [tile.w + entity_rect.w, tile.h + entity_rect.h]
-                minkowski_rect = pygame.FRect((tile.topleft[0] - entity_rect.w / 2, tile.topleft[1] - entity_rect.h / 2), minkowski_size)
-                self.minkowski_tiles.append(minkowski_rect)
+        prev_y = entity_rect.bottom
+        self.velocity[1] = min(4, self.velocity[1] + 0.1) #gravity
+        self.pos[1] += self.velocity[1]
+        entity_rect.y = self.pos[1]
         
-        px, py = entity_rect.center
-        vx, vy = self.velocity
+        #resolve y collisions
+        for rect in self.tilemap.physics_rects_around(self.pos):
+            if entity_rect.colliderect(rect):
+                if self.velocity[1] > 0 and prev_y <= rect.top:
+                    entity_rect.bottom = rect.top
+                    self.collisions['down'] = True
+                if self.velocity[1] < 0:
+                    entity_rect.top = rect.bottom 
+                    self.collisions['up'] = True
+                self.pos[1] = entity_rect.y
+                self.velocity[1] = 0
+                break
 
-        earliest_time = 1.0
-        hit_normal = (0, 0)
-        nx, ny = 0.0, 0.0
-
-        for tile in self.minkowski_tiles:
-            nx, ny, entry_time = swept_aabb(px, py, vx, vy, tile)
-            if entry_time < earliest_time:
-                earliest_time = entry_time
-                hit_normal = (nx, ny)
-
-        self.pos[0] += self.velocity[0] * earliest_time
-        self.pos[1] += self.velocity[1] * earliest_time
-
-        remaining = 1.0 - earliest_time
-        dot = vx * nx + vy * ny
-        self.velocity[0] -= dot * nx
-        self.velocity[1] -= dot * ny
-
-
-        self.pos[0] += self.velocity[0] * remaining
-        self.pos[1] += self.velocity[1] * remaining
-
+        self.pos[0] += self.velocity[0]
+        entity_rect.x = self.pos[0]
+        #resolve x collisions
+        for rect in self.tilemap.physics_rects_around(self.pos):
+            if entity_rect.colliderect(rect):
+                if self.velocity[0] > 0:
+                    entity_rect.right = rect.left 
+                    self.collisions['right'] = True
+                if self.velocity[0] < 0:
+                    entity_rect.left = rect.right 
+                    self.collisions['left'] = True
+                self.pos[0] = entity_rect.x
+                self.velocity[0] = 0
+                break
+        
         if self.velocity[0] > 0:
             self.flip = False
         if self.velocity[0] < 0:
@@ -79,7 +80,6 @@ class PhysicsEntity:
 class Player(PhysicsEntity):
     def __init__(self, game, tilemap, pos):
         super().__init__(game, tilemap, game.entities['player'], pos, game.entities['player'].get_size())
-        pass
 
 class NPC(PhysicsEntity):
     pass

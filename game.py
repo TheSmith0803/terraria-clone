@@ -91,5 +91,6 @@ class Game:
             self.screen.blit(pygame.transform.scale(self.display, self.screen.get_size()), (0, 0))
             pygame.display.update()
             self.delta_time = self.clock.tick(60) / 1000.0
+            
 if __name__ == '__main__':
     Game().run()
