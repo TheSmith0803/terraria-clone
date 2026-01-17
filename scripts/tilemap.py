@@ -39,11 +39,3 @@ class Tilemap:
             self.tile_map[str(self.xpos) + ";" + str(self.ypos)] = {'type': 'grass/top', 'pos': pos,}
             surf.blit(self.game.tiles['grass/top'], pos)
             countx += self.tile_size
-        county = 0
-        for i in range(10):
-            pos = (countx, 300 + county)
-            self.xpos = pos[0] // self.tile_size
-            self.ypos = pos[1] // self.tile_size
-            self.tile_map[str(self.xpos) + ";" + str(self.ypos)] = {'type': 'grass/top', 'pos': pos,}
-            surf.blit(self.game.tiles['grass/top'], pos)
-            county -= self.tile_size

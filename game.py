@@ -19,6 +19,7 @@ class Game:
         self.clock = pygame.time.Clock()
         
         self.entities = {
+            #player sprite and animations for player
             'player': load_image('assets\\entities\\player.png')
         }
 

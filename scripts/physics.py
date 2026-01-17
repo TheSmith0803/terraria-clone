@@ -4,7 +4,6 @@ import os, math
 #will only apply to entities and projectiles
 def swept_aabb(px, py, vx, vy, minkowski_box):
 
-
     #find the distance between the objects on the near and far sides for x and y
     x_inv_entry, y_inv_entry = float(), float()
     x_inv_exit, y_inv_exit   = float(), float()
@@ -67,7 +66,6 @@ def swept_aabb(px, py, vx, vy, minkowski_box):
         else:
             normalx = 0.0
             normaly = -1.0 if vy > 0 else 1.0
-            
         
         #this will need to be handled, 
         #as variable assignment by reference isnt possible (dumb python)
