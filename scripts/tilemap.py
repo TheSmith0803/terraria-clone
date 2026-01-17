@@ -1,7 +1,9 @@
 import pygame
 import json
 
-
+AUTOTILE_MAP = {
+    tuple(sorted([]))
+}
 
 class Tilemap:
     def __init__(self, game, map_size=1, tile_size=16):
@@ -31,11 +33,18 @@ class Tilemap:
         pass    
 
     def render_map(self, surf , offset=(0, 0)):
-        countx = 0
-        for i in range(10):
-            pos =(countx, 300)
-            self.xpos = pos[0] // self.tile_size
-            self.ypos = pos[1] // self.tile_size
-            self.tile_map[str(self.xpos) + ";" + str(self.ypos)] = {'type': 'grass/top', 'pos': pos,}
-            surf.blit(self.game.tiles['grass/top'], pos)
-            countx += self.tile_size
+        
+        county = 0
+        for k in range(10): 
+            countx = 0
+            for i in range(25):
+                pos =(countx, 300 + county)
+                self.xpos = pos[0] // self.tile_size
+                self.ypos = pos[1] // self.tile_size
+                self.tile_map[str(self.xpos) + ";" + str(self.ypos)] = {'type': 'grass/top', 'pos': pos,}
+                if county > 0:
+                    surf.blit(self.game.tiles['grass'][3], pos)
+                else:
+                    surf.blit(self.game.tiles['grass'][0], pos)
+                countx += self.tile_size
+            county += self.tile_size

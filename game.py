@@ -24,7 +24,8 @@ class Game:
         }
 
         self.tiles = {
-            'grass/top': load_images('assets\\tiles\\grass')[0],
+            #grass tiles
+            'grass': load_images('assets\\tiles\\grass'),
         }
 
         self.tilemap = Tilemap(self, 1)
