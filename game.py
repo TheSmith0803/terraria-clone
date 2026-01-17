@@ -29,7 +29,7 @@ class Game:
         }
 
         self.tilemap = Tilemap(self, 1)
-
+        self.tilemap.generate_map()
         self.running = True
         self.pos = [40, 275]
         self.movement = [False, False]
@@ -41,17 +41,38 @@ class Game:
     def run(self):
         #game loop
         while self.running:
+            
+            mpos = pygame.mouse.get_pos()
+            mouse_btns = pygame.mouse.get_pressed()
 
+            mposx = (mpos[0] // self.tilemap.tile_size) // 2
+            mposy = (mpos[1] // self.tilemap.tile_size) // 2
+            mpos = (mposx, mposy)
+
+            #for removing tiles
+            try:
+                if mouse_btns[0] and self.tilemap.tile_map[str(mpos[0]) + ';' + str(mpos[1])]:
+                    self.tilemap.tile_map.pop(str(mpos[0]) + ';' + str(mpos[1] - 1))
+                    print(f'removed tile: {str(mpos[0]) + ';' + str(mpos[1])}')
+                    print(self.tilemap.tile_map)
+                else:
+                    pass
+            except KeyError:
+                pass
             self.player.update()
                         
             self.display.fill((20, 100, 200))
-
-            self.tilemap.render_map(self.display)
-
-            self.player.render(self.display)
             
+            self.tilemap.render_map(self.display)
+            mouse_over_rect = pygame.Rect(((mpos[0] / 2) * self.tilemap.tile_size * 2, (mpos[1] / 2) * self.tilemap.tile_size * 2) , self.tiles['grass'][0].get_size())
+            #pygame.draw.rect(self.display, (255, 0, 0), mouse_over_rect)
+            self.player.render(self.display)
+
+            
+
             speed = 1
             keys_pressed = pygame.key.get_pressed()
+
             if keys_pressed[K_a] or keys_pressed[K_d]:
                 self.player.moving[0] = True
             else:

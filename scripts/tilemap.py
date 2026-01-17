@@ -17,7 +17,16 @@ class Tilemap:
 
     #temp
     def generate_map(self):
-        pass
+        county = 0
+        for k in range(10): 
+            countx = 0
+            for i in range(25):
+                pos =(countx, 300 + county)
+                self.xpos = pos[0] // self.tile_size
+                self.ypos = pos[1] // self.tile_size
+                self.tile_map[str(self.xpos) + ";" + str(self.ypos)] = {'type': 'grass/top', 'pos': pos,}
+                countx += self.tile_size
+            county += self.tile_size
     
     def physics_rects_around(self, pos):
         offsets = [(1, 0), (-1, 0), (0, 1), (0, -1), (-1, -1), (-1, 1), (1, 1), (1, -1), (0, 0)]
@@ -34,17 +43,9 @@ class Tilemap:
 
     def render_map(self, surf , offset=(0, 0)):
         
-        county = 0
-        for k in range(10): 
-            countx = 0
-            for i in range(25):
-                pos =(countx, 300 + county)
-                self.xpos = pos[0] // self.tile_size
-                self.ypos = pos[1] // self.tile_size
-                self.tile_map[str(self.xpos) + ";" + str(self.ypos)] = {'type': 'grass/top', 'pos': pos,}
-                if county > 0:
-                    surf.blit(self.game.tiles['grass'][3], pos)
-                else:
-                    surf.blit(self.game.tiles['grass'][0], pos)
-                countx += self.tile_size
-            county += self.tile_size
+        
+        for tile in self.tile_map:
+            surf.blit(self.game.tiles['grass'][1], self.tile_map[tile]['pos'])
+            
+
+        
