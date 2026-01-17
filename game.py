@@ -50,16 +50,22 @@ class Game:
             
             speed = 1
             keys_pressed = pygame.key.get_pressed()
+            if keys_pressed[K_a] or keys_pressed[K_d]:
+                self.player.moving[0] = True
+            else:
+                self.player.moving[0] = False
+
             if keys_pressed[K_a]:
-                self.player.moving[0] = True
-                self.player.velocity[0] = max(-self.player.grip + self.player.velocity[0], -speed)
-            else:
-                self.player.moving[0] = False
+                if self.player.collisions['down']:
+                    self.player.velocity[0] = max(-self.player.grip + self.player.velocity[0], -speed)
+                else:
+                    self.player.velocity[0] = max((-self.player.grip * 0.2) + self.player.velocity[0], -speed)
+
             if keys_pressed[K_d]:
-                self.player.moving[0] = True
-                self.player.velocity[0] = min(self.player.grip + self.player.velocity[0], speed)
-            else:
-                self.player.moving[0] = False
+                if self.player.collisions['down']:
+                    self.player.velocity[0] = min(self.player.grip + self.player.velocity[0], speed)
+                else:
+                    self.player.velocity[0] = min((self.player.grip * 0.2) + self.player.velocity[0], speed)
 
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
