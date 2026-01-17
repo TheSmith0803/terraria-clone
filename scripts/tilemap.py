@@ -24,7 +24,10 @@ class Tilemap:
                 pos =(countx, 300 + county)
                 self.xpos = pos[0] // self.tile_size
                 self.ypos = pos[1] // self.tile_size
-                self.tile_map[str(self.xpos) + ";" + str(self.ypos)] = {'type': 'grass/top', 'pos': pos,}
+                if str(self.xpos) + ';' + str(self.ypos - 1) in self.tile_map.keys():
+                    self.tile_map[str(self.xpos) + ";" + str(self.ypos)] = {'type': 'grass/top', 'variant': 3,'pos': pos,}
+                else:
+                    self.tile_map[str(self.xpos) + ";" + str(self.ypos)] = {'type': 'grass/top', 'variant': 0,'pos': pos,}
                 countx += self.tile_size
             county += self.tile_size
     
@@ -45,7 +48,7 @@ class Tilemap:
         
         
         for tile in self.tile_map:
-            surf.blit(self.game.tiles['grass'][1], self.tile_map[tile]['pos'])
+            surf.blit(self.game.tiles['grass'][self.tile_map[tile]['variant']], self.tile_map[tile]['pos'])
             
 
         

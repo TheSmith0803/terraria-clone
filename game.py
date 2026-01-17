@@ -50,15 +50,12 @@ class Game:
             mpos = (mposx, mposy)
 
             #for removing tiles
-            try:
-                if mouse_btns[0] and self.tilemap.tile_map[str(mpos[0]) + ';' + str(mpos[1])]:
-                    self.tilemap.tile_map.pop(str(mpos[0]) + ';' + str(mpos[1] - 1))
-                    print(f'removed tile: {str(mpos[0]) + ';' + str(mpos[1])}')
-                    print(self.tilemap.tile_map)
-                else:
-                    pass
-            except KeyError:
+            if mouse_btns[0] and str(mpos[0]) + ';' + str(mpos[1] - 1) in self.tilemap.tile_map.keys():
+                self.tilemap.tile_map.pop(str(mpos[0]) + ';' + str(mpos[1] - 1))
+                print(f'removed tile: {str(mpos[0]) + ';' + str(mpos[1])}')
+            else:
                 pass
+            
             self.player.update()
                         
             self.display.fill((20, 100, 200))
@@ -111,6 +108,9 @@ class Game:
                         self.player.moving[0] = False
                     if event.key == K_a:
                         self.player.moving[0] = False
+
+                if event.type == pygame.MOUSEBUTTONDOWN:
+                    print('ok')
 
             self.screen.blit(pygame.transform.scale(self.display, self.screen.get_size()), (0, 0))
             pygame.display.update()
