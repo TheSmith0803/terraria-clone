@@ -29,6 +29,11 @@ class Game:
             'grass': load_images('assets\\tiles\\grass'),
         }
 
+        #everything else lol
+        self.assets = {
+            'background': load_image('assets\\shitty-background.png'),
+        }
+
         self.tilemap = Tilemap(self, 1)
         self.tilemap.generate_map()
         self.running = True
@@ -56,10 +61,11 @@ class Game:
                 print(f'removed tile: {str(mpos[0]) + ';' + str(mpos[1])}')
             else:
                 pass
-            
-            self.player.update()
-                        
+
             self.display.fill((20, 100, 200))
+            self.display.blit(pygame.transform.scale_by(self.assets['background'], 0.5), (0,0))
+
+            self.player.update()
             
             self.tilemap.render_map(self.display)
             mouse_over_rect = pygame.Rect(((mpos[0] / 2) * self.tilemap.tile_size * 2, (mpos[1] / 2) * self.tilemap.tile_size * 2) , self.tiles['grass'][0].get_size())
