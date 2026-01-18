@@ -51,7 +51,18 @@ class Tilemap:
 
     #how the player and other objects can remove tiles in the world
     def remove_tile(self):
-        pass    
+        mpos = pygame.mouse.get_pos()
+        mpress = pygame.mouse.get_pressed()
+        tile_to_remove = None
+        for tile in self.tile_map:
+            if mpos[0] >= self.tile_map[tile]['pos'][0] and mpos[0] <= self.tile_map[tile]['pos'][0] + self.tile_size and mpos[1] >= self.tile_map[tile]['pos'][1] and mpos[1] <= self.tile_map[tile]['pos'][1] + self.tile_size:
+                if mpress[0]:
+                    tile_to_remove = tile
+
+        if tile_to_remove != None:
+            self.tile_map.pop(tile_to_remove)
+            print(tile_to_remove)
+        
 
     def render_map(self, surf , offset=(0, 0)):
         """

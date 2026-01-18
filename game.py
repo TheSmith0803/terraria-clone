@@ -35,9 +35,11 @@ class Game:
             'background': load_image('assets\\shitty-background.png'),
             #'cursor': load_image(),
         }
-
+        
         self.tilemap = Tilemap(self, 1)
+        
         self.tilemap.generate_map()
+        
         self.running = True
         self.pos = [40, 105]
         self.movement = [False, False]
@@ -56,32 +58,13 @@ class Game:
             self.scroll[1] += (self.player.rect().centery - self.display.get_height() / 2 - self.scroll[1]) / 10
             render_scroll = (int(self.scroll[0]), int(self.scroll[1]))
 
-            mpos = pygame.mouse.get_pos()
-            mouse_btns = pygame.mouse.get_pressed()
-
-            mposx = (mpos[0] // self.tilemap.tile_size) // 2 + (render_scroll[0] // self.tilemap.tile_size)
-            mposy = (mpos[1] // self.tilemap.tile_size)  // 2 + (render_scroll[1] // self.tilemap.tile_size)
-            mpos = (mposx, mposy)
-
-            #for removing tiles
-            try:
-                if mouse_btns[0] and str(mpos[0]) + ';' + str(mpos[1] + 1) in self.tilemap.tile_map.keys():
-                    self.tilemap.tile_map.pop(str(mpos[0]) + ';' + str(mpos[1] + 1))
-                    print(f'removed tile: {str(mpos[0]) + ';' + str(mpos[1])}')
-                else:
-                    pass
-            except KeyError:
-                pass
-
             self.display.fill((20, 100, 200))
             self.display.blit(pygame.transform.scale_by(self.assets['background'], 0.5), (0,0))
 
             self.player.update()
-            
+            self.tilemap.remove_tile()
             self.tilemap.render_map(self.display, offset=render_scroll)
             self.player.render(self.display, offset=render_scroll)
-
-            print(self.player.pos)
 
             speed = 1
             keys_pressed = pygame.key.get_pressed()
@@ -127,7 +110,6 @@ class Game:
 
                 if event.type == pygame.MOUSEBUTTONDOWN:
                     print('ok')
-                    print(mpos)
 
             self.screen.blit(pygame.transform.scale(self.display, self.screen.get_size()), (0, 0))
             pygame.display.update()
