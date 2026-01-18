@@ -33,6 +33,7 @@ class Game:
         #everything else lol
         self.assets = {
             'background': load_image('assets\\shitty-background.png'),
+            #'cursor': load_image(),
         }
 
         self.tilemap = Tilemap(self, 1)
@@ -80,7 +81,7 @@ class Game:
             self.tilemap.render_map(self.display, offset=render_scroll)
             self.player.render(self.display, offset=render_scroll)
 
-            
+            print(self.player.pos)
 
             speed = 1
             keys_pressed = pygame.key.get_pressed()
