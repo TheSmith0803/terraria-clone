@@ -77,8 +77,8 @@ class PhysicsEntity:
             self.flip = True
 
         #print(self.collisions)
-    def render(self, surf):
-        surf.blit(pygame.transform.flip(self.img, self.flip, False), self.pos)
+    def render(self, surf, offset=(0, 0)):
+        surf.blit(pygame.transform.flip(self.img, self.flip, False), (self.pos[0] - offset[0], self.pos[1] - offset[1]))
 
 class Player(PhysicsEntity):
     def __init__(self, game, tilemap, pos):
@@ -89,6 +89,10 @@ class Player(PhysicsEntity):
 
     def update(self):
         super().update()
+
+    def render(self, surf, offset=(0, 0)):
+        super().render(surf, offset=offset)
+        
 
 
 

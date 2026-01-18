@@ -1,5 +1,5 @@
 import pygame
-import json
+import json, random
 
 #rules for spawinging tiles, variants equate to file names --> '0.png'
 AUTOTILE_MAP = {
@@ -27,10 +27,10 @@ class Tilemap:
     #temp
     def generate_map(self):
         county = 0
-        for k in range(10): 
+        for k in range(100): 
             countx = 0
-            for i in range(25):
-                pos =(countx, (self.tile_size * 15) + county)
+            for i in range(-125, 125):
+                pos = (countx, (self.tile_size * 15) + county)
                 self.xpos = pos[0] // self.tile_size
                 self.ypos = pos[1] // self.tile_size
                 if str(self.xpos) + ';' + str(self.ypos - 1) in self.tile_map.keys():
@@ -54,10 +54,16 @@ class Tilemap:
         pass    
 
     def render_map(self, surf , offset=(0, 0)):
-        
-        
+        """
+        for x in range(int(offset[0] // self.tile_size), int((offset[0] + surf.get_width()) // self.tile_size + 1)):
+            for y in range(int(offset[1] // self.tile_size), int((offset[1] + surf.get_height()) // self.tile_size + 1)):
+                loc = str(x) + ';' + str(y)
+                for tile in self.tile_map:
+                    if loc == tile:
+                        surf.blit(self.game.tiles['grass'][0], (self.tile_map[tile]['pos'][0] - offset[0], self.tile_map[tile]['pos'][0] - offset[1]))
+        """
+
         for tile in self.tile_map:
-            surf.blit(self.game.tiles['grass'][self.tile_map[tile]['variant']], self.tile_map[tile]['pos'])
-            
+            surf.blit(self.game.tiles[self.tile_map[tile]['type']][self.tile_map[tile]['variant']], (self.tile_map[tile]['pos'][0] - offset[0], self.tile_map[tile]['pos'][1] - offset[1]))
 
         

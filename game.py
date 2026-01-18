@@ -4,6 +4,7 @@ from pygame.locals import *
 import math
 import sys
 
+from scripts.world import World
 from scripts.tilemap import Tilemap
 from scripts.entities import PhysicsEntity, Player
 from scripts.utilities import load_image, load_images, Animation
@@ -40,6 +41,8 @@ class Game:
         self.pos = [40, 105]
         self.movement = [False, False]
 
+        self.scroll = [0, 0]
+
         self.delta_time = 0.0
 
         self.player = Player(self, self.tilemap, self.pos)
@@ -48,18 +51,25 @@ class Game:
         #game loop
         while self.running:
             
+            self.scroll[0] += (self.player.rect().centerx - self.display.get_width() / 2 - self.scroll[0]) / 10
+            self.scroll[1] += (self.player.rect().centery - self.display.get_height() / 2 - self.scroll[1]) / 10
+            render_scroll = (int(self.scroll[0]), int(self.scroll[1]))
+
             mpos = pygame.mouse.get_pos()
             mouse_btns = pygame.mouse.get_pressed()
 
-            mposx = (mpos[0] // self.tilemap.tile_size) // 2
-            mposy = (mpos[1] // self.tilemap.tile_size) // 2
+            mposx = (mpos[0] // self.tilemap.tile_size) // 2 + (render_scroll[0] // self.tilemap.tile_size)
+            mposy = (mpos[1] // self.tilemap.tile_size)  // 2 + (render_scroll[1] // self.tilemap.tile_size)
             mpos = (mposx, mposy)
 
             #for removing tiles
-            if mouse_btns[0] and str(mpos[0]) + ';' + str(mpos[1]) in self.tilemap.tile_map.keys():
-                self.tilemap.tile_map.pop(str(mpos[0]) + ';' + str(mpos[1]))
-                print(f'removed tile: {str(mpos[0]) + ';' + str(mpos[1])}')
-            else:
+            try:
+                if mouse_btns[0] and str(mpos[0]) + ';' + str(mpos[1] + 1) in self.tilemap.tile_map.keys():
+                    self.tilemap.tile_map.pop(str(mpos[0]) + ';' + str(mpos[1] + 1))
+                    print(f'removed tile: {str(mpos[0]) + ';' + str(mpos[1])}')
+                else:
+                    pass
+            except KeyError:
                 pass
 
             self.display.fill((20, 100, 200))
@@ -67,10 +77,8 @@ class Game:
 
             self.player.update()
             
-            self.tilemap.render_map(self.display)
-            mouse_over_rect = pygame.Rect(((mpos[0] / 2) * self.tilemap.tile_size * 2, (mpos[1] / 2) * self.tilemap.tile_size * 2) , self.tiles['grass'][0].get_size())
-            #pygame.draw.rect(self.display, (255, 0, 0), mouse_over_rect)
-            self.player.render(self.display)
+            self.tilemap.render_map(self.display, offset=render_scroll)
+            self.player.render(self.display, offset=render_scroll)
 
             
 
@@ -118,6 +126,7 @@ class Game:
 
                 if event.type == pygame.MOUSEBUTTONDOWN:
                     print('ok')
+                    print(mpos)
 
             self.screen.blit(pygame.transform.scale(self.display, self.screen.get_size()), (0, 0))
             pygame.display.update()
