@@ -6,7 +6,7 @@ import sys
 
 from scripts.tilemap import Tilemap
 from scripts.entities import PhysicsEntity, Player
-from scripts.utilities import load_image, load_images
+from scripts.utilities import load_image, load_images, Animation
 
 class Game:
     def __init__(self):
@@ -20,7 +20,8 @@ class Game:
         
         self.entities = {
             #player sprite and animations for player
-            'player': load_image('assets\\entities\\player.png')
+            'player': load_image('assets\\entities\\player.png'),
+            'player/idle': Animation(load_image('assets\\entities\\player\\idle\\player-idle.png'), img_dur=5)
         }
 
         self.tiles = {
@@ -31,7 +32,7 @@ class Game:
         self.tilemap = Tilemap(self, 1)
         self.tilemap.generate_map()
         self.running = True
-        self.pos = [40, 275]
+        self.pos = [40, 105]
         self.movement = [False, False]
 
         self.delta_time = 0.0
@@ -50,8 +51,8 @@ class Game:
             mpos = (mposx, mposy)
 
             #for removing tiles
-            if mouse_btns[0] and str(mpos[0]) + ';' + str(mpos[1] - 1) in self.tilemap.tile_map.keys():
-                self.tilemap.tile_map.pop(str(mpos[0]) + ';' + str(mpos[1] - 1))
+            if mouse_btns[0] and str(mpos[0]) + ';' + str(mpos[1]) in self.tilemap.tile_map.keys():
+                self.tilemap.tile_map.pop(str(mpos[0]) + ';' + str(mpos[1]))
                 print(f'removed tile: {str(mpos[0]) + ';' + str(mpos[1])}')
             else:
                 pass

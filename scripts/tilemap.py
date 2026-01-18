@@ -1,9 +1,18 @@
 import pygame
 import json
 
+#rules for spawinging tiles, variants equate to file names --> '0.png'
 AUTOTILE_MAP = {
-    tuple(sorted([]))
+    tuple(sorted([(-1, 0), (1, 0), (0, 1)])): 0,
+    tuple(sorted([(1, 0), (0, 1)])): 1,
+    tuple(sorted([(-1, 0), (1, 0)])): 2,
+    tuple(sorted([(-1, 0), (0, -1), (0, 1)])): 3,
+    tuple(sorted([(1, 0), (0, -1), (0, 1)])): 4,
+    tuple(sorted([(-1, 0), (1, 0), (0, 1)])): 5,
+    tuple(sorted([(-1, 0), (1, 0), (0, -1), (0, 1)])): 5,
 }
+
+AUTOTILE_TPYE = {'grass', 'stone'}
 
 class Tilemap:
     def __init__(self, game, map_size=1, tile_size=16):
@@ -21,13 +30,13 @@ class Tilemap:
         for k in range(10): 
             countx = 0
             for i in range(25):
-                pos =(countx, 300 + county)
+                pos =(countx, (self.tile_size * 15) + county)
                 self.xpos = pos[0] // self.tile_size
                 self.ypos = pos[1] // self.tile_size
                 if str(self.xpos) + ';' + str(self.ypos - 1) in self.tile_map.keys():
-                    self.tile_map[str(self.xpos) + ";" + str(self.ypos)] = {'type': 'grass/top', 'variant': 3,'pos': pos,}
+                    self.tile_map[str(self.xpos) + ";" + str(self.ypos)] = {'type': 'grass', 'variant': 5,'pos': pos,}
                 else:
-                    self.tile_map[str(self.xpos) + ";" + str(self.ypos)] = {'type': 'grass/top', 'variant': 0,'pos': pos,}
+                    self.tile_map[str(self.xpos) + ";" + str(self.ypos)] = {'type': 'grass', 'variant': 0,'pos': pos,}
                 countx += self.tile_size
             county += self.tile_size
     

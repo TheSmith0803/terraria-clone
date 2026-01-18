@@ -84,6 +84,13 @@ class Player(PhysicsEntity):
     def __init__(self, game, tilemap, pos):
         super().__init__(game, tilemap, game.entities['player'], pos, game.entities['player'].get_size())
 
+    def set_action(self, action):
+        pass
+
+    def update(self):
+        super().update()
+
+
 
 class NPC(PhysicsEntity):
     pass

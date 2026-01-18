@@ -15,15 +15,16 @@ def load_images(path):
     return imgs
 
 class Animation:
-    def __init__(self, images, img_dur=5, loop=True):
-        self.images = images
+    def __init__(self, sprite_sheet, sprite_res=(16, 16), img_dur=5, loop=True):
+        self.sheet = sprite_sheet
+        self.res = sprite_res
         self.loop = loop
         self.img_duration = img_dur
         self.done = False
         self.frame = 0
 
     def copy(self):
-        return Animation(self.images, self.img_duration, self.loop)
+        return Animation(self.sheet, self.sheet, self.res, self.img_duration, self.loop)
     
     def update(self):
         if self.loop:

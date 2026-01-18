@@ -7,5 +7,5 @@ random spawning and spawning rules will take place here.
 """
 
 class World:
-    def __init__(self):
+    def __init__(self, tilemap):
         pass
