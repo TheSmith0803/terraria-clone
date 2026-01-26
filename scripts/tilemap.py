@@ -26,11 +26,11 @@ class Tilemap:
 
     #temp
     def generate_map(self):
-        county = 0
-        for k in range(100): 
-            countx = 0
-            for i in range(-125, 125):
-                pos = (countx, (self.tile_size * 15) + county)
+        county = 350
+        for k in range(10): 
+            countx = 150
+            for i in range(-125, -115):
+                pos = (countx, county)
                 self.xpos = pos[0] // self.tile_size
                 self.ypos = pos[1] // self.tile_size
                 if str(self.xpos) + ';' + str(self.ypos - 1) in self.tile_map.keys():
@@ -49,21 +49,6 @@ class Tilemap:
                 tiles_around.append(pygame.FRect(self.tile_map[str(int(pos[0] // self.tile_size) + adjacent_tile[0]) + ";" + str(int(pos[1] // self.tile_size) + adjacent_tile[1])]['pos'], (self.tile_size, self.tile_size)))
         return tiles_around
 
-    #how the player and other objects can remove tiles in the world
-    def remove_tile(self):
-        mpos = pygame.mouse.get_pos()
-        mpress = pygame.mouse.get_pressed()
-        tile_to_remove = None
-        for tile in self.tile_map:
-            if mpos[0] >= self.tile_map[tile]['pos'][0] and mpos[0] <= self.tile_map[tile]['pos'][0] + self.tile_size and mpos[1] >= self.tile_map[tile]['pos'][1] and mpos[1] <= self.tile_map[tile]['pos'][1] + self.tile_size:
-                if mpress[0]:
-                    tile_to_remove = tile
-
-        if tile_to_remove != None:
-            self.tile_map.pop(tile_to_remove)
-            print(tile_to_remove)
-        
-
     def render_map(self, surf , offset=(0, 0)):
         """
         for x in range(int(offset[0] // self.tile_size), int((offset[0] + surf.get_width()) // self.tile_size + 1)):
@@ -73,7 +58,7 @@ class Tilemap:
                     if loc == tile:
                         surf.blit(self.game.tiles['grass'][0], (self.tile_map[tile]['pos'][0] - offset[0], self.tile_map[tile]['pos'][0] - offset[1]))
         """
-
+        
         for tile in self.tile_map:
             surf.blit(self.game.tiles[self.tile_map[tile]['type']][self.tile_map[tile]['variant']], (self.tile_map[tile]['pos'][0] - offset[0], self.tile_map[tile]['pos'][1] - offset[1]))
 

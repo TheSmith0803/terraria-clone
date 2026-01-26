@@ -17,6 +17,7 @@ class PhysicsEntity:
         self.air_grip = self.grip * 0.2
         self.friction = 0.0301
         self.deadzone = 0.05
+        self.speed = 1.0
         
         self.gravity = 1.0
 
@@ -83,6 +84,31 @@ class PhysicsEntity:
 class Player(PhysicsEntity):
     def __init__(self, game, tilemap, pos):
         super().__init__(game, tilemap, game.entities['player'], pos, game.entities['player'].get_size())
+        self.game = game
+        self.tilemap = tilemap
+        self.pos = pos
+
+    def mine_tile(self, offset=(0, 0)):
+        mpos = list(pygame.mouse.get_pos())
+        if mpos[0] != 0:
+            mpos[0] /= self.game.x_res_ratio 
+        if mpos[1] != 0:    
+            mpos[1] /= self.game.y_res_ratio 
+
+        remove_tile = None
+        for tile in self.tilemap.tile_map:
+            if (mpos[0] >= self.tilemap.tile_map[tile]['pos'][0] - offset[0] and
+                mpos[1] >= self.tilemap.tile_map[tile]['pos'][1] - offset[1] and
+                mpos[0] <= self.tilemap.tile_map[tile]['pos'][0] - offset[0] + self.tilemap.tile_size and
+                mpos[1] <= self.tilemap.tile_map[tile]['pos'][1] - offset[1] + self.tilemap.tile_size):
+                remove_tile = tile
+
+        if remove_tile != None:
+            self.tilemap.tile_map.pop(remove_tile)
+
+    #maybe put all player based actions in here, like mine tile, switch tool, ect...or maybe all in update? idk lol
+    def update_player_actions(self):
+        pass
 
     def set_action(self, action):
         pass
@@ -91,6 +117,7 @@ class Player(PhysicsEntity):
         super().update()
 
     def render(self, surf, offset=(0, 0)):
+        self.offset = offset
         super().render(surf, offset=offset)
         
 
