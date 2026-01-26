@@ -100,7 +100,8 @@ class Player(PhysicsEntity):
             if (mpos[0] >= self.tilemap.tile_map[tile]['pos'][0] - offset[0] and
                 mpos[1] >= self.tilemap.tile_map[tile]['pos'][1] - offset[1] and
                 mpos[0] <= self.tilemap.tile_map[tile]['pos'][0] - offset[0] + self.tilemap.tile_size and
-                mpos[1] <= self.tilemap.tile_map[tile]['pos'][1] - offset[1] + self.tilemap.tile_size):
+                mpos[1] <= self.tilemap.tile_map[tile]['pos'][1] - offset[1] + self.tilemap.tile_size and 
+                self.tilemap.tile_map[tile]['pos'][1] < self.game.world_limit_y_bottom):
                 remove_tile = tile
 
         if remove_tile != None:

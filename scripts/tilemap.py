@@ -27,9 +27,9 @@ class Tilemap:
     #temp
     def generate_map(self):
         county = 350
-        for k in range(10): 
-            countx = 150
-            for i in range(-125, -115):
+        for k in range(50): 
+            countx = -100
+            for i in range(0, 100):
                 pos = (countx, county)
                 self.xpos = pos[0] // self.tile_size
                 self.ypos = pos[1] // self.tile_size

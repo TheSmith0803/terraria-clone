@@ -46,6 +46,10 @@ class Game:
         
         self.tilemap.generate_map()
         
+        #can be attached to world size later if i feel like it lol
+        self.world_limit_y_top = -500
+        self.world_limit_y_bottom = 1000
+
         self.running = True
         self.pos = [self.display.get_width() / 2, self.display.get_height() / 2]
         self.movement = [False, False]
@@ -61,14 +65,13 @@ class Game:
         while self.running:
             self.scroll[0] += (self.player.rect().centerx - self.display.get_width() / 2 - self.scroll[0]) / 10
 
-            if self.scroll[1] <= -500 and (self.player.rect().centery - self.scroll[1]) < self.display.get_height() / 2:
-                self.scroll[1] = -500
-            elif self.scroll[1] >= 1000 and (self.player.rect().centery - self.scroll[1]) > self.display.get_height() / 2:
-                self.scroll[1] = 1000
+            #locks the camera when world limit is reached
+            if self.scroll[1] <= self.world_limit_y_top and (self.player.rect().centery - self.scroll[1]) < self.display.get_height() / 2:
+                self.scroll[1] = self.world_limit_y_top
+            elif self.scroll[1] >= self.world_limit_y_bottom and (self.player.rect().centery - self.scroll[1]) > self.display.get_height() / 2:
+                self.scroll[1] = self.world_limit_y_bottom
             else:
                 self.scroll[1] += (self.player.rect().centery - self.display.get_height() / 2 - self.scroll[1]) / 10
-
-            print(self.scroll[1])
 
             render_scroll = (int(self.scroll[0]), int(self.scroll[1]))
 
