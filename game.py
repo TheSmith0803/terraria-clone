@@ -13,9 +13,10 @@ class Game:
     def __init__(self):
         
         pygame.init()
+
+        #these variables are for calculating cursor pos with scaling
         self.window_size = (800, 800)
         self.display_res = (400, 400)
-
         self.x_res_ratio = self.window_size[0] / self.display_res[0]
         self.y_res_ratio = self.window_size[1] / self.display_res[1]  
 
@@ -58,9 +59,17 @@ class Game:
     def run(self):
         #game loop
         while self.running:
-            
             self.scroll[0] += (self.player.rect().centerx - self.display.get_width() / 2 - self.scroll[0]) / 10
-            self.scroll[1] += (self.player.rect().centery - self.display.get_height() / 2 - self.scroll[1]) / 10
+
+            if self.scroll[1] <= -500 and (self.player.rect().centery - self.scroll[1]) < self.display.get_height() / 2:
+                self.scroll[1] = -500
+            elif self.scroll[1] >= 1000 and (self.player.rect().centery - self.scroll[1]) > self.display.get_height() / 2:
+                self.scroll[1] = 1000
+            else:
+                self.scroll[1] += (self.player.rect().centery - self.display.get_height() / 2 - self.scroll[1]) / 10
+
+            print(self.scroll[1])
+
             render_scroll = (int(self.scroll[0]), int(self.scroll[1]))
 
             self.display.fill((20, 100, 200))
