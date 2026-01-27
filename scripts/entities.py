@@ -1,6 +1,7 @@
 import pygame
 
 from .physics import swept_aabb
+from .items import *
 
 class PhysicsEntity:
     def __init__(self, game, tilemap, img, pos, size):
@@ -82,9 +83,10 @@ class PhysicsEntity:
         surf.blit(pygame.transform.flip(self.img, self.flip, False), (self.pos[0] - offset[0], self.pos[1] - offset[1]))
 
 class Player(PhysicsEntity):
-    def __init__(self, game, tilemap, pos):
+    def __init__(self, game, inventory, tilemap, pos):
         super().__init__(game, tilemap, game.entities['player'], pos, game.entities['player'].get_size())
         self.game = game
+        self.inventory = inventory
         self.tilemap = tilemap
         self.pos = pos
 
@@ -95,7 +97,16 @@ class Player(PhysicsEntity):
         if mpos[1] != 0:    
             mpos[1] /= self.game.y_res_ratio 
 
+        #iterating over every tile every time you click iz bad, 
+        #make it deterministic by div mpos by tilepos and see if that tile exists
+        #may need to divide offset by 
+        mpos_grid = ['','']
+        offset_grid = [offset[0] // self.tilemap.tile_size, offset[1] // self.tilemap.tile_size]
         remove_tile = None
+
+        mpos_grid[0] = mpos[0] // self.tilemap.tile_size
+        mpos_grid[1] = mpos[1] // self.tilemap.tile_size
+        
         for tile in self.tilemap.tile_map:
             if (mpos[0] >= self.tilemap.tile_map[tile]['pos'][0] - offset[0] and
                 mpos[1] >= self.tilemap.tile_map[tile]['pos'][1] - offset[1] and
@@ -103,9 +114,18 @@ class Player(PhysicsEntity):
                 mpos[1] <= self.tilemap.tile_map[tile]['pos'][1] - offset[1] + self.tilemap.tile_size and 
                 self.tilemap.tile_map[tile]['pos'][1] < self.game.world_limit_y_bottom):
                 remove_tile = tile
+        #put item into inventory (will drop it in the world later)
+        
 
         if remove_tile != None:
+            self.inventory.update(Item('grass', self.game.tiles[self.tilemap.tile_map[remove_tile]['type']][self.tilemap.tile_map[remove_tile]['variant']], stackable=True))
             self.tilemap.tile_map.pop(remove_tile)
+            for i in self.inventory.contents:
+                print(f'type: {i[0].type} ---- amt {i[1]}')
+
+        
+        
+        
 
     #maybe put all player based actions in here, like mine tile, switch tool, ect...or maybe all in update? idk lol
     def update_player_actions(self):

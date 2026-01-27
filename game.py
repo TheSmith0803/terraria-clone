@@ -7,6 +7,7 @@ import sys
 from scripts.world import World
 from scripts.tilemap import Tilemap
 from scripts.entities import PhysicsEntity, Player
+from scripts.inventory import Inventory
 from scripts.utilities import load_image, load_images, Animation
 
 class Game:
@@ -15,8 +16,8 @@ class Game:
         pygame.init()
 
         #these variables are for calculating cursor pos with scaling
-        self.window_size = (800, 800)
-        self.display_res = (400, 400)
+        self.window_size = (1920, 1080)
+        self.display_res = (self.window_size[0] / 2, self.window_size[1] / 2)
         self.x_res_ratio = self.window_size[0] / self.display_res[0]
         self.y_res_ratio = self.window_size[1] / self.display_res[1]  
 
@@ -58,7 +59,8 @@ class Game:
 
         self.delta_time = 0.0
 
-        self.player = Player(self, self.tilemap, self.pos)
+        self.inventory = Inventory()
+        self.player = Player(self, self.inventory, self.tilemap, self.pos)
 
     def run(self):
         #game loop
@@ -120,6 +122,7 @@ class Game:
 
                     if event.key == K_w:
                         self.player.velocity[1] = -3
+                        print("poop")
 
 
             self.screen.blit(pygame.transform.scale(self.display, self.screen.get_size()), (0, 0))
