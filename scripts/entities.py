@@ -4,7 +4,7 @@ from .physics import swept_aabb
 from .items import *
 
 class PhysicsEntity:
-    def __init__(self, game, tilemap, img, pos, size):
+    def __init__(self, game, tilemap, e_type, img, pos, size):
         self.game = game
         self.tilemap = tilemap
         self.pos = list(pos)
@@ -12,7 +12,11 @@ class PhysicsEntity:
         self.size = size
         self.velocity = [0, 0]
         self.moving = [False, False]
-        
+        self.collisions = {'up': False, 'down': False, 'left': False, 'right': False}
+
+        self.type = e_type
+        self.action = ''
+        self.set_action('idle')
 
         self.grip = 0.0700001
         self.air_grip = self.grip * 0.2
@@ -27,6 +31,10 @@ class PhysicsEntity:
     def rect(self):
         return pygame.FRect(*self.pos, *self.size)
 
+    def set_action(self, action):
+        if action != self.action:
+            self.action = action
+            self.animation = self.game.entities[self.type + "\\" + self.action].copy()
 
     def update(self):
         self.collisions = {'up': False, 'down': False, 'left': False, 'right': False}
@@ -78,13 +86,15 @@ class PhysicsEntity:
         if self.velocity[0] < 0:
             self.flip = True
 
+        self.animation.update()
+
         #print(self.collisions)
     def render(self, surf, offset=(0, 0)):
-        surf.blit(pygame.transform.flip(self.img, self.flip, False), (self.pos[0] - offset[0], self.pos[1] - offset[1]))
+        surf.blit(pygame.transform.flip(self.animation.img(), self.flip, False), (self.pos[0] - offset[0], self.pos[1] - offset[1]))
 
 class Player(PhysicsEntity):
     def __init__(self, game, inventory, tilemap, pos):
-        super().__init__(game, tilemap, game.entities['player'], pos, game.entities['player'].get_size())
+        super().__init__(game, tilemap, 'player', game.entities['player'], pos, game.entities['player'].get_size())
         self.game = game
         self.inventory = inventory
         self.tilemap = tilemap
@@ -123,19 +133,24 @@ class Player(PhysicsEntity):
             for i in self.inventory.contents:
                 print(f'type: {i[0].type} ---- amt {i[1]}')
 
-        
-        
-        
-
     #maybe put all player based actions in here, like mine tile, switch tool, ect...or maybe all in update? idk lol
     def update_player_actions(self):
         pass
 
-    def set_action(self, action):
-        pass
-
     def update(self):
+        
+
+        
+        if self.velocity[0] == 0:
+            self.set_action('idle')
+        if self.velocity[0] != 0 and self.collisions['down']:
+            self.animation.img_duration = min(self.animation.img_duration, self.animation.img_duration * abs(self.velocity[0] * 20))
+            self.set_action('run')
+        if not self.collisions['down']:
+            self.animation.frame = 0
+        
         super().update()
+        
 
     def render(self, surf, offset=(0, 0)):
         self.offset = offset

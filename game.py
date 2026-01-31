@@ -17,7 +17,7 @@ class Game:
 
         #these variables are for calculating cursor pos with scaling
         self.window_size = (1920, 1080)
-        self.display_res = (self.window_size[0] / 2, self.window_size[1] / 2)
+        self.display_res = (self.window_size[0] / 4, self.window_size[1] / 4)
         self.x_res_ratio = self.window_size[0] / self.display_res[0]
         self.y_res_ratio = self.window_size[1] / self.display_res[1]  
 
@@ -29,7 +29,8 @@ class Game:
         self.entities = {
             #player sprite and animations for player
             'player': load_image('assets\\entities\\player.png'),
-            'player/idle': Animation(load_image('assets\\entities\\player\\idle\\player-idle.png'), img_dur=5)
+            'player\\idle': Animation(load_images('assets\\entities\\player\\idle'), img_dur=6),
+            'player\\run': Animation(load_images('assets\\entities\\player\\run'), img_dur=6)
         }
 
         self.tiles = {
@@ -98,7 +99,7 @@ class Game:
                 if self.player.collisions['down']:
                     self.player.velocity[0] = max(-self.player.grip + self.player.velocity[0], -self.player.speed)
                 else:
-                    self.player.velocity[0] = max(-self.player.air_grip + self.player.velocity[0], -self.player.speed)
+                    self.player.velocity[0] = max(-self.player.air_grip + self.player.velocity[0], -self.player.speed) 
             if keys_pressed[K_d]:
                 if self.player.collisions['down']:
                     self.player.velocity[0] = min(self.player.grip + self.player.velocity[0], self.player.speed)

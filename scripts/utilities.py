@@ -9,22 +9,20 @@ def load_image(path):
 def load_images(path):
     imgs = []
     for img in os.listdir(path):
-        print(img)
         imgs.append(load_image(os.path.abspath(os.path.join(path, img))))
         
     return imgs
 
 class Animation:
-    def __init__(self, sprite_sheet, sprite_res=(16, 16), img_dur=5, loop=True):
-        self.sheet = sprite_sheet
-        self.res = sprite_res
+    def __init__(self, images, img_dur=5, loop=True):
+        self.images = images
         self.loop = loop
         self.img_duration = img_dur
         self.done = False
         self.frame = 0
 
     def copy(self):
-        return Animation(self.sheet, self.sheet, self.res, self.img_duration, self.loop)
+        return Animation(self.images, self.img_duration, self.loop)
     
     def update(self):
         if self.loop:
@@ -33,4 +31,7 @@ class Animation:
             self.frame = min(self.frame + 1, self.img_duration * len(self.images) - 1)
             if self.frame >= self.img_duration * len(self.images) - 1:
                 self.done = True
+
+    def img(self):
+        return self.images[int(self.frame / self.img_duration)]
 
