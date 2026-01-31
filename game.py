@@ -16,8 +16,8 @@ class Game:
         pygame.init()
 
         #these variables are for calculating cursor pos with scaling
-        self.window_size = (1920, 1080)
-        self.display_res = (self.window_size[0] / 4, self.window_size[1] / 4)
+        self.window_size = (800, 800)
+        self.display_res = (self.window_size[0] / 2, self.window_size[1] / 2)
         self.x_res_ratio = self.window_size[0] / self.display_res[0]
         self.y_res_ratio = self.window_size[1] / self.display_res[1]  
 
@@ -41,10 +41,11 @@ class Game:
         #everything else lol
         self.assets = {
             'background': load_image('assets\\shitty-background.png'),
+            'chest': load_image('assets\\chests\\chest-regular.png'),
             #'cursor': load_image(),
         }
         
-        self.tilemap = Tilemap(self, 1)
+        self.tilemap = Tilemap(self, 'small')
         
         self.tilemap.generate_map()
         
@@ -124,7 +125,6 @@ class Game:
                     if event.key == K_w:
                         self.player.velocity[1] = -3
                         print("poop")
-
 
             self.screen.blit(pygame.transform.scale(self.display, self.screen.get_size()), (0, 0))
             pygame.display.update()

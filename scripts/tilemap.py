@@ -15,11 +15,17 @@ AUTOTILE_MAP = {
 AUTOTILE_TPYE = {'grass', 'stone'}
 
 class Tilemap:
-    def __init__(self, game, map_size=1, tile_size=16):
+    def __init__(self, game, map_size='small', tile_size=16):
         self.game = game
-        self.map_size = map_size
         self.tile_size = tile_size
 
+        if map_size == 'small':
+            map_size = (1000, 1000)
+        if map_size == 'medium':
+            map_size = (2000, 1000)
+        if map_size == 'large':
+            map_size = (3000, 1000)
+        self.map_size = map_size
 
         self.tile_map = {}
         self.offgrid_tiles = []

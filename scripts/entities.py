@@ -100,6 +100,22 @@ class Player(PhysicsEntity):
         self.tilemap = tilemap
         self.pos = pos
 
+        #get origin of tile map in order to generate an accurate tilemap for the cursor
+        done = False
+        for x in range(int(0 - self.tilemap.map_size[0] / 2 - 1), int(self.tilemap.map_size[0] / 2)):
+            for y in range(int(0 - self.tilemap.map_size[1] / 2 - 1), int(self.tilemap.map_size[1] / 2)):
+                if f'{str(x)};{str(y)}' in self.tilemap.tile_map.keys():
+                    done = True
+                    pos_origin = self.tilemap.tile_map[f'{str(x)};{str(y)}']['pos']
+                    print(pos_origin, f'{str(x)};{str(y)}')
+                    break
+            if done:
+                break
+
+        #FIGURE OUT HOW TO USE THIS ^^^^^ TO MAP THE MOUSE POS TO THE TILE GRID LOL
+            
+            
+
     def mine_tile(self, offset=(0, 0)):
         mpos = list(pygame.mouse.get_pos())
         if mpos[0] != 0:
@@ -116,7 +132,7 @@ class Player(PhysicsEntity):
 
         mpos_grid[0] = mpos[0] // self.tilemap.tile_size
         mpos_grid[1] = mpos[1] // self.tilemap.tile_size
-        
+        print(mpos_grid[0], mpos_grid[1])
         for tile in self.tilemap.tile_map:
             if (mpos[0] >= self.tilemap.tile_map[tile]['pos'][0] - offset[0] and
                 mpos[1] >= self.tilemap.tile_map[tile]['pos'][1] - offset[1] and
