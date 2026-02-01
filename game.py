@@ -17,8 +17,8 @@ class Game:
         pygame.init()
 
         #these variables are for calculating cursor pos with scaling
-        self.window_size = (800, 800)
-        self.display_res = (self.window_size[0] / 2, self.window_size[1] / 2)
+        self.window_size = (2560, 1440)
+        self.display_res = (self.window_size[0] / 3, self.window_size[1] / 3)
         self.x_res_ratio = self.window_size[0] / self.display_res[0]
         self.y_res_ratio = self.window_size[1] / self.display_res[1]  
 
@@ -68,6 +68,8 @@ class Game:
         self.delta_time = 0.0
 
         self.inventory = Inventory()
+        for img in self.inventory_assets.values():
+            img.set_alpha(128)
         self.ui = UI(self, self.inventory,[img for img in self.inventory_assets.values()], (8, 10))
         self.player = Player(self, self.inventory, self.tilemap, self.pos)
 
