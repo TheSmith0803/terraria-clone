@@ -17,8 +17,8 @@ class Game:
         pygame.init()
 
         #these variables are for calculating cursor pos with scaling
-        self.window_size = (2560, 1440)
-        self.display_res = (self.window_size[0] / 3, self.window_size[1] / 3)
+        self.window_size = (1920, 1080)
+        self.display_res = (self.window_size[0] / 2, self.window_size[1] / 2)
         self.x_res_ratio = self.window_size[0] / self.display_res[0]
         self.y_res_ratio = self.window_size[1] / self.display_res[1]  
 
@@ -31,7 +31,7 @@ class Game:
             #player sprite and animations for player
             'player': load_image('assets\\entities\\player.png'),
             'player\\idle': Animation(load_images('assets\\entities\\player\\idle'), img_dur=6),
-            'player\\run': Animation(load_images('assets\\entities\\player\\run'), img_dur=6)
+            'player\\run': Animation(load_images('assets\\entities\\player\\run'), img_dur=5)
         }
 
         self.inventory_assets = {
@@ -68,9 +68,7 @@ class Game:
         self.delta_time = 0.0
 
         self.inventory = Inventory()
-        for img in self.inventory_assets.values():
-            img.set_alpha(128)
-        self.ui = UI(self, self.inventory,[img for img in self.inventory_assets.values()], (8, 10))
+        self.ui = UI(self,[img for img in self.inventory_assets.values()], (8, 10))
         self.player = Player(self, self.inventory, self.tilemap, self.pos)
 
     def run(self):
@@ -135,6 +133,12 @@ class Game:
                         self.player.velocity[1] = -3
                         print("poop")
 
+                
+                self.ui.update(event=event)
+                    
+            font = pygame.font.SysFont('Consolas', 15)
+            font_surf = font.render(f'Player pos\nX: {int(self.player.pos[0])}\nY: {int(self.player.pos[1])}', False, (255,255,255))
+            self.display.blit(font_surf, (10, 45))
             self.ui.render_inventory(self.display)
             self.screen.blit(pygame.transform.scale(self.display, self.screen.get_size()), (0, 0))
             pygame.display.update()

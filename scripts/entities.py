@@ -101,53 +101,46 @@ class Player(PhysicsEntity):
         self.pos = pos
 
         #get origin of tile map in order to generate an accurate tilemap for the cursor
+        self.tile_pos_origin = None
+        self.tile_key_origin = None
         done = False
-        for x in range(int(0 - self.tilemap.map_size[0] / 2 - 1), int(self.tilemap.map_size[0] / 2)):
-            for y in range(int(0 - self.tilemap.map_size[1] / 2 - 1), int(self.tilemap.map_size[1] / 2)):
-                if f'{str(x)};{str(y)}' in self.tilemap.tile_map.keys():
-                    done = True
-                    pos_origin = self.tilemap.tile_map[f'{str(x)};{str(y)}']['pos']
-                    print(pos_origin, f'{str(x)};{str(y)}')
-                    break
-            if done:
-                break
+
+        for coord in self.tilemap.tile_map.keys():
+            self.tile_pos_origin = self.tilemap.tile_map[coord]['pos']
+            self.tile_key_origin = coord.split(';')
+            self.tile_key_origin[0] = int(self.tile_key_origin[0])
+            self.tile_key_origin[1] = int(self.tile_key_origin[1])
+            print(self.tile_pos_origin, self.tile_key_origin)
+            break
 
         #FIGURE OUT HOW TO USE THIS ^^^^^ TO MAP THE MOUSE POS TO THE TILE GRID LOL
-            
-            
-
+    
     def mine_tile(self, offset=(0, 0)):
         mpos = list(pygame.mouse.get_pos())
         if mpos[0] != 0:
             mpos[0] /= self.game.x_res_ratio 
         if mpos[1] != 0:    
             mpos[1] /= self.game.y_res_ratio 
-
-        #iterating over every tile every time you click iz bad, 
-        #make it deterministic by div mpos by tilepos and see if that tile exists
-        #may need to divide offset by 
-        mpos_grid = ['','']
-        offset_grid = [offset[0] // self.tilemap.tile_size, offset[1] // self.tilemap.tile_size]
-        remove_tile = None
-
-        mpos_grid[0] = mpos[0] // self.tilemap.tile_size
-        mpos_grid[1] = mpos[1] // self.tilemap.tile_size
-        print(mpos_grid[0], mpos_grid[1])
-        for tile in self.tilemap.tile_map:
-            if (mpos[0] >= self.tilemap.tile_map[tile]['pos'][0] - offset[0] and
-                mpos[1] >= self.tilemap.tile_map[tile]['pos'][1] - offset[1] and
-                mpos[0] <= self.tilemap.tile_map[tile]['pos'][0] - offset[0] + self.tilemap.tile_size and
-                mpos[1] <= self.tilemap.tile_map[tile]['pos'][1] - offset[1] + self.tilemap.tile_size and 
-                self.tilemap.tile_map[tile]['pos'][1] < self.game.world_limit_y_bottom):
-                remove_tile = tile
-        #put item into inventory (will drop it in the world later)
         
+        world_mpos_raw = [mpos[0] + offset[0], mpos[1] + offset[1]]
+        world_mpos_tile = [int((world_mpos_raw[0] - self.tile_pos_origin[0]) // self.tilemap.tile_size) + self.tile_key_origin[0], int((world_mpos_raw[1] - self.tile_pos_origin[1]) // self.tilemap.tile_size) + self.tile_key_origin[1]]
 
+
+        print(world_mpos_tile)
+
+        remove_tile = None
+        if f'{str(world_mpos_tile[0])};{str(world_mpos_tile[1])}' in self.tilemap.tile_map.keys():
+                remove_tile = f'{str(world_mpos_tile[0])};{str(world_mpos_tile[1])}'
+
+        #put item into inventory (will drop it in the world later)
         if remove_tile != None:
             self.inventory.update(Item('grass', self.game.tiles[self.tilemap.tile_map[remove_tile]['type']][self.tilemap.tile_map[remove_tile]['variant']], stackable=True))
             self.tilemap.tile_map.pop(remove_tile)
             for i in self.inventory.contents:
                 print(f'type: {i[0].type} ---- amt {i[1]}')
+
+    def place_tile(sekf):
+        pass
 
     #maybe put all player based actions in here, like mine tile, switch tool, ect...or maybe all in update? idk lol
     def update_player_actions(self):
@@ -155,12 +148,9 @@ class Player(PhysicsEntity):
 
     def update(self):
         
-
-        
         if self.velocity[0] == 0:
             self.set_action('idle')
         if self.velocity[0] != 0 and self.collisions['down']:
-            self.animation.img_duration = min(self.animation.img_duration, self.animation.img_duration * abs(self.velocity[0] * 20))
             self.set_action('run')
         if not self.collisions['down']:
             self.animation.frame = 0
