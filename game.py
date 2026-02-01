@@ -7,6 +7,7 @@ import sys
 from scripts.world import World
 from scripts.tilemap import Tilemap
 from scripts.entities import PhysicsEntity, Player
+from scripts.ui import UI
 from scripts.inventory import Inventory
 from scripts.utilities import load_image, load_images, Animation
 
@@ -31,6 +32,11 @@ class Game:
             'player': load_image('assets\\entities\\player.png'),
             'player\\idle': Animation(load_images('assets\\entities\\player\\idle'), img_dur=6),
             'player\\run': Animation(load_images('assets\\entities\\player\\run'), img_dur=6)
+        }
+
+        self.inventory_assets = {
+            'slot': load_image('assets\\ui\\inventory-slot.png'),
+            'selected-slot': load_image('assets\\ui\\inventory-slot-selected.png')
         }
 
         self.tiles = {
@@ -62,6 +68,7 @@ class Game:
         self.delta_time = 0.0
 
         self.inventory = Inventory()
+        self.ui = UI(self, self.inventory,[img for img in self.inventory_assets.values()], (8, 10))
         self.player = Player(self, self.inventory, self.tilemap, self.pos)
 
     def run(self):
@@ -126,6 +133,7 @@ class Game:
                         self.player.velocity[1] = -3
                         print("poop")
 
+            self.ui.render_inventory(self.display)
             self.screen.blit(pygame.transform.scale(self.display, self.screen.get_size()), (0, 0))
             pygame.display.update()
             self.delta_time = self.clock.tick(60) / 1000.0
