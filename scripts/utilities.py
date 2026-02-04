@@ -9,6 +9,7 @@ def load_image(path):
 def load_images(path):
     imgs = []
     for img in os.listdir(path):
+        print(img)
         imgs.append(load_image(os.path.abspath(os.path.join(path, img))))
         
     return imgs

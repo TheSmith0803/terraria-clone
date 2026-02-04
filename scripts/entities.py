@@ -16,7 +16,7 @@ class PhysicsEntity:
 
         self.type = e_type
         self.action = ''
-        self.set_action('idle')
+        self.set_animation('idle')
 
         self.grip = 0.0700001
         self.air_grip = self.grip * 0.2
@@ -31,7 +31,7 @@ class PhysicsEntity:
     def rect(self):
         return pygame.FRect(*self.pos, *self.size)
 
-    def set_action(self, action):
+    def set_animation(self, action):
         if action != self.action:
             self.action = action
             self.animation = self.game.entities[self.type + "\\" + self.action].copy()
@@ -149,9 +149,9 @@ class Player(PhysicsEntity):
     def update(self):
         
         if self.velocity[0] == 0:
-            self.set_action('idle')
+            self.set_animation('idle')
         if self.velocity[0] != 0 and self.collisions['down']:
-            self.set_action('run')
+            self.set_animation('run')
         if not self.collisions['down']:
             self.animation.frame = 0
         

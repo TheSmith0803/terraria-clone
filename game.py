@@ -43,7 +43,7 @@ class Game:
             #grass tiles
             'grass': load_images('assets\\tiles\\grass'),
         }
-
+        
         #everything else lol
         self.assets = {
             'background': load_image('assets\\shitty-background.png'),
