@@ -41,7 +41,7 @@ class Game:
 
         self.tiles = {
             #grass tiles
-            'grass': load_images('assets\\tiles\\grass'),
+            'grass': load_images('assets\\tiles\\grass', numeric=True),
         }
         
         #everything else lol

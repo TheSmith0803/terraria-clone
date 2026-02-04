@@ -6,11 +6,21 @@ def load_image(path):
     img.set_colorkey((0,0,0,0))
     return img
 
-def load_images(path):
+def load_images(path, numeric=False):
     imgs = []
-    for img in os.listdir(path):
-        print(img)
-        imgs.append(load_image(os.path.abspath(os.path.join(path, img))))
+    if numeric:
+        sorted_paths = []
+        for img in os.listdir(path):
+            sorted_paths.append(img)
+        
+        sorted_paths.sort(key=lambda f: int(os.path.splitext(f)[0]))
+        for img in sorted_paths:
+            print(img)
+            imgs.append(load_image(os.path.abspath(os.path.join(path, img))))
+
+    else:
+        for img in os.listdir(path):
+            imgs.append(load_image(os.path.abspath(os.path.join(path, img))))w
         
     return imgs
 

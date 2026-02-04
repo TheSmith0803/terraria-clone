@@ -40,7 +40,7 @@ class Tilemap:
                 self.xpos = pos[0] // self.tile_size
                 self.ypos = pos[1] // self.tile_size
                 if str(self.xpos) + ';' + str(self.ypos - 1) in self.tile_map.keys():
-                    self.tile_map[str(self.xpos) + ";" + str(self.ypos)] = {'basetype': 'block', 'type': 'grass', 'variant': 11,'pos': pos,}
+                    self.tile_map[str(self.xpos) + ";" + str(self.ypos)] = {'basetype': 'block', 'type': 'grass', 'variant': 8,'pos': pos,}
                 else:
                     self.tile_map[str(self.xpos) + ";" + str(self.ypos)] = {'basetype': 'block', 'type': 'grass', 'variant': 0,'pos': pos,}
                 countx += self.tile_size
