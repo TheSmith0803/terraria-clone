@@ -20,7 +20,7 @@ def load_images(path, numeric=False):
 
     else:
         for img in os.listdir(path):
-            imgs.append(load_image(os.path.abspath(os.path.join(path, img))))w
+            imgs.append(load_image(os.path.abspath(os.path.join(path, img))))
         
     return imgs
 

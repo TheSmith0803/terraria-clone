@@ -67,8 +67,8 @@ class Game:
 
         self.delta_time = 0.0
 
-        self.inventory = Inventory()
-        self.ui = UI(self,[img for img in self.inventory_assets.values()], (8, 10))
+        self.ui = UI(self,[img for img in self.inventory_assets.values()])
+        self.inventory = Inventory(self, self.ui)
         self.player = Player(self, self.inventory, self.tilemap, self.pos)
 
     def run(self):
@@ -139,7 +139,8 @@ class Game:
             font = pygame.font.SysFont('Consolas', 15)
             font_surf = font.render(f'Player pos\nX: {int(self.player.pos[0])}\nY: {int(self.player.pos[1])}', False, (255,255,255))
             self.display.blit(font_surf, (10, 45))
-            self.ui.render_inventory(self.display)
+            self.ui.render_hotbar(self.display)
+            self.inventory.render_contents(self.display)
             self.screen.blit(pygame.transform.scale(self.display, self.screen.get_size()), (0, 0))
             pygame.display.update()
             self.delta_time = self.clock.tick(60) / 1000.0

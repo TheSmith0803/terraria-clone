@@ -1,12 +1,14 @@
 import pygame
 
 class UI:
-    def __init__(self, game, images, init_pos):
+    def __init__(self, game, images):
         self.game = game
         self.images = images
         for img in self.images:
             img.set_alpha(150)
-        self.pos = init_pos
+        self.x_offset = 8
+        self.y_offset = 10
+        self.pos = (self.x_offset, self.y_offset)
         self.spacing = 35 #space between each inventory slot
         self.hotbar_positions = [x * self.spacing for x in range(10)] #individual positions for hotbar
 
@@ -42,7 +44,7 @@ class UI:
         inventory = self.game.player.inventory
         #updates to world container inventories
 
-    def render_inventory(self, surf):
+    def render_hotbar(self, surf):
         slot_num = 1
         for pos in self.hotbar_positions:
             if self.selected + 1 == slot_num:
