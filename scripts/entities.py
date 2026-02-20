@@ -159,16 +159,27 @@ class Player(PhysicsEntity):
         
         #get selected ui slot, check if there is a block to place, if not do nothing
         if place_tile != None:
+
             selected_slot = self.ui.selected
             item = self.inventory.contents[selected_slot][0]
 
+            #USE THESE TILE POSITIONS TO CALCULATE THE NEW POSITIONS FOR PLACED TILES, SORRY THIS IS A MESS - PAST ETHAN
+            reference_tile_str = next(iter(self.tilemap.tile_map.keys())) #gets first value in tilemap
+            reference_tile_int = [int(reference_tile_str.split(';')[0]), int(reference_tile_str.split(';')[1])]
+            place_tile_int = [int(place_tile.split(';')[0]), int(place_tile.split(';')[1])]
+            difference = [place_tile_int[0]]
             if item.type == None:
                 return
             
+            #this will eventually be made to be 'blocks'
             if item.type == 'grass':
                 self.inventory.contents[selected_slot][1] -= 1
-                self.tilemap.tile_map[place_tile] = {'basetype': 'block', 'type': item.type, 'variant': 0, 'pos': (tile_placement_offsets[direction][0] * -self.tilemap.tile_size, tile_placement_offsets[direction][1] * -self.tilemap.tile_size)} #figure out how to get this tile pos lol
                 
+                self.tilemap.tile_map[place_tile] = {'basetype': 'block', 'type': item.type, 'variant': 0, 'pos': (tile_placement_offsets[direction][0] * -self.tilemap.tile_size, tile_placement_offsets[direction][1] * -self.tilemap.tile_size)} #figure out how to get this tile pos lol
+            
+            #another conditional here for non block types (objects)
+            #if item.type == 'object':
+            #   do a thing
 
 
 
