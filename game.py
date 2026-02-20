@@ -69,7 +69,7 @@ class Game:
 
         self.ui = UI(self,[img for img in self.inventory_assets.values()])
         self.inventory = Inventory(self, self.ui)
-        self.player = Player(self, self.inventory, self.tilemap, self.pos)
+        self.player = Player(self, self.inventory, self.ui, self.tilemap, self.pos)
 
     def run(self):
         #game loop
@@ -89,7 +89,7 @@ class Game:
             self.display.fill((20, 100, 200))
             self.display.blit(pygame.transform.scale_by(self.assets['background'], 0.5), (0,0))
 
-            self.player.update()
+            self.player.update(offset=render_scroll)
             self.tilemap.render_map(self.display, offset=render_scroll)
             self.player.render(self.display, offset=render_scroll)
 
@@ -115,7 +115,9 @@ class Game:
                     self.player.velocity[0] = min(self.player.air_grip + self.player.velocity[0], self.player.speed)
 
             if pygame.mouse.get_pressed()[0]:
-                self.player.mine_tile(offset=render_scroll)
+                self.player.mine_tile()
+            if pygame.mouse.get_just_pressed()[2]:
+                self.player.place_tile()
 
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:

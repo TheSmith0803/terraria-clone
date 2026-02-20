@@ -93,12 +93,15 @@ class PhysicsEntity:
         surf.blit(pygame.transform.flip(self.animation.img(), self.flip, False), (self.pos[0] - offset[0], self.pos[1] - offset[1]))
 
 class Player(PhysicsEntity):
-    def __init__(self, game, inventory, tilemap, pos):
+    def __init__(self, game, inventory, ui, tilemap, pos):
         super().__init__(game, tilemap, 'player', game.entities['player'], pos, game.entities['player'].get_size())
         self.game = game
         self.inventory = inventory
+        self.ui = ui
         self.tilemap = tilemap
         self.pos = pos
+        self.world_mpos_raw = None #raw pixel location of cursor
+        self.world_mpos_tile = None #for mining tiles and interacting with UI
 
         #get origin of tile map in order to generate an accurate tilemap for the cursor
         self.tile_pos_origin = None
@@ -115,22 +118,13 @@ class Player(PhysicsEntity):
 
         #FIGURE OUT HOW TO USE THIS ^^^^^ TO MAP THE MOUSE POS TO THE TILE GRID LOL
     
-    def mine_tile(self, offset=(0, 0)):
-        mpos = list(pygame.mouse.get_pos())
-        if mpos[0] != 0:
-            mpos[0] /= self.game.x_res_ratio 
-        if mpos[1] != 0:    
-            mpos[1] /= self.game.y_res_ratio 
-        
-        world_mpos_raw = [mpos[0] + offset[0], mpos[1] + offset[1]]
-        world_mpos_tile = [int((world_mpos_raw[0] - self.tile_pos_origin[0]) // self.tilemap.tile_size) + self.tile_key_origin[0], int((world_mpos_raw[1] - self.tile_pos_origin[1]) // self.tilemap.tile_size) + self.tile_key_origin[1]]
+    def mine_tile(self):
 
-
-        print(world_mpos_tile)
+        print(self.world_mpos_tile)
 
         remove_tile = None
-        if f'{str(world_mpos_tile[0])};{str(world_mpos_tile[1])}' in self.tilemap.tile_map.keys():
-                remove_tile = f'{str(world_mpos_tile[0])};{str(world_mpos_tile[1])}'
+        if f'{str(self.world_mpos_tile[0])};{str(self.world_mpos_tile[1])}' in self.tilemap.tile_map.keys():
+                remove_tile = f'{str(self.world_mpos_tile[0])};{str(self.world_mpos_tile[1])}'
 
         #put item into inventory (will drop it in the world later)
         if remove_tile != None:
@@ -138,16 +132,62 @@ class Player(PhysicsEntity):
             self.tilemap.tile_map.pop(remove_tile)
             for i in self.inventory.contents:
                 print(f'type: {i[0].type} ---- amt {i[1]}')
-
-    def place_tile(sekf):
+    
+    #this will use the raw world coords to check wether or not the cursor is overlapping with a
+    #removable object in the scene
+    def mine_object(self):
         pass
+
+    def place_tile(self):
+
+        tile_placement_offsets = [(-1, 0), (1, 0), (0, -1), (0, 1)]
+
+        place_tile = None
+        offset_tile = None
+        direction = None
+        for adjacent_tile in tile_placement_offsets:
+            if (f'{str(self.world_mpos_tile[0])};{str(self.world_mpos_tile[1])}' not in self.tilemap.tile_map.keys() and
+                f'{self.world_mpos_tile[0] + adjacent_tile[0]};{self.world_mpos_tile[1] + adjacent_tile[1]}' in self.tilemap.tile_map.keys()):
+                place_tile =  f'{str(self.world_mpos_tile[0])};{str(self.world_mpos_tile[1])}'
+                offset_tile = f'{self.world_mpos_tile[0] + adjacent_tile[0]};{self.world_mpos_tile[1] + adjacent_tile[1]}'
+                direction = tile_placement_offsets.index(adjacent_tile)
+                print(direction)
+                break
+                
+
+                
+        
+        #get selected ui slot, check if there is a block to place, if not do nothing
+        if place_tile != None:
+            selected_slot = self.ui.selected
+            item = self.inventory.contents[selected_slot][0]
+
+            if item.type == None:
+                return
+            
+            if item.type == 'grass':
+                self.inventory.contents[selected_slot][1] -= 1
+                self.tilemap.tile_map[place_tile] = {'basetype': 'block', 'type': item.type, 'variant': 0, 'pos': (tile_placement_offsets[direction][0] * -self.tilemap.tile_size, tile_placement_offsets[direction][1] * -self.tilemap.tile_size)} #figure out how to get this tile pos lol
+                
+
+
 
     #maybe put all player based actions in here, like mine tile, switch tool, ect...or maybe all in update? idk lol
     def update_player_actions(self):
         pass
 
-    def update(self):
+    def update(self, offset):
         
+        mpos = list(pygame.mouse.get_pos())
+        if mpos[0] != 0:
+            mpos[0] /= self.game.x_res_ratio 
+        if mpos[1] != 0:    
+            mpos[1] /= self.game.y_res_ratio 
+        
+        self.world_mpos_raw = [mpos[0] + offset[0], mpos[1] + offset[1]]
+        self.world_mpos_tile = [int((self.world_mpos_raw[0] - self.tile_pos_origin[0]) // self.tilemap.tile_size) + self.tile_key_origin[0], int((self.world_mpos_raw[1] - self.tile_pos_origin[1]) // self.tilemap.tile_size) + self.tile_key_origin[1]]
+
+
         if self.velocity[0] == 0:
             self.set_animation('idle')
         if self.velocity[0] != 0 and self.collisions['down']:

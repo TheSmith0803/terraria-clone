@@ -21,6 +21,7 @@ class Block(Item):
         
         super().__init__(ITEM_TYPES['block'], img, True)
 
+        self.type = 'block'
         self.subtype = subtype
 
         
