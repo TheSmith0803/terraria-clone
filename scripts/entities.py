@@ -128,7 +128,7 @@ class Player(PhysicsEntity):
 
         #put item into inventory (will drop it in the world later)
         if remove_tile != None:
-            self.inventory.update(Item('grass', self.game.tiles[self.tilemap.tile_map[remove_tile]['type']][self.tilemap.tile_map[remove_tile]['variant']], stackable=True))
+            self.inventory.update(Item(self.tilemap.tile_map[remove_tile]['type'], self.game.tiles[self.tilemap.tile_map[remove_tile]['type']][self.tilemap.tile_map[remove_tile]['variant']], stackable=True))
             self.tilemap.tile_map.pop(remove_tile)
             for i in self.inventory.contents:
                 print(f'type: {i[0].type} ---- amt {i[1]}')
