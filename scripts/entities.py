@@ -2,6 +2,9 @@ import pygame
 
 from .physics import swept_aabb
 from .items import *
+from .tilemap import AUTOTILE_MAP
+
+TILE_OFFSETS = [(-1, 0), (1, 0), (0, -1), (0, 1)]
 
 class PhysicsEntity:
     def __init__(self, game, tilemap, e_type, img, pos, size):
@@ -120,7 +123,9 @@ class Player(PhysicsEntity):
     
     def mine_tile(self):
 
-        print(self.world_mpos_tile)
+        #print(self.world_mpos_tile)
+
+        
 
         remove_tile = None
         if f'{str(self.world_mpos_tile[0])};{str(self.world_mpos_tile[1])}' in self.tilemap.tile_map.keys():
@@ -132,6 +137,34 @@ class Player(PhysicsEntity):
             self.tilemap.tile_map.pop(remove_tile)
             for i in self.inventory.contents:
                 print(f'type: {i[0].type} ---- amt {i[1]}')
+
+            adjacent_tiles = []
+            for tileoffset in TILE_OFFSETS:
+                
+                curr_tile = (self.world_mpos_tile[0] + tileoffset[0], self.world_mpos_tile[1] + tileoffset[1])
+                if f'{curr_tile[0]};{curr_tile[1]}' in self.tilemap.tile_map:
+                    adjacent_tiles.append(curr_tile)
+
+            
+            if not adjacent_tiles:
+                pass
+
+            for tile in adjacent_tiles:
+                check_tiles = []
+                for tile_offset in TILE_OFFSETS:
+                    curr_tile = (tile[0] + tile_offset[0], tile[1] + tile_offset[1])
+                    if f'{curr_tile[0]};{curr_tile[1]}' in self.tilemap.tile_map:
+                        check_tiles.append(tile_offset)
+                
+                check_tiles = tuple(sorted(check_tiles))
+
+                for autotile in AUTOTILE_MAP.keys():
+                    if check_tiles == autotile:
+                        self.tilemap.tile_map[f'{tile[0]};{tile[1]}']['variant'] = AUTOTILE_MAP[autotile]
+
+
+
+
     
     #this will use the raw world coords to check wether or not the cursor is overlapping with a
     #removable object in the scene
@@ -140,12 +173,11 @@ class Player(PhysicsEntity):
 
     def place_tile(self):
 
-        tile_placement_offsets = [(-1, 0), (1, 0), (0, -1), (0, 1)]
-
         place_tile = None
         offset_tile = None
         direction = None
-        for adjacent_tile in tile_placement_offsets:
+        """
+        for adjacent_tile in TILE_OFFSETS:
             if (f'{str(self.world_mpos_tile[0])};{str(self.world_mpos_tile[1])}' not in self.tilemap.tile_map.keys() and
                 f'{self.world_mpos_tile[0] + adjacent_tile[0]};{self.world_mpos_tile[1] + adjacent_tile[1]}' in self.tilemap.tile_map.keys()):
                 place_tile =  f'{str(self.world_mpos_tile[0])};{str(self.world_mpos_tile[1])}'
@@ -153,7 +185,7 @@ class Player(PhysicsEntity):
                 direction = tile_placement_offsets.index(adjacent_tile)
                 print(direction)
                 break
-                
+        """
 
                 
         

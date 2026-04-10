@@ -2,14 +2,20 @@ import pygame
 import json, random
 
 #rules for spawinging tiles, variants equate to file names --> '0.png'
-AUTOTILE_MAP = {
-    tuple(sorted([(-1, 0), (1, 0), (0, 1)])): 0,
-    tuple(sorted([(1, 0), (0, 1)])): 1,
-    tuple(sorted([(-1, 0), (1, 0)])): 2,
-    tuple(sorted([(-1, 0), (0, -1), (0, 1)])): 3,
-    tuple(sorted([(1, 0), (0, -1), (0, 1)])): 4,
-    tuple(sorted([(-1, 0), (1, 0), (0, 1)])): 5,
-    tuple(sorted([(-1, 0), (1, 0), (0, -1), (0, 1)])): 5,
+AUTOTILE_MAP = {                                            #exposed sides
+    tuple(sorted([(-1, 0), (1, 0), (0, 1)])): 0,            #top
+    tuple(sorted([(1, 0), (0, 1)])): 1,                     #left, top
+    tuple(sorted([(-1, 0), (0, 1)])): 2,                    #right, top
+    tuple(sorted([(1, 0), (0, -1)])): 3,                    #left, bottom
+    tuple(sorted([(-1, 0), (0, -1)])): 4,                   #right, bottom
+    tuple(sorted([(-1, 0), (0, 1), (0, -1)])): 5,           #right
+    tuple(sorted([(1, 0), (0, 1), (0, -1)])): 6,            #left
+    tuple(sorted([(-1, 0), (1, 0), (0, -1)])): 7,           #bottom
+    tuple(sorted([(-1, 0), (1, 0), (0, 1), (0, -1)])): 8,   #none
+    tuple(sorted([(-1, 0)])): 9,                            #top, right, bottom
+    tuple(sorted([(0, 1)])): 10,                            #left, top, right
+    tuple(sorted([(1, 0)])): 11,                            #left, top, bottom
+    tuple(sorted([(0, -1)])): 12,                           #left, bottom, top
 }
 
 AUTOTILE_TPYE = {'grass', 'stone'}
