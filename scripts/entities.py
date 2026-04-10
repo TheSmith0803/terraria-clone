@@ -147,7 +147,7 @@ class Player(PhysicsEntity):
 
             
             if not adjacent_tiles:
-                pass
+                return
 
             for tile in adjacent_tiles:
                 check_tiles = []
