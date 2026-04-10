@@ -61,6 +61,14 @@ class Tilemap:
                 tiles_around.append(pygame.FRect(self.tile_map[str(int(pos[0] // self.tile_size) + adjacent_tile[0]) + ";" + str(int(pos[1] // self.tile_size) + adjacent_tile[1])]['pos'], (self.tile_size, self.tile_size)))
         return tiles_around
 
+    #will take in a tile coord string and remove that particular tile from the tilemap will handle tile sprite changes, same with the place tile
+    def remove_tile(self):
+        pass
+
+    #read comment above remove tile
+    def place_tile(self):
+        pass
+
     def render_map(self, surf , offset=(0, 0)):
         """
         for x in range(int(offset[0] // self.tile_size), int((offset[0] + surf.get_width()) // self.tile_size + 1)):

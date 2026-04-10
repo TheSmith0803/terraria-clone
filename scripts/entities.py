@@ -124,9 +124,6 @@ class Player(PhysicsEntity):
     def mine_tile(self):
 
         #print(self.world_mpos_tile)
-
-        
-
         remove_tile = None
         if f'{str(self.world_mpos_tile[0])};{str(self.world_mpos_tile[1])}' in self.tilemap.tile_map.keys():
                 remove_tile = f'{str(self.world_mpos_tile[0])};{str(self.world_mpos_tile[1])}'
