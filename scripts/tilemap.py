@@ -16,6 +16,8 @@ AUTOTILE_MAP = {                                            #exposed sides
     tuple(sorted([(0, 1)])): 10,                            #left, top, right
     tuple(sorted([(1, 0)])): 11,                            #left, top, bottom
     tuple(sorted([(0, -1)])): 12,                           #left, bottom, top
+    tuple(sorted([(-1, 0), (1, 0)])): 13,                   #top, bottom 
+    tuple(sorted([(0, -1), (0, 1)])): 14,                   #left, right
 }
 
 AUTOTILE_TPYE = {'grass', 'stone'}
@@ -66,7 +68,7 @@ class Tilemap:
         pass
 
     #read comment above remove tile
-    def place_tile(self):
+    def insert_tile(self):
         pass
 
     def render_map(self, surf , offset=(0, 0)):
