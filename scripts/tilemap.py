@@ -1,6 +1,8 @@
 import pygame
 import json, random
 
+from .items import Item
+
 #rules for spawinging tiles, variants equate to file names --> '0.png'
 AUTOTILE_MAP = {                                            #exposed sides
     tuple(sorted([(-1, 0), (1, 0), (0, 1)])): 0,            #top
@@ -20,6 +22,7 @@ AUTOTILE_MAP = {                                            #exposed sides
     tuple(sorted([(0, -1), (0, 1)])): 14,                   #left, right
 }
 
+TILE_OFFSETS = [(-1, 0), (1, 0), (0, -1), (0, 1)]
 AUTOTILE_TPYE = {'grass', 'stone'}
 
 class Tilemap:
@@ -64,8 +67,44 @@ class Tilemap:
         return tiles_around
 
     #will take in a tile coord string and remove that particular tile from the tilemap will handle tile sprite changes, same with the place tile
-    def remove_tile(self):
-        pass
+    def remove_tile(self, world_tile_mpos) -> Item:
+        
+        remove_tile = None
+        if f'{str(world_tile_mpos[0])};{str(world_tile_mpos[1])}' in self.tile_map.keys():
+                remove_tile = f'{str(world_tile_mpos[0])};{str(world_tile_mpos[1])}'
+
+        #maybe make the tile actually pop out into the world later, right now it is just removed
+        if remove_tile != None:
+            removed_item = Item(self.tile_map[remove_tile]['type'], self.game.tiles[self.tile_map[remove_tile]['type']][self.tile_map[remove_tile]['variant']], stackable=True)
+            self.tile_map.pop(remove_tile)
+
+            adjacent_tiles = []
+
+            for tileoffset in TILE_OFFSETS:
+                curr_tile = (world_tile_mpos[0] + tileoffset[0], world_tile_mpos[1] + tileoffset[1])
+                if f'{curr_tile[0]};{curr_tile[1]}' in self.tile_map:
+                    adjacent_tiles.append(curr_tile)
+
+            
+            if not adjacent_tiles:
+                return removed_item
+
+            for tile in adjacent_tiles:
+                check_tiles = []
+                for tile_offset in TILE_OFFSETS:
+                    curr_tile = (tile[0] + tile_offset[0], tile[1] + tile_offset[1])
+                    if f'{curr_tile[0]};{curr_tile[1]}' in self.tile_map:
+                        check_tiles.append(tile_offset)
+                
+                check_tiles = tuple(sorted(check_tiles))
+
+                for autotile in AUTOTILE_MAP.keys():
+                    if check_tiles == autotile:
+                        self.tile_map[f'{tile[0]};{tile[1]}']['variant'] = AUTOTILE_MAP[autotile]
+            
+            return removed_item
+        else:
+            return None
 
     #read comment above remove tile
     def insert_tile(self):
