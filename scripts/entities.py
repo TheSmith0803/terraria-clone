@@ -125,11 +125,6 @@ class Player(PhysicsEntity):
         else:
             self.inventory.update(item)
 
-    #this will use the raw world coords to check wether or not the cursor is overlapping with a
-    #removable object in the scene
-    def mine_object(self):
-        pass
-
     def place_tile(self):
 
         place_tile = None

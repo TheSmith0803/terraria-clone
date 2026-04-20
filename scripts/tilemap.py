@@ -67,13 +67,14 @@ class Tilemap:
         return tiles_around
 
     #will take in a tile coord string and remove that particular tile from the tilemap will handle tile sprite changes, same with the place tile
-    def remove_tile(self, world_tile_mpos) -> Item:
+    def remove_tile(self, world_tile_pos) -> Item:
         
         remove_tile = None
-        if f'{str(world_tile_mpos[0])};{str(world_tile_mpos[1])}' in self.tile_map.keys():
-                remove_tile = f'{str(world_tile_mpos[0])};{str(world_tile_mpos[1])}'
+        if f'{str(world_tile_pos[0])};{str(world_tile_pos[1])}' in self.tile_map.keys():
+                remove_tile = f'{str(world_tile_pos[0])};{str(world_tile_pos[1])}'
 
         #maybe make the tile actually pop out into the world later, right now it is just removed
+        #currently gets 
         if remove_tile != None:
             removed_item = Item(self.tile_map[remove_tile]['type'], self.game.tiles[self.tile_map[remove_tile]['type']][self.tile_map[remove_tile]['variant']], stackable=True)
             self.tile_map.pop(remove_tile)
@@ -81,7 +82,7 @@ class Tilemap:
             adjacent_tiles = []
 
             for tileoffset in TILE_OFFSETS:
-                curr_tile = (world_tile_mpos[0] + tileoffset[0], world_tile_mpos[1] + tileoffset[1])
+                curr_tile = (world_tile_pos[0] + tileoffset[0], world_tile_pos[1] + tileoffset[1])
                 if f'{curr_tile[0]};{curr_tile[1]}' in self.tile_map:
                     adjacent_tiles.append(curr_tile)
 
