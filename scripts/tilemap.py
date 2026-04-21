@@ -1,5 +1,6 @@
 import pygame
 import json, random
+import os
 
 from .items import Item
 
@@ -124,4 +125,7 @@ class Tilemap:
         for tile in self.tile_map:
             surf.blit(self.game.tiles[self.tile_map[tile]['type']][self.tile_map[tile]['variant']], (self.tile_map[tile]['pos'][0] - offset[0], self.tile_map[tile]['pos'][1] - offset[1]))
 
+    def save(self, filepath=r'map.json'):
+        with open(filepath, "w") as f:
+            json.dump(self.tile_map, f)
         

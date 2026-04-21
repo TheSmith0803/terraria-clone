@@ -134,6 +134,9 @@ class Game:
                     if event.key == K_w:
                         self.player.velocity[1] = -3
                         print("poop")
+                    
+                    if event.key == K_o:
+                        self.tilemap.save()
 
                 
                 self.ui.update(event=event)
