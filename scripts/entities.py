@@ -103,6 +103,8 @@ class Player(PhysicsEntity):
         self.world_mpos_raw = None #raw pixel location of cursor
         self.world_mpos_tile = None #for mining tiles and interacting with UI
 
+        self.jump_power = 3
+
         #get origin of tile map in order to generate an accurate tilemap for the cursor
         self.tile_pos_origin = None
         self.tile_key_origin = None

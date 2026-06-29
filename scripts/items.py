@@ -7,12 +7,30 @@ ITEM_TYPES = {
     'weapon': ['sword'],
 }
 
+#this dict will define different behaviors for the different block types
+BLOCK_TYPES = {
+    'grass': {
+        'drop': 'dirt',
+        'autotile': True,
+        'stackable': True,
+        'hardness': 1,
+    },
+    'stone': {
+        'drop': 'stone',
+        'autotile': True,
+        'stackable': True,
+        'hardness': 2,
+    }
+}
+
+#generic item class
 class Item:
     def __init__(self, type, img, stackable=False):
         self.type = type
         self.subtype = None 
         self.img = img
         self.stackable = stackable
+
 
 class Block(Item):
     def __init__(self, subtype, img):

@@ -27,6 +27,8 @@ class Game:
 
         self.clock = pygame.time.Clock()
         
+        self.font = pygame.font.SysFont('Consolas', 15)
+
         self.entities = {
             #player sprite and animations for player
             'player': load_image('assets\\entities\\player.png'),
@@ -131,8 +133,8 @@ class Game:
                         sys.exit()
                         self.running = False
 
-                    if event.key == K_w:
-                        self.player.velocity[1] = -3
+                    if event.key == K_w and self.player.collisions['down']:
+                        self.player.velocity[1] = -self.player.jump_power
                         print("poop")
                     
                     if event.key == K_o:
@@ -141,8 +143,8 @@ class Game:
                 
                 self.ui.update(event=event)
                     
-            font = pygame.font.SysFont('Consolas', 15)
-            font_surf = font.render(f'Player pos\nX: {int(self.player.pos[0])}\nY: {int(self.player.pos[1])}', False, (255,255,255))
+            
+            font_surf = self.font.render(f'Player pos\nX: {int(self.player.pos[0])}\nY: {int(self.player.pos[1])}', False, (255,255,255))
             self.display.blit(font_surf, (10, 45))
             self.ui.render_hotbar(self.display)
             self.inventory.render_contents(self.display)

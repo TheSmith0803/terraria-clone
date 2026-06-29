@@ -69,18 +69,19 @@ class Tilemap:
         return tiles_around
 
     #this is just to check the surrounding tiles on a tilemap change, for both placement and removal
-    def _tile_type_check(self, tile):
+    def _block_type_check(self, tile):
         pass
 
     #will take in a tile coord string and remove that particular tile from the tilemap will handle tile sprite changes, same with the place tile
+    #this is specifically for removing block type objects, the logic for that is natrually simpler
     def rmv_tile(self, world_tile_pos) -> Block:
-        
         remove_tile = None
         if f'{str(world_tile_pos[0])};{str(world_tile_pos[1])}' in self.tile_map.keys():
                 remove_tile = f'{str(world_tile_pos[0])};{str(world_tile_pos[1])}'
 
         #maybe make the tile actually pop out into the world later, right now it is just removed
-        #currently gets 
+        #currently gets
+        
         if remove_tile != None:
             removed_item = Block(self.tile_map[remove_tile]['type'], self.game.tiles[self.tile_map[remove_tile]['type']][self.tile_map[remove_tile]['variant']])
             self.tile_map.pop(remove_tile)
