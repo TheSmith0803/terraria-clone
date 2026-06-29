@@ -9,7 +9,8 @@ ITEM_TYPES = {
 
 class Item:
     def __init__(self, type, img, stackable=False):
-        self.type = type 
+        self.type = type
+        self.subtype = None 
         self.img = img
         self.stackable = stackable
 
@@ -17,7 +18,7 @@ class Block(Item):
     def __init__(self, subtype, img):
 
         if subtype not in ITEM_TYPES['block']['subtype']:
-            raise RuntimeError('block type in listed in subtypes')
+            raise RuntimeError('block type not in listed in subtypes')
         
         super().__init__(ITEM_TYPES['block'], img, True)
 

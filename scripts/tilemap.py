@@ -2,7 +2,7 @@ import pygame
 import json, random
 import os
 
-from .items import Item
+from .items import Item, Block
 
 #rules for spawinging tiles, variants equate to file names --> '0.png'
 AUTOTILE_MAP = {                                            #exposed sides
@@ -21,6 +21,7 @@ AUTOTILE_MAP = {                                            #exposed sides
     tuple(sorted([(0, -1)])): 12,                           #left, bottom, top
     tuple(sorted([(-1, 0), (1, 0)])): 13,                   #top, bottom 
     tuple(sorted([(0, -1), (0, 1)])): 14,                   #left, right
+    tuple(sorted([])): 15,                                  #none
 }
 
 TILE_OFFSETS = [(-1, 0), (1, 0), (0, -1), (0, 1)]
@@ -67,8 +68,12 @@ class Tilemap:
                 tiles_around.append(pygame.FRect(self.tile_map[str(int(pos[0] // self.tile_size) + adjacent_tile[0]) + ";" + str(int(pos[1] // self.tile_size) + adjacent_tile[1])]['pos'], (self.tile_size, self.tile_size)))
         return tiles_around
 
+    #this is just to check the surrounding tiles on a tilemap change, for both placement and removal
+    def _tile_type_check(self, tile):
+        pass
+
     #will take in a tile coord string and remove that particular tile from the tilemap will handle tile sprite changes, same with the place tile
-    def remove_tile(self, world_tile_pos) -> Item:
+    def rmv_tile(self, world_tile_pos) -> Block:
         
         remove_tile = None
         if f'{str(world_tile_pos[0])};{str(world_tile_pos[1])}' in self.tile_map.keys():
@@ -77,7 +82,7 @@ class Tilemap:
         #maybe make the tile actually pop out into the world later, right now it is just removed
         #currently gets 
         if remove_tile != None:
-            removed_item = Item(self.tile_map[remove_tile]['type'], self.game.tiles[self.tile_map[remove_tile]['type']][self.tile_map[remove_tile]['variant']], stackable=True)
+            removed_item = Block(self.tile_map[remove_tile]['type'], self.game.tiles[self.tile_map[remove_tile]['type']][self.tile_map[remove_tile]['variant']])
             self.tile_map.pop(remove_tile)
 
             adjacent_tiles = []

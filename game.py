@@ -42,6 +42,7 @@ class Game:
         self.tiles = {
             #grass tiles
             'grass': load_images('assets\\tiles\\grass', numeric=True),
+            'dirt': load_images('assets\\tiles\\dirt', numeric=True)
         }
         
         #everything else lol
@@ -52,7 +53,6 @@ class Game:
         }
         
         self.tilemap = Tilemap(self, 'small')
-        
         self.tilemap.generate_map()
         
         #can be attached to world size later if i feel like it lol

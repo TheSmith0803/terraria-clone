@@ -1,5 +1,5 @@
 import pygame
-from .items import Item
+from .items import Item, Block, ITEM_TYPES
 
 TILE_TYPES = {'grass'}
 
@@ -24,14 +24,15 @@ class Inventory:
             elif item[0].stackable and item[0].type == self.contents[index][0].type and item[1] < self.stack_size:
                 self.contents[index][1] += 1
                 break
-    
+        print(self.contents)
+
     def render_contents(self, surf):
         for index, item in enumerate(self.contents):
             if item[0].type != None: #item[0] contains item obj, item[1] is just the quanity of that item
                 if item[1] == 0:
                     self.contents[index][0] = Item(None, None)  
-                if item[0].type in TILE_TYPES:
-                    surf.blit(pygame.transform.scale_by(self.game.tiles[item[0].type][0], 0.75), (self.ui.pos[0] + self.ui.hotbar_positions[index] + (self.game.inventory_assets['slot'].get_width() / 2 + 1), self.ui.pos[1] + (self.game.inventory_assets['slot'].get_height() / 2 + 1)))
+                if item[0].type in ITEM_TYPES and item[0].subtype != None:
+                    surf.blit(pygame.transform.scale_by(self.game.tiles[item[0].subtype][0], 0.75), (self.ui.pos[0] + self.ui.hotbar_positions[index] + (self.game.inventory_assets['slot'].get_width() / 2 + 1), self.ui.pos[1] + (self.game.inventory_assets['slot'].get_height() / 2 + 1)))
                     font = pygame.font.SysFont('Consolas', 8)
                     text_surf = font.render(str(item[1]), True, (255, 255, 255))
                     text_rect = text_surf.get_rect()

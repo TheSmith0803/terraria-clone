@@ -3,7 +3,7 @@ from pygame.locals import *
 
 class Background:
     def __init__(self, img):
-        self.biomes = ['forest', 'jungle', 'desert', 'underground']
+        self.biome = ['forest', 'jungle', 'desert', 'underground']
 
         self.img = img
         self.current_biome = self.biomes[0]
