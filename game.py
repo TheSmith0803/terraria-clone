@@ -17,7 +17,7 @@ class Game:
         pygame.init()
 
         #these variables are for calculating cursor pos with scaling
-        self.window_size = (1200, 1000)
+        self.window_size = (1920, 1080)
         self.display_res = (self.window_size[0] / 2, self.window_size[1] / 2)
         self.x_res_ratio = self.window_size[0] / self.display_res[0]
         self.y_res_ratio = self.window_size[1] / self.display_res[1]  
@@ -55,7 +55,7 @@ class Game:
         }
         
         self.tilemap = Tilemap(self, 'small')
-        self.tilemap.generate_map()
+        self.tilemap.generate_map_debug()
         
         #can be attached to world size later if i feel like it lol
         self.world_limit_y_top = -500
@@ -78,11 +78,13 @@ class Game:
         while self.running:
             self.scroll[0] += (self.player.rect().centerx - self.display.get_width() / 2 - self.scroll[0])
 
+            #if self.scroll[0] <= self.
+
             #locks the camera when world limit is reached
-            if self.scroll[1] <= self.world_limit_y_top and (self.player.rect().centery - self.scroll[1]) < self.display.get_height() / 2:
-                self.scroll[1] = self.world_limit_y_top
-            elif self.scroll[1] >= self.world_limit_y_bottom and (self.player.rect().centery - self.scroll[1]) > self.display.get_height() / 2:
-                self.scroll[1] = self.world_limit_y_bottom
+            if self.scroll[1] <= -self.tilemap.map_size[1] and (self.player.rect().centery - self.scroll[1]) < self.display.get_height() / 2:
+                self.scroll[1] = -self.tilemap.map_size[1]
+            elif self.scroll[1] >= self.tilemap.map_size[1] and (self.player.rect().centery - self.scroll[1]) > self.display.get_height() / 2:
+                self.scroll[1] = self.tilemap.map_size[1]
             else:
                 self.scroll[1] += (self.player.rect().centery - self.display.get_height() / 2 - self.scroll[1])
 
@@ -133,7 +135,7 @@ class Game:
                         sys.exit()
                         self.running = False
 
-                    if event.key == K_w and self.player.collisions['down']:
+                    if event.key == K_w:
                         self.player.velocity[1] = -self.player.jump_power
                         print("poop")
                     

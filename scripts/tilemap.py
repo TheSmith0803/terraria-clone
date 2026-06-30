@@ -45,7 +45,7 @@ class Tilemap:
 
     #temp ALSO MAKE SURE WHEN YOU DO ACTUAL WORLD GENERATION THAT THE COORDS ARE ACTUALLY
     # MULTIPLES OF 16, OTHERWISE BLOCK PLACEMENT WILL BE BROKEN
-    def generate_map(self):
+    def generate_map_debug(self):
         county = 352
         for k in range(50): 
             countx = -160
@@ -144,6 +144,9 @@ class Tilemap:
         
         for tile in self.tile_map:
             surf.blit(self.game.tiles[self.tile_map[tile]['subtype']][self.tile_map[tile]['variant']], (self.tile_map[tile]['pos'][0] - offset[0], self.tile_map[tile]['pos'][1] - offset[1]))
+
+    def generate_map(self):
+        pass
 
     def save(self, filepath=r'map.json'):
         with open(filepath, "w") as f:
