@@ -15,16 +15,24 @@ class Inventory:
         for i in range(10):
             self.contents.append([Item(None, None), 0])
 
-    def update(self, new_item):
+    def update(self, new_item=None) -> Item | None:
         #add new item to inventory
-        for index, item in enumerate(self.contents):
-            if item[0].type == None:
-                self.contents[index] = [new_item, 1]
-                break
-            elif item[0].stackable and item[0].type == self.contents[index][0].type and item[1] < self.stack_size:
-                self.contents[index][1] += 1
-                break
-        print(self.contents)
+        if new_item == None:
+            hotbar_index = self.ui.selected
+            if self.contents[self.ui.selected].type == None:
+                return
+            else:
+                print(self.contents[self.ui.selected])
+
+                    
+        else:
+            for index, item in enumerate(self.contents):
+                if item[0].type == None:
+                    self.contents[index] = [new_item, 1]
+                    break
+                elif item[0].stackable and item[0].type == self.contents[index][0].type and item[1] < self.stack_size:
+                    self.contents[index][1] += 1
+                    break
 
     def render_contents(self, surf):
         for index, item in enumerate(self.contents):

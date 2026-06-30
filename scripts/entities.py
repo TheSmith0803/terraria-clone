@@ -142,7 +142,15 @@ class Player(PhysicsEntity):
                 print(direction)
                 break
         """
-
+        if self.inventory.contents[self.ui.selected][0].type == None:
+            return
+        else:
+            placed = self.tilemap.insert_tile(self.world_mpos_tile, self.inventory.contents[self.ui.selected][0]) #place item in world
+            if placed:
+                self.inventory.contents[self.ui.selected][1] -= 1 #sub item from invetory
+                print(f"WORLD MPOS TILE: {self.world_mpos_tile}\nWORLD MPOS RAW: {self.world_mpos_raw}")
+            else:
+                return
                 
         
         #get selected ui slot, check if there is a block to place, if not do nothing

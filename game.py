@@ -17,7 +17,7 @@ class Game:
         pygame.init()
 
         #these variables are for calculating cursor pos with scaling
-        self.window_size = (800, 800)
+        self.window_size = (1200, 1000)
         self.display_res = (self.window_size[0] / 2, self.window_size[1] / 2)
         self.x_res_ratio = self.window_size[0] / self.display_res[0]
         self.y_res_ratio = self.window_size[1] / self.display_res[1]  
@@ -118,7 +118,7 @@ class Game:
 
             if pygame.mouse.get_pressed()[0]:
                 self.player.mine_tile()
-            if pygame.mouse.get_just_pressed()[2]:
+            if pygame.mouse.get_pressed()[2]:
                 self.player.place_tile()
 
             for event in pygame.event.get():

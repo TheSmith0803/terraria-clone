@@ -33,29 +33,30 @@ class Tilemap:
         self.tile_size = tile_size
 
         if map_size == 'small':
-            map_size = (1000, 1000)
+            map_size = (1250, 500)
         if map_size == 'medium':
-            map_size = (2000, 1000)
+            map_size = (2500, 1000)
         if map_size == 'large':
-            map_size = (3000, 1000)
+            map_size = (5000, 2000)
         self.map_size = map_size
 
         self.tile_map = {}
         self.offgrid_tiles = []
 
-    #temp
+    #temp ALSO MAKE SURE WHEN YOU DO ACTUAL WORLD GENERATION THAT THE COORDS ARE ACTUALLY
+    # MULTIPLES OF 16, OTHERWISE BLOCK PLACEMENT WILL BE BROKEN
     def generate_map(self):
-        county = 350
+        county = 352
         for k in range(50): 
-            countx = -100
+            countx = -160
             for i in range(0, 100):
                 pos = (countx, county)
                 self.xpos = pos[0] // self.tile_size
                 self.ypos = pos[1] // self.tile_size
                 if str(self.xpos) + ';' + str(self.ypos - 1) in self.tile_map.keys():
-                    self.tile_map[str(self.xpos) + ";" + str(self.ypos)] = {'basetype': 'block', 'type': 'grass', 'variant': 8,'pos': pos,}
+                    self.tile_map[str(self.xpos) + ";" + str(self.ypos)] = {'type': 'block', 'subtype': 'grass', 'variant': 8,'pos': pos,}
                 else:
-                    self.tile_map[str(self.xpos) + ";" + str(self.ypos)] = {'basetype': 'block', 'type': 'grass', 'variant': 0,'pos': pos,}
+                    self.tile_map[str(self.xpos) + ";" + str(self.ypos)] = {'type': 'block', 'subtype': 'grass', 'variant': 0,'pos': pos,}
                 countx += self.tile_size
             county += self.tile_size
     
@@ -71,19 +72,22 @@ class Tilemap:
     #this is just to check the surrounding tiles on a tilemap change, for both placement and removal
     def _block_type_check(self, tile):
         pass
-
+    
+    #just putting the autotile code in one place for both removing and placing tiles
+    def _autotile(self):
+        pass
     #will take in a tile coord string and remove that particular tile from the tilemap will handle tile sprite changes, same with the place tile
     #this is specifically for removing block type objects, the logic for that is natrually simpler
     def rmv_tile(self, world_tile_pos) -> Block:
         remove_tile = None
         if f'{str(world_tile_pos[0])};{str(world_tile_pos[1])}' in self.tile_map.keys():
                 remove_tile = f'{str(world_tile_pos[0])};{str(world_tile_pos[1])}'
-
+        print(remove_tile)
         #maybe make the tile actually pop out into the world later, right now it is just removed
         #currently gets
         
         if remove_tile != None:
-            removed_item = Block(self.tile_map[remove_tile]['type'], self.game.tiles[self.tile_map[remove_tile]['type']][self.tile_map[remove_tile]['variant']])
+            removed_item = Block(self.tile_map[remove_tile]['subtype'], self.game.tiles[self.tile_map[remove_tile]['subtype']][self.tile_map[remove_tile]['variant']])
             self.tile_map.pop(remove_tile)
 
             adjacent_tiles = []
@@ -115,8 +119,18 @@ class Tilemap:
             return None
 
     #read comment above remove tile
-    def insert_tile(self):
-        pass
+    def insert_tile(self, world_tile_pos, block: Block) -> None:
+        place_tile = None
+        if f'{str(world_tile_pos[0])};{str(world_tile_pos[1])}' not in self.tile_map.keys():
+                place_tile = f'{str(world_tile_pos[0])};{str(world_tile_pos[1])}'
+        print(f"world tile pos: {world_tile_pos[0]}, {world_tile_pos[1]}")
+        if place_tile != None:
+            pos = (world_tile_pos[0] * self.tile_size, world_tile_pos[1] * self.tile_size)
+            self.tile_map[place_tile] = {'type': block.type, 'subtype': block.subtype, 'variant': 0,'pos': pos,}
+            return True
+        else:
+            return False
+
 
     def render_map(self, surf , offset=(0, 0)):
         """
@@ -129,7 +143,7 @@ class Tilemap:
         """
         
         for tile in self.tile_map:
-            surf.blit(self.game.tiles[self.tile_map[tile]['type']][self.tile_map[tile]['variant']], (self.tile_map[tile]['pos'][0] - offset[0], self.tile_map[tile]['pos'][1] - offset[1]))
+            surf.blit(self.game.tiles[self.tile_map[tile]['subtype']][self.tile_map[tile]['variant']], (self.tile_map[tile]['pos'][0] - offset[0], self.tile_map[tile]['pos'][1] - offset[1]))
 
     def save(self, filepath=r'map.json'):
         with open(filepath, "w") as f:
