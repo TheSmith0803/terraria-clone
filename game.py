@@ -76,7 +76,7 @@ class Game:
     def run(self):
         #game loop
         while self.running:
-            self.scroll[0] += (self.player.rect().centerx - self.display.get_width() / 2 - self.scroll[0]) / 10
+            self.scroll[0] += (self.player.rect().centerx - self.display.get_width() / 2 - self.scroll[0])
 
             #locks the camera when world limit is reached
             if self.scroll[1] <= self.world_limit_y_top and (self.player.rect().centery - self.scroll[1]) < self.display.get_height() / 2:
@@ -84,7 +84,7 @@ class Game:
             elif self.scroll[1] >= self.world_limit_y_bottom and (self.player.rect().centery - self.scroll[1]) > self.display.get_height() / 2:
                 self.scroll[1] = self.world_limit_y_bottom
             else:
-                self.scroll[1] += (self.player.rect().centery - self.display.get_height() / 2 - self.scroll[1]) / 10
+                self.scroll[1] += (self.player.rect().centery - self.display.get_height() / 2 - self.scroll[1])
 
             render_scroll = (int(self.scroll[0]), int(self.scroll[1]))
 
@@ -143,7 +143,7 @@ class Game:
                 
                 self.ui.update(event=event)
                     
-            
+            #render ui stuff at the end of the fram
             font_surf = self.font.render(f'Player pos\nX: {int(self.player.pos[0])}\nY: {int(self.player.pos[1])}', False, (255,255,255))
             self.display.blit(font_surf, (10, 45))
             self.ui.render_hotbar(self.display)
