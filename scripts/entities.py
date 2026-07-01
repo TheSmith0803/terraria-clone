@@ -24,12 +24,12 @@ class PhysicsEntity:
         self.deadzone = 0.05
         self.speed = 1.0
         
-        self.gravity = 1.0
+        self.gravity = 1.2
 
         self.flip = False
 
     def rect(self):
-        return pygame.FRect(*self.pos, *self.size)
+        return pygame.Rect(*self.pos, *self.size)
 
     def set_animation(self, action):
         if action != self.action:

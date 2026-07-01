@@ -3,6 +3,7 @@ from pygame.locals import *
 
 import math
 import sys
+import time
 
 from scripts.world import World
 from scripts.tilemap import Tilemap
@@ -53,7 +54,7 @@ class Game:
             'chest': load_image('assets\\chests\\chest-regular.png'),
             #'cursor': load_image(),
         }
-        
+
         self.tilemap = Tilemap(self, 'small')
         self.tilemap.generate_map_debug()
         
@@ -66,8 +67,8 @@ class Game:
         self.movement = [False, False]
 
         self.scroll = [0, 0]
-
-        self.delta_time = 0.0
+        self.last_time = time.time()
+        self.dt = 0.0
 
         self.ui = UI(self,[img for img in self.inventory_assets.values()])
         self.inventory = Inventory(self, self.ui)
@@ -76,9 +77,12 @@ class Game:
     def run(self):
         #game loop
         while self.running:
-            self.scroll[0] += (self.player.rect().centerx - self.display.get_width() / 2 - self.scroll[0])
+            #calculate delta time
+            current_time = time.time()
+            self.dt = current_time - self.last_time
+            self.last_time = current_time
 
-            #if self.scroll[0] <= self.
+            self.scroll[0] += (self.player.rect().centerx - self.display.get_width() / 2 - self.scroll[0])
 
             #locks the camera when world limit is reached
             if self.scroll[1] <= -self.tilemap.map_size[1] and (self.player.rect().centery - self.scroll[1]) < self.display.get_height() / 2:
