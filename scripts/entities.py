@@ -48,6 +48,7 @@ class PhysicsEntity:
         self.pos[1] += self.velocity[1] 
         entity_rect.y = self.pos[1]
 
+
         #resolve y collisions
         for rect in self.tilemap.physics_rects_around(self.pos):
             if entity_rect.colliderect(rect):
@@ -60,10 +61,15 @@ class PhysicsEntity:
                 self.pos[1] = entity_rect.y
                 self.velocity[1] = 0
                 break
-            elif entity_rect.bottom == rect.top and entity_rect.left < rect.right and entity_rect.right > rect.left:
+            #variable to ensure that contact is only checked once
+            touching_top = (entity_rect.bottom == rect.top 
+                            and entity_rect.left < rect.right 
+                            and entity_rect.right > rect.left)
+            if touching_top:
                 self.collisions['down'] = True
                 self.pos[1] = entity_rect.y
                 self.velocity[1] = 0
+                break
         self.pos[0] += self.velocity[0]
         entity_rect.x = self.pos[0]
         
