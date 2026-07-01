@@ -60,7 +60,7 @@ class PhysicsEntity:
                 self.pos[1] = entity_rect.y
                 self.velocity[1] = 0
                 break
-            elif entity_rect.bottom == rect.top:
+            elif entity_rect.bottom == rect.top and entity_rect.left < rect.right and entity_rect.right > rect.left:
                 self.collisions['down'] = True
                 self.pos[1] = entity_rect.y
                 self.velocity[1] = 0
