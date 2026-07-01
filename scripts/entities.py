@@ -37,37 +37,38 @@ class PhysicsEntity:
             self.animation = self.game.entities[self.type + "\\" + self.action].copy()
 
     def update(self):
+        entity_rect = self.rect()        
         self.collisions = {'up': False, 'down': False, 'left': False, 'right': False}
-        entity_rect = self.rect()
 
-        self.velocity[1] = min(5, self.velocity[1] + (0.01 * self.gravity)) #gravity
-        
-        if not self.moving[0]:
-            if abs(self.velocity[0]) < self.deadzone:
-                self.velocity[0] = 0
-            else:
-                self.velocity[0] -= self.friction * (1 if self.velocity[0] > 0 else -1)
-
-        prev_y = entity_rect.bottom
+          
         self.velocity[1] = min(4, self.velocity[1] + 0.1) #gravity
-        self.pos[1] += self.velocity[1]
+
+        prev_y_bottom = entity_rect.bottom
+
+        self.pos[1] += self.velocity[1] 
         entity_rect.y = self.pos[1]
-        
+
         #resolve y collisions
         for rect in self.tilemap.physics_rects_around(self.pos):
             if entity_rect.colliderect(rect):
-                if self.velocity[1] > 0 and prev_y <= rect.top:
+                if self.velocity[1] > 0 and prev_y_bottom <= rect.top:
                     entity_rect.bottom = rect.top
-                    self.collisions['down'] = True
+                    self.collisions['down'] = True                    
                 if self.velocity[1] < 0:
-                    entity_rect.top = rect.bottom 
+                    entity_rect.top = rect.bottom
                     self.collisions['up'] = True
                 self.pos[1] = entity_rect.y
                 self.velocity[1] = 0
                 break
-
+            elif entity_rect.bottom == rect.top:
+                self.collisions['down'] = True
+                self.pos[1] = entity_rect.y
+                self.velocity[1] = 0
         self.pos[0] += self.velocity[0]
         entity_rect.x = self.pos[0]
+        
+        
+
         #resolve x collisions
         for rect in self.tilemap.physics_rects_around(self.pos):
             if entity_rect.colliderect(rect):
@@ -81,6 +82,18 @@ class PhysicsEntity:
                 self.velocity[0] = 0
                 break
         
+        #this is to make sure you dont bounce back in the other direction if friction is high
+        #must happen after above collision calculations
+        if not self.moving[0] and self.collisions['down']:
+            if self.velocity[0] > 0:
+                self.velocity[0] -= self.friction * (1 if self.velocity[0] > 0 else -1)
+                if self.velocity[0] < 0:
+                    self.velocity[0] = 0
+            if self.velocity[0] < 0:
+                self.velocity[0] -= self.friction * (1 if self.velocity[0] > 0 else -1)
+                if self.velocity[0] > 0:
+                    self.velocity[0] = 0
+
         if self.velocity[0] > 0:
             self.flip = False
         if self.velocity[0] < 0:
@@ -115,7 +128,6 @@ class Player(PhysicsEntity):
             self.tile_key_origin = coord.split(';')
             self.tile_key_origin[0] = int(self.tile_key_origin[0])
             self.tile_key_origin[1] = int(self.tile_key_origin[1])
-            print(self.tile_pos_origin, self.tile_key_origin)
             break
 
         #FIGURE OUT HOW TO USE THIS ^^^^^ TO MAP THE MOUSE POS TO THE TILE GRID LOL
@@ -129,26 +141,12 @@ class Player(PhysicsEntity):
 
     def place_tile(self):
 
-        place_tile = None
-        offset_tile = None
-        direction = None
-        """
-        for adjacent_tile in TILE_OFFSETS:
-            if (f'{str(self.world_mpos_tile[0])};{str(self.world_mpos_tile[1])}' not in self.tilemap.tile_map.keys() and
-                f'{self.world_mpos_tile[0] + adjacent_tile[0]};{self.world_mpos_tile[1] + adjacent_tile[1]}' in self.tilemap.tile_map.keys()):
-                place_tile =  f'{str(self.world_mpos_tile[0])};{str(self.world_mpos_tile[1])}'
-                offset_tile = f'{self.world_mpos_tile[0] + adjacent_tile[0]};{self.world_mpos_tile[1] + adjacent_tile[1]}'
-                direction = tile_placement_offsets.index(adjacent_tile)
-                print(direction)
-                break
-        """
         if self.inventory.contents[self.ui.selected][0].type == None:
             return
         else:
             placed = self.tilemap.insert_tile(self.world_mpos_tile, self.inventory.contents[self.ui.selected][0]) #place item in world
             if placed:
                 self.inventory.contents[self.ui.selected][1] -= 1 #sub item from invetory
-                print(f"WORLD MPOS TILE: {self.world_mpos_tile}\nWORLD MPOS RAW: {self.world_mpos_raw}")
             else:
                 return
 
@@ -175,7 +173,7 @@ class Player(PhysicsEntity):
             self.set_animation('run')
         if not self.collisions['down']:
             self.animation.frame = 0
-        
+
         super().update()
         
 

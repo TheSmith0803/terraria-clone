@@ -34,7 +34,7 @@ class Game:
             #player sprite and animations for player
             'player': load_image('assets\\entities\\player.png'),
             'player\\idle': Animation(load_images('assets\\entities\\player\\idle'), img_dur=6),
-            'player\\run': Animation(load_images('assets\\entities\\player\\run'), img_dur=5)
+            'player\\run': Animation(load_images('assets\\entities\\player\\run'), img_dur=9)
         }
 
         self.inventory_assets = {
@@ -101,7 +101,6 @@ class Game:
             self.tilemap.render_map(self.display, offset=render_scroll)
             self.player.render(self.display, offset=render_scroll)
 
-            
             keys_pressed = pygame.key.get_pressed()
 
             #player clontrols
@@ -157,6 +156,9 @@ class Game:
             self.screen.blit(pygame.transform.scale(self.display, self.screen.get_size()), (0, 0))
             pygame.display.update()
             self.delta_time = self.clock.tick(60) / 1000.0
-
+            #print(self.player.velocity, self.player.pos)
+            print(self.player.velocity)
+            print(self.player.pos)
+            
 if __name__ == '__main__':
     Game().run()

@@ -15,3 +15,8 @@ class Background:
 
     def update_biome(self, new_biome):
         pass
+
+class Cloud:
+    def __init__(self):
+        pass
+

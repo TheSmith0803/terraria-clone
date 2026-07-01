@@ -50,8 +50,8 @@ class Tilemap:
     def generate_map_debug(self):
         county = 352
         for k in range(50): 
-            countx = -160
-            for i in range(0, 100):
+            countx = -1008
+            for i in range(-1000, 1000):
                 pos = (countx, county)
                 self.xpos = pos[0] // self.tile_size
                 self.ypos = pos[1] // self.tile_size
