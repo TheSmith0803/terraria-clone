@@ -17,8 +17,10 @@ class Game:
         
         pygame.init()
 
+        self.mixer = pygame.mixer.init()
+
         #these variables are for calculating cursor pos with scaling
-        self.window_size = (1536, 864)
+        self.window_size = (2560, 1440)
         self.display_res = (self.window_size[0] / 2, self.window_size[1] / 2)
         self.x_res_ratio = self.window_size[0] / self.display_res[0]
         self.y_res_ratio = self.window_size[1] / self.display_res[1]  
@@ -76,7 +78,7 @@ class Game:
         self.ui = UI(self,[img for img in self.inventory_assets.values()])
         self.inventory = Inventory(self, self.ui)
         self.player = Player(self, self.inventory, self.ui, self.tilemap, self.pos)
-        #self.player.speed, self.player.friction = 5, 5
+        
     def run(self):
         #game loop
         while self.running:
@@ -85,10 +87,11 @@ class Game:
             self.dt = current_time - self.last_time
             self.last_time = current_time
             self.player.update(offset=self.scroll)
+
             #locks the camera when world limit is reached
-            if self.scroll[0] <= -self.world.map_size[0] and (self.player.rect().centerx - self.scroll[0]) < self.display.get_height() / 2:
+            if self.scroll[0] <= -self.world.map_size[0] and (self.player.rect().centerx - self.scroll[0]) < self.display.get_width() / 2:
                 self.scroll[0] = -self.world.map_size[0]
-            elif self.scroll[0] >= self.world.map_size[0] and (self.player.rect().centerx - self.scroll[0]) > self.display.get_height() / 2:
+            elif self.scroll[0] >= self.world.map_size[0] and (self.player.rect().centerx - self.scroll[0]) > self.display.get_width() / 2:
                 self.scroll[0] = self.world.map_size[0]
             else:
                 self.scroll[0] += (self.player.rect().centerx - self.display.get_width() / 2 - self.scroll[0])
