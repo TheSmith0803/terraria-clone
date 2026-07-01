@@ -15,7 +15,7 @@ def load_images(path, numeric=False):
         
         sorted_paths.sort(key=lambda f: int(os.path.splitext(f)[0]))
         for img in sorted_paths:
-            print(img)
+            #print(img)
             imgs.append(load_image(os.path.abspath(os.path.join(path, img))))
 
     else:

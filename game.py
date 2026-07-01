@@ -18,7 +18,7 @@ class Game:
         pygame.init()
 
         #these variables are for calculating cursor pos with scaling
-        self.window_size = (1000, 1000)
+        self.window_size = (1536, 864)
         self.display_res = (self.window_size[0] / 2, self.window_size[1] / 2)
         self.x_res_ratio = self.window_size[0] / self.display_res[0]
         self.y_res_ratio = self.window_size[1] / self.display_res[1]  
@@ -34,7 +34,7 @@ class Game:
             #player sprite and animations for player
             'player': load_image('assets\\entities\\player.png'),
             'player\\idle': Animation(load_images('assets\\entities\\player\\idle'), img_dur=6),
-            'player\\run': Animation(load_images('assets\\entities\\player\\run'), img_dur=9)
+            'player\\run': Animation(load_images('assets\\entities\\player\\run'), img_dur=4)
         }
 
         self.inventory_assets = {
@@ -55,8 +55,11 @@ class Game:
             #'cursor': load_image(),
         }
 
-        self.tilemap = Tilemap(self, 'small')
-        self.tilemap.generate_map_debug()
+        self.assets['background'] = pygame.transform.scale_by(self.assets['background'], 0.5)
+
+        self.tilemap = Tilemap(self)
+        self.world = World(self, 'small', self.tilemap)
+        self.tilemap.generate_map_debug(self.world.map_size[0], self.world.map_size[1])
         
         #can be attached to world size later if i feel like it lol
         self.world_limit_y_top = -500
@@ -73,7 +76,7 @@ class Game:
         self.ui = UI(self,[img for img in self.inventory_assets.values()])
         self.inventory = Inventory(self, self.ui)
         self.player = Player(self, self.inventory, self.ui, self.tilemap, self.pos)
-
+        #self.player.speed, self.player.friction = 5, 5
     def run(self):
         #game loop
         while self.running:
@@ -81,23 +84,29 @@ class Game:
             current_time = time.time()
             self.dt = current_time - self.last_time
             self.last_time = current_time
-
-            self.scroll[0] += (self.player.rect().centerx - self.display.get_width() / 2 - self.scroll[0])
-
+            self.player.update(offset=self.scroll)
             #locks the camera when world limit is reached
-            if self.scroll[1] <= -self.tilemap.map_size[1] and (self.player.rect().centery - self.scroll[1]) < self.display.get_height() / 2:
-                self.scroll[1] = -self.tilemap.map_size[1]
-            elif self.scroll[1] >= self.tilemap.map_size[1] and (self.player.rect().centery - self.scroll[1]) > self.display.get_height() / 2:
-                self.scroll[1] = self.tilemap.map_size[1]
+            if self.scroll[0] <= -self.world.map_size[0] and (self.player.rect().centerx - self.scroll[0]) < self.display.get_height() / 2:
+                self.scroll[0] = -self.world.map_size[0]
+            elif self.scroll[0] >= self.world.map_size[0] and (self.player.rect().centerx - self.scroll[0]) > self.display.get_height() / 2:
+                self.scroll[0] = self.world.map_size[0]
+            else:
+                self.scroll[0] += (self.player.rect().centerx - self.display.get_width() / 2 - self.scroll[0])
+            
+            #locks the camera when world limit is reached
+            if self.scroll[1] <= -self.world.map_size[1] and (self.player.rect().centery - self.scroll[1]) < self.display.get_height() / 2:
+                self.scroll[1] = -self.world.map_size[1]
+            elif self.scroll[1] >= self.world.map_size[1] and (self.player.rect().centery - self.scroll[1]) > self.display.get_height() / 2:
+                self.scroll[1] = self.world.map_size[1]
             else:
                 self.scroll[1] += (self.player.rect().centery - self.display.get_height() / 2 - self.scroll[1])
 
             render_scroll = (int(self.scroll[0]), int(self.scroll[1]))
 
             self.display.fill((20, 100, 200))
-            self.display.blit(pygame.transform.scale_by(self.assets['background'], 0.5), (0,0))
+            self.display.blit(self.assets['background'], (0,0))
 
-            self.player.update(offset=render_scroll)
+            
             self.tilemap.render_map(self.display, offset=render_scroll)
             self.player.render(self.display, offset=render_scroll)
 
@@ -156,9 +165,14 @@ class Game:
             self.screen.blit(pygame.transform.scale(self.display, self.screen.get_size()), (0, 0))
             pygame.display.update()
             self.delta_time = self.clock.tick(60) / 1000.0
+            
+            pygame.display.set_caption(
+                f"FPS: {self.clock.get_fps():.1f}"
+            )
+
             #print(self.player.velocity, self.player.pos)
-            print(self.player.velocity)
-            print(self.player.pos)
+            #print(self.player.velocity)
+            #print(self.player.pos)
             
 if __name__ == '__main__':
     Game().run()

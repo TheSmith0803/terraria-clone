@@ -28,17 +28,9 @@ TILE_OFFSETS = [(-1, 0), (1, 0), (0, -1), (0, 1)]
 AUTOTILE_TPYE = {'grass', 'stone'}
 
 class Tilemap:
-    def __init__(self, game, map_size='small', tile_size=16):
+    def __init__(self, game, tile_size=16):
         self.game = game
         self.tile_size = tile_size
-
-        if map_size == 'small':
-            map_size = (1250, 500)
-        if map_size == 'medium':
-            map_size = (2500, 1000)
-        if map_size == 'large':
-            map_size = (5000, 2000)
-        self.map_size = map_size
 
         self.tile_map = {}
         self.offgrid_tiles = []
@@ -47,7 +39,7 @@ class Tilemap:
 
     #temp ALSO MAKE SURE WHEN YOU DO ACTUAL WORLD GENERATION THAT THE COORDS ARE ACTUALLY
     # MULTIPLES OF 16, OTHERWISE BLOCK PLACEMENT WILL BE BROKEN
-    def generate_map_debug(self):
+    def generate_map_debug(self, x_lim, y_lim):
         county = 352
         for k in range(50): 
             countx = -1008
@@ -89,7 +81,7 @@ class Tilemap:
         remove_tile = None
         if f'{str(world_tile_pos[0])};{str(world_tile_pos[1])}' in self.tile_map.keys():
                 remove_tile = f'{str(world_tile_pos[0])};{str(world_tile_pos[1])}'
-        print(remove_tile)
+        #print(remove_tile)
         #maybe make the tile actually pop out into the world later, right now it is just removed
         #currently gets
         
@@ -130,7 +122,7 @@ class Tilemap:
         place_tile = None
         if f'{str(world_tile_pos[0])};{str(world_tile_pos[1])}' not in self.tile_map.keys():
                 place_tile = f'{str(world_tile_pos[0])};{str(world_tile_pos[1])}'
-        print(f"world tile pos: {world_tile_pos[0]}, {world_tile_pos[1]}")
+        #print(f"world tile pos: {world_tile_pos[0]}, {world_tile_pos[1]}")
         if place_tile != None:
             pos = (world_tile_pos[0] * self.tile_size, world_tile_pos[1] * self.tile_size)
             self.tile_map[place_tile] = {'type': block.type, 'subtype': block.subtype, 'variant': 0,'pos': pos,}

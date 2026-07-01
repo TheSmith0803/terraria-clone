@@ -72,8 +72,6 @@ class PhysicsEntity:
                 break
         self.pos[0] += self.velocity[0]
         entity_rect.x = self.pos[0]
-        
-        
 
         #resolve x collisions
         for rect in self.tilemap.physics_rects_around(self.pos):
