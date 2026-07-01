@@ -43,6 +43,8 @@ class Tilemap:
         self.tile_map = {}
         self.offgrid_tiles = []
 
+        self.tile_coords = {}
+
     #temp ALSO MAKE SURE WHEN YOU DO ACTUAL WORLD GENERATION THAT THE COORDS ARE ACTUALLY
     # MULTIPLES OF 16, OTHERWISE BLOCK PLACEMENT WILL BE BROKEN
     def generate_map_debug(self):
@@ -59,7 +61,11 @@ class Tilemap:
                     self.tile_map[str(self.xpos) + ";" + str(self.ypos)] = {'type': 'block', 'subtype': 'grass', 'variant': 0,'pos': pos,}
                 countx += self.tile_size
             county += self.tile_size
-    
+
+    #takes in a tuple of tile coords and returns the associated tile data
+    def _get_tile_data(self, tile_coords):
+        return self.tile_map[f'{str(tile_coords[0])};{str(tile_coords[1])}']
+
     def physics_rects_around(self, pos):
         offsets = [(1, 0), (-1, 0), (0, 1), (0, -1), (-1, -1), (-1, 1), (1, 1), (1, -1), (0, 0)]
 
@@ -76,6 +82,7 @@ class Tilemap:
     #just putting the autotile code in one place for both removing and placing tiles
     def _autotile(self):
         pass
+
     #will take in a tile coord string and remove that particular tile from the tilemap will handle tile sprite changes, same with the place tile
     #this is specifically for removing block type objects, the logic for that is natrually simpler
     def rmv_tile(self, world_tile_pos) -> Block:
@@ -133,17 +140,32 @@ class Tilemap:
 
 
     def render_map(self, surf , offset=(0, 0)):
-        """
+        
+        #this is da way
         for x in range(int(offset[0] // self.tile_size), int((offset[0] + surf.get_width()) // self.tile_size + 1)):
             for y in range(int(offset[1] // self.tile_size), int((offset[1] + surf.get_height()) // self.tile_size + 1)):
-                loc = str(x) + ';' + str(y)
-                for tile in self.tile_map:
-                    if loc == tile:
-                        surf.blit(self.game.tiles['grass'][0], (self.tile_map[tile]['pos'][0] - offset[0], self.tile_map[tile]['pos'][0] - offset[1]))
-        """
+                loc = (f'{x};{y}')
+                
+                if loc in self.tile_map:
+                    tile = self.tile_map[loc]
+                    surf.blit(self.game.tiles[tile['subtype']][tile['variant']], 
+                                (
+                                    tile['pos'][0] - offset[0], 
+                                    tile['pos'][1] - offset[1]
+                                )
+                             )
         
+        """
         for tile in self.tile_map:
-            surf.blit(self.game.tiles[self.tile_map[tile]['subtype']][self.tile_map[tile]['variant']], (self.tile_map[tile]['pos'][0] - offset[0], self.tile_map[tile]['pos'][1] - offset[1]))
+            if (self.tile_map[tile]['pos'][0] + self.tile_size - offset[0] >= 0 and
+                self.tile_map[tile]['pos'][0] + offset[0] <= self.game.window_size[0] + offset[0] and
+                self.tile_map[tile]['pos'][1] + self.tile_size - offset[1] >= 0 and
+                self.tile_map[tile]['pos'][1] + offset[0] <= self.game.window_size[1] + offset[0]):
+                 surf.blit(self.game.tiles[self.tile_map[tile]['subtype']][self.tile_map[tile]['variant']], (self.tile_map[tile]['pos'][0] - offset[0], self.tile_map[tile]['pos'][1] - offset[1]))
+        """
+
+        #for tile in self.tile_map:
+        #    surf.blit(self.game.tiles[self.tile_map[tile]['subtype']][self.tile_map[tile]['variant']], (self.tile_map[tile]['pos'][0] - offset[0], self.tile_map[tile]['pos'][1] - offset[1]))
 
     def generate_map(self):
         pass
