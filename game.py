@@ -190,7 +190,7 @@ class Game:
             self.screen.blit(pygame.transform.scale(self.display, self.screen.get_size()), (0, 0))
             pygame.display.update()
             self.delta_time = self.clock.tick(60) / 16.667
-            print(self.delta_time)
+            #print(self.delta_time)
             pygame.display.set_caption(
                 f"FPS: {self.clock.get_fps():.1f}"
             )

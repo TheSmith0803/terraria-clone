@@ -55,8 +55,31 @@ class Tilemap:
         pass
     
     #just putting the autotile code in one place for both removing and placing tiles
-    def _autotile(self):
-        pass
+    def _autotile(self, world_tile_pos, place=False):
+        adjacent_tiles = []
+
+        if place:
+            adjacent_tiles.append(world_tile_pos)
+
+        for tileoffset in TILE_OFFSETS:
+            curr_tile = (world_tile_pos[0] + tileoffset[0], world_tile_pos[1] + tileoffset[1])
+            if f'{curr_tile[0]};{curr_tile[1]}' in self.tile_map:
+                adjacent_tiles.append(curr_tile)
+        if not adjacent_tiles:
+            return
+
+        for tile in adjacent_tiles:
+            check_tiles = []
+            for tile_offset in TILE_OFFSETS:
+                curr_tile = (tile[0] + tile_offset[0], tile[1] + tile_offset[1])
+                if f'{curr_tile[0]};{curr_tile[1]}' in self.tile_map:
+                    check_tiles.append(tile_offset)
+            
+            check_tiles = tuple(sorted(check_tiles))
+
+            for autotile in AUTOTILE_MAP.keys():
+                if check_tiles == autotile:
+                    self.tile_map[f'{tile[0]};{tile[1]}']['variant'] = AUTOTILE_MAP[autotile]
 
     #will take in a tile coord string and remove that particular tile from the tilemap will handle tile sprite changes, same with the place tile
     #this is specifically for removing block type objects, the logic for that is natrually simpler
@@ -72,29 +95,7 @@ class Tilemap:
             removed_item = Block(self.tile_map[remove_tile]['subtype'], self.game.tiles[self.tile_map[remove_tile]['subtype']][self.tile_map[remove_tile]['variant']])
             self.tile_map.pop(remove_tile)
 
-            adjacent_tiles = []
-
-            for tileoffset in TILE_OFFSETS:
-                curr_tile = (world_tile_pos[0] + tileoffset[0], world_tile_pos[1] + tileoffset[1])
-                if f'{curr_tile[0]};{curr_tile[1]}' in self.tile_map:
-                    adjacent_tiles.append(curr_tile)
-
-            
-            if not adjacent_tiles:
-                return removed_item
-
-            for tile in adjacent_tiles:
-                check_tiles = []
-                for tile_offset in TILE_OFFSETS:
-                    curr_tile = (tile[0] + tile_offset[0], tile[1] + tile_offset[1])
-                    if f'{curr_tile[0]};{curr_tile[1]}' in self.tile_map:
-                        check_tiles.append(tile_offset)
-                
-                check_tiles = tuple(sorted(check_tiles))
-
-                for autotile in AUTOTILE_MAP.keys():
-                    if check_tiles == autotile:
-                        self.tile_map[f'{tile[0]};{tile[1]}']['variant'] = AUTOTILE_MAP[autotile]
+            self._autotile(world_tile_pos)
             
             return removed_item
         else:
@@ -109,6 +110,7 @@ class Tilemap:
         if place_tile != None:
             pos = (world_tile_pos[0] * self.tile_size, world_tile_pos[1] * self.tile_size)
             self.tile_map[place_tile] = {'type': block.type, 'subtype': block.subtype, 'variant': 0,'pos': pos,}
+            self._autotile(world_tile_pos, place=True)
             return True
         else:
             return False
