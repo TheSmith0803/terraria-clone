@@ -7,14 +7,14 @@ random spawning and spawning rules will take place here.
 """
 
 class World:
-    def __init__(self, game, map_size, tilemap):
+    def __init__(self, game, map_size):
         self.game = game
-        self.tilemap = tilemap
         self.start_pos = (0, 0)
         self.tiles = self.game.tiles
-
+        
+        #tile size of world
         if map_size == 'small':
-            map_size = (1248, 800)
+            map_size = (1248, 800) 
         if map_size == 'medium':
             map_size = (2500, 1000)
         if map_size == 'large':

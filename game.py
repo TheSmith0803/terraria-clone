@@ -4,6 +4,7 @@ from pygame.locals import *
 import math
 import sys
 import time
+import os
 
 from scripts.world import World
 from scripts.tilemap import Tilemap
@@ -59,16 +60,33 @@ class Game:
 
         self.assets['background'] = pygame.transform.scale_by(self.assets['background'], 0.5)
 
-        self.tilemap = Tilemap(self)
-        self.world = World(self, 'small', self.tilemap)
-        self.tilemap.generate_map_debug(self.world.map_size[0], self.world.map_size[1])
-        
-        #can be attached to world size later if i feel like it lol
-        self.world_limit_y_top = -500
-        self.world_limit_y_bottom = 1000
-
+        self.world = World(self, 'small')
+        self.tilemap = Tilemap(self, self.world)
+        self.world_size_pix = (self.world.map_size[0] * self.tilemap.tile_size, self.world.map_size[1] * self.tilemap.tile_size)
+        if os.path.exists(r'map.json'):
+            self.tilemap.load()
+            print('load')
+        else:
+            self.tilemap.generate_map_debug(self.world.map_size[0], self.world.map_size[1])
+            self.tilemap.save()
+            print('save')
         self.running = True
-        self.pos = [self.display.get_width() / 2, self.display.get_height() / 2]
+
+        #calc player starting pos
+        coord_list = []
+        for tile in self.tilemap.tile_map.keys():
+            tile = tile.split(";")
+            tile = tuple([int(coord) for coord in tile])
+            coord_list.append(tile)
+        middle_coord = f"{coord_list[-1:][0][0] // 2};{coord_list[:-1][0][1]}"
+        print(middle_coord)
+        middle_tile_raw_pos = [self.tilemap.tile_map[middle_coord]['pos'][0] + self.entities['player'].get_width(), self.tilemap.tile_map[middle_coord]['pos'][1] - self.entities['player'].get_height()]
+        print(self.entities['player'].get_height())
+        print(middle_tile_raw_pos)
+        #figure out why this is breaking it
+        self.pos = [int(middle_tile_raw_pos[0]), int(middle_tile_raw_pos[1])]
+        #self.pos = [2000, 336]
+
         self.movement = [False, False]
 
         self.scroll = [0, 0]
@@ -78,7 +96,10 @@ class Game:
         self.ui = UI(self,[img for img in self.inventory_assets.values()])
         self.inventory = Inventory(self, self.ui)
         self.player = Player(self, self.inventory, self.ui, self.tilemap, self.pos)
-        
+
+    def _tile(self, coords: tuple) -> str: #maybe ill use this?
+        return f"{coords[0]};{coords[1]}"
+
     def run(self):
         #game loop
         while self.running:
@@ -87,22 +108,22 @@ class Game:
             self.dt = current_time - self.last_time
             self.last_time = current_time
             self.player.update(offset=self.scroll)
-
-            #locks the camera when world limit is reached
-            if self.scroll[0] <= -self.world.map_size[0] and (self.player.rect().centerx - self.scroll[0]) < self.display.get_width() / 2:
-                self.scroll[0] = -self.world.map_size[0]
-            elif self.scroll[0] >= self.world.map_size[0] and (self.player.rect().centerx - self.scroll[0]) > self.display.get_width() / 2:
-                self.scroll[0] = self.world.map_size[0]
-            else:
-                self.scroll[0] += (self.player.rect().centerx - self.display.get_width() / 2 - self.scroll[0])
             
             #locks the camera when world limit is reached
-            if self.scroll[1] <= -self.world.map_size[1] and (self.player.rect().centery - self.scroll[1]) < self.display.get_height() / 2:
-                self.scroll[1] = -self.world.map_size[1]
-            elif self.scroll[1] >= self.world.map_size[1] and (self.player.rect().centery - self.scroll[1]) > self.display.get_height() / 2:
-                self.scroll[1] = self.world.map_size[1]
+            if self.scroll[0] <= -self.world_size_pix[0] and (self.player.rect().centerx - self.scroll[0]) < self.display.get_width() / 2:
+                self.scroll[0] = -self.world_size_pix[0]
+            elif self.scroll[0] >= self.world_size_pix[0] and (self.player.rect().centerx - self.scroll[0]) > self.display.get_width() / 2:
+                self.scroll[0] = self.world_size_pix[0]
             else:
-                self.scroll[1] += (self.player.rect().centery - self.display.get_height() / 2 - self.scroll[1])
+                self.scroll[0] = (self.player.rect().centerx - self.display.get_width() / 2)
+            
+            #locks the camera when world limit is reached
+            if self.scroll[1] <= -self.world_size_pix[1] and (self.player.rect().centery - self.scroll[1]) < self.display.get_height() / 2:
+                self.scroll[1] = -self.world_size_pix[1]
+            elif self.scroll[1] >= self.world_size_pix[1] and (self.player.rect().centery - self.scroll[1]) > self.display.get_height() / 2:
+                self.scroll[1] = self.world_size_pix[1]
+            else:
+                self.scroll[1] = (self.player.rect().centery - self.display.get_height() / 2)
 
             render_scroll = (int(self.scroll[0]), int(self.scroll[1]))
 

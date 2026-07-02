@@ -1,5 +1,5 @@
 import pygame
-import json, random
+import json, random, orjson
 import os
 
 from .items import Item, Block
@@ -28,9 +28,11 @@ TILE_OFFSETS = [(-1, 0), (1, 0), (0, -1), (0, 1)]
 AUTOTILE_TPYE = {'grass', 'stone'}
 
 class Tilemap:
-    def __init__(self, game, tile_size=16):
+    def __init__(self, game, world, tile_size=16):
         self.game = game
         self.tile_size = tile_size
+
+        self.world = world
 
         self.tile_map = {}
         self.offgrid_tiles = []
@@ -39,20 +41,16 @@ class Tilemap:
 
     #temp ALSO MAKE SURE WHEN YOU DO ACTUAL WORLD GENERATION THAT THE COORDS ARE ACTUALLY
     # MULTIPLES OF 16, OTHERWISE BLOCK PLACEMENT WILL BE BROKEN
-    def generate_map_debug(self, x_lim, y_lim):
-        county = 352
-        for k in range(50): 
-            countx = -1008
-            for i in range(-1000, 1000):
-                pos = (countx, county)
-                self.xpos = pos[0] // self.tile_size
-                self.ypos = pos[1] // self.tile_size
-                if str(self.xpos) + ';' + str(self.ypos - 1) in self.tile_map.keys():
-                    self.tile_map[str(self.xpos) + ";" + str(self.ypos)] = {'type': 'block', 'subtype': 'grass', 'variant': 8,'pos': pos,}
+    def generate_map_debug(self, tile_size_x, tile_size_y):
+        for x in range(-tile_size_x, tile_size_x):
+            for y in range(-tile_size_y // 2, tile_size_y):
+                if str(x) + ';' + str(y - 1) in self.tile_map.keys():
+                    self.tile_map[f"{x};{y}"] = {'type': 'block', 'subtype': 'grass', 'variant': 8,'pos': (x*self.tile_size, y*self.tile_size),}
                 else:
-                    self.tile_map[str(self.xpos) + ";" + str(self.ypos)] = {'type': 'block', 'subtype': 'grass', 'variant': 0,'pos': pos,}
-                countx += self.tile_size
-            county += self.tile_size
+                    self.tile_map[str(x) + ";" + str(y)] = {'type': 'block', 'subtype': 'grass', 'variant': 0,'pos': (x*self.tile_size, y*self.tile_size),}
+                 #save this for later
+            #    countx += self.tile_size
+            #county += self.tile_size
 
     #takes in a tuple of tile coords and returns the associated tile data
     def _get_tile_data(self, tile_coords):
@@ -163,6 +161,16 @@ class Tilemap:
         pass
 
     def save(self, filepath=r'map.json'):
-        with open(filepath, "w") as f:
-            json.dump(self.tile_map, f)
+        json_bytes = orjson.dumps(self.tile_map)
+        with open(filepath, "wb") as f:
+            f.write(json_bytes)
+    
+    def load(self, filepath=r'map.json'):
+        if os.path.exists(filepath):
+            with open(filepath, 'rb') as f:
+                file = f.read()
+                self.tile_map = orjson.loads(file)
+            return True
+        else:
+            return False
         
