@@ -12,6 +12,7 @@ from scripts.entities import PhysicsEntity, Player
 from scripts.ui import UI
 from scripts.inventory import Inventory
 from scripts.utilities import load_image, load_images, Animation
+from scripts.console import Console
 
 class Game:
     def __init__(self):
@@ -92,6 +93,8 @@ class Game:
         self.ui = UI(self,[img for img in self.inventory_assets.values()])
         self.inventory = Inventory(self, self.ui)
         self.player = Player(self, self.inventory, self.ui, self.tilemap, self.pos)
+
+        self.console = Console(self)
 
         self.player.grip, self.player.speed, self.player.friction, self.player.jump_power = 5, 2, 5, 3
 

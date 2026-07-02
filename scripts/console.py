@@ -1,7 +1,8 @@
 
 
 class Console:
-    def __init__(self):
+    def __init__(self, game):
+        self.game = game
         self.functions = {
             "godmode": self.god_mode,
             "give": self.give_item,
