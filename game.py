@@ -21,7 +21,7 @@ class Game:
         self.mixer = pygame.mixer.init()
 
         #these variables are for calculating cursor pos with scaling
-        self.window_size = (2560, 1440)
+        self.window_size = (800, 800)
         self.display_res = (self.window_size[0] / 2, self.window_size[1] / 2)
         self.x_res_ratio = self.window_size[0] / self.display_res[0]
         self.y_res_ratio = self.window_size[1] / self.display_res[1]  
@@ -87,13 +87,13 @@ class Game:
 
         self.scroll = [0, 0]
         self.last_time = time.time()
-        self.dt = 0.0
+        self.delta_time  = 0.0
 
         self.ui = UI(self,[img for img in self.inventory_assets.values()])
         self.inventory = Inventory(self, self.ui)
         self.player = Player(self, self.inventory, self.ui, self.tilemap, self.pos)
 
-        self.player.grip, self.player.speed, self.player.friction = 5, 2, 5
+        self.player.grip, self.player.speed, self.player.friction, self.player.jump_power = 5, 2, 5, 3
 
     def _tile(self, coords: tuple) -> str: #maybe ill use this?
         return f"{coords[0]};{coords[1]}"
@@ -186,8 +186,8 @@ class Game:
             self.inventory.render_contents(self.display)
             self.screen.blit(pygame.transform.scale(self.display, self.screen.get_size()), (0, 0))
             pygame.display.update()
-            self.delta_time = self.clock.tick(60) / 1000.0
-            
+            self.delta_time = self.clock.tick(60) / 16.667
+            print(self.delta_time)
             pygame.display.set_caption(
                 f"FPS: {self.clock.get_fps():.1f}"
             )

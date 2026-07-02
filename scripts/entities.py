@@ -24,7 +24,8 @@ class PhysicsEntity:
         self.deadzone = 0.05
         self.speed = 1.0
         
-        self.gravity = 1.2
+        self.gravity = 0.1
+        self.terminal_velocity = 4
 
         self.flip = False
 
@@ -41,11 +42,11 @@ class PhysicsEntity:
         self.collisions = {'up': False, 'down': False, 'left': False, 'right': False}
 
           
-        self.velocity[1] = min(4, self.velocity[1] + 0.1) #gravity
+        self.velocity[1] = min(self.terminal_velocity, self.velocity[1] + self.gravity) #gravity
 
         prev_y_bottom = entity_rect.bottom
 
-        self.pos[1] += self.velocity[1] 
+        self.pos[1] += self.velocity[1] * self.game.delta_time
         entity_rect.y = self.pos[1]
 
 
@@ -70,7 +71,8 @@ class PhysicsEntity:
                 self.pos[1] = entity_rect.y
                 self.velocity[1] = 0
                 break
-        self.pos[0] += self.velocity[0]
+
+        self.pos[0] += self.velocity[0] * self.game.delta_time
         entity_rect.x = self.pos[0]
 
         #resolve x collisions
@@ -125,7 +127,6 @@ class Player(PhysicsEntity):
         #get origin of tile map in order to generate an accurate tilemap for the cursor
         self.tile_pos_origin = None
         self.tile_key_origin = None
-        done = False
 
         for coord in self.tilemap.tile_map.keys():
             self.tile_pos_origin = self.tilemap.tile_map[coord]['pos']
