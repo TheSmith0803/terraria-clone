@@ -7,24 +7,39 @@ random spawning and spawning rules will take place here.
 """
 
 class World:
-    def __init__(self, game, map_size):
+    def __init__(self, game, map_size, tilemap):
         self.game = game
+        self.tilemap = tilemap
         self.start_pos = (0, 0)
         self.tiles = self.game.tiles
-        
+
         #tile size of world
         if map_size == 'small':
-            map_size = (1248, 800) 
+            map_size = (1248, 208) 
+            #map_size = (128, 64)
         if map_size == 'medium':
-            map_size = (2500, 1000)
+            map_size = (2500, 800)
         if map_size == 'large':
-            map_size = (5000, 2000)
+            map_size = (5000, 1200)
         self.map_size = map_size
 
+    #generates the tiles for the map and sets the world limits
     def _generate_tiles(self):
-        for x in range(-(self.map_size[0] / 2), (self.map_size[0] / 2)):
-            for y in range(-(self.map_size[1] / 2), (self.map_size[1] / 2)):
-                print(f"{x};{y}")
+        x_vals = []
+        y_vals = []
+        for x in range(-self.map_size[0] // 2, self.map_size[0] // 2):
+            x_vals.append(x*self.tilemap.tile_size)
+            for y in range(1, self.map_size[1]):
+                y_vals.append(y*self.tilemap.tile_size)
+                if str(x) + ';' + str(y - 1) in self.tilemap.tile_map.keys():
+                    self.tilemap.tile_map[f"{x};{y}"] = {'type': 'block', 'subtype': 'grass', 'variant': 8,'pos': (x*self.tilemap.tile_size, y*self.tilemap.tile_size),}
+                else:
+                    self.tilemap.tile_map[str(x) + ";" + str(y)] = {'type': 'block', 'subtype': 'grass', 'variant': 0,'pos': (x*self.tilemap.tile_size, y*self.tilemap.tile_size),}
+
+        self.lh_world_lim = min(x_vals)
+        self.rh_world_lim = max(x_vals) + self.tilemap.tile_size - self.game.display.get_width()
+        self.upr_world_lim = min(y_vals) - 1200
+        self.lwr_world_lim = max(y_vals) + self.tilemap.tile_size - self.game.display.get_height()
 
     def generate_world(self):
         self._generate_tiles()

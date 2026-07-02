@@ -28,29 +28,14 @@ TILE_OFFSETS = [(-1, 0), (1, 0), (0, -1), (0, 1)]
 AUTOTILE_TPYE = {'grass', 'stone'}
 
 class Tilemap:
-    def __init__(self, game, world, tile_size=16):
+    def __init__(self, game, tile_size=16):
         self.game = game
         self.tile_size = tile_size
-
-        self.world = world
 
         self.tile_map = {}
         self.offgrid_tiles = []
 
-        self.tile_coords = {}
-
-    #temp ALSO MAKE SURE WHEN YOU DO ACTUAL WORLD GENERATION THAT THE COORDS ARE ACTUALLY
-    # MULTIPLES OF 16, OTHERWISE BLOCK PLACEMENT WILL BE BROKEN
-    def generate_map_debug(self, tile_size_x, tile_size_y):
-        for x in range(-tile_size_x, tile_size_x):
-            for y in range(-tile_size_y // 2, tile_size_y):
-                if str(x) + ';' + str(y - 1) in self.tile_map.keys():
-                    self.tile_map[f"{x};{y}"] = {'type': 'block', 'subtype': 'grass', 'variant': 8,'pos': (x*self.tile_size, y*self.tile_size),}
-                else:
-                    self.tile_map[str(x) + ";" + str(y)] = {'type': 'block', 'subtype': 'grass', 'variant': 0,'pos': (x*self.tile_size, y*self.tile_size),}
-                 #save this for later
-            #    countx += self.tile_size
-            #county += self.tile_size
+        self.tile_coords = {}        
 
     #takes in a tuple of tile coords and returns the associated tile data
     def _get_tile_data(self, tile_coords):

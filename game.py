@@ -60,16 +60,13 @@ class Game:
 
         self.assets['background'] = pygame.transform.scale_by(self.assets['background'], 0.5)
 
-        self.world = World(self, 'small')
-        self.tilemap = Tilemap(self, self.world)
+        
+        self.tilemap = Tilemap(self)
+        self.world = World(self, 'small', self.tilemap)
         self.world_size_pix = (self.world.map_size[0] * self.tilemap.tile_size, self.world.map_size[1] * self.tilemap.tile_size)
-        if os.path.exists(r'map.json'):
-            self.tilemap.load()
-            print('load')
-        else:
-            self.tilemap.generate_map_debug(self.world.map_size[0], self.world.map_size[1])
-            self.tilemap.save()
-            print('save')
+        print(self.world_size_pix)
+        self.world.generate_world()
+
         self.running = True
 
         #calc player starting pos
@@ -84,9 +81,8 @@ class Game:
         print(self.entities['player'].get_height())
         print(middle_tile_raw_pos)
         #figure out why this is breaking it
-        self.pos = [int(middle_tile_raw_pos[0]), int(middle_tile_raw_pos[1])]
-        #self.pos = [2000, 336]
-
+        #self.pos = [int(middle_tile_raw_pos[0]), int(middle_tile_raw_pos[1])]
+        self.pos = [0, 0]
         self.movement = [False, False]
 
         self.scroll = [0, 0]
@@ -96,6 +92,8 @@ class Game:
         self.ui = UI(self,[img for img in self.inventory_assets.values()])
         self.inventory = Inventory(self, self.ui)
         self.player = Player(self, self.inventory, self.ui, self.tilemap, self.pos)
+
+        self.player.grip, self.player.speed, self.player.friction = 5, 2, 5
 
     def _tile(self, coords: tuple) -> str: #maybe ill use this?
         return f"{coords[0]};{coords[1]}"
@@ -110,18 +108,18 @@ class Game:
             self.player.update(offset=self.scroll)
             
             #locks the camera when world limit is reached
-            if self.scroll[0] <= -self.world_size_pix[0] and (self.player.rect().centerx - self.scroll[0]) < self.display.get_width() / 2:
-                self.scroll[0] = -self.world_size_pix[0]
-            elif self.scroll[0] >= self.world_size_pix[0] and (self.player.rect().centerx - self.scroll[0]) > self.display.get_width() / 2:
-                self.scroll[0] = self.world_size_pix[0]
+            if self.scroll[0] <= self.world.lh_world_lim and (self.player.rect().centerx - self.scroll[0]) < self.display.get_width() / 2:
+                self.scroll[0] = self.world.lh_world_lim 
+            elif self.scroll[0] >= self.world.rh_world_lim and (self.player.rect().centerx - self.scroll[0]) > self.display.get_width() / 2:
+                self.scroll[0] = self.world.rh_world_lim
             else:
                 self.scroll[0] = (self.player.rect().centerx - self.display.get_width() / 2)
             
             #locks the camera when world limit is reached
-            if self.scroll[1] <= -self.world_size_pix[1] and (self.player.rect().centery - self.scroll[1]) < self.display.get_height() / 2:
-                self.scroll[1] = -self.world_size_pix[1]
-            elif self.scroll[1] >= self.world_size_pix[1] and (self.player.rect().centery - self.scroll[1]) > self.display.get_height() / 2:
-                self.scroll[1] = self.world_size_pix[1]
+            if self.scroll[1] <= self.world.upr_world_lim and (self.player.rect().centery - self.scroll[1]) < self.display.get_height() / 2:
+                self.scroll[1] = self.world.upr_world_lim
+            elif self.scroll[1] >= self.world.lwr_world_lim and (self.player.rect().centery - self.scroll[1]) > self.display.get_height() / 2:
+                self.scroll[1] = self.world.lwr_world_lim
             else:
                 self.scroll[1] = (self.player.rect().centery - self.display.get_height() / 2)
 
@@ -182,7 +180,7 @@ class Game:
                 self.ui.update(event=event)
                     
             #render ui stuff at the end of the fram
-            font_surf = self.font.render(f'Player pos\nX: {int(self.player.pos[0])}\nY: {int(self.player.pos[1])}', False, (255,255,255))
+            font_surf = self.font.render(f'Player pos\nX: {int(self.player.pos[0]) // self.tilemap.tile_size}\nY: {-int(self.player.pos[1]) // self.tilemap.tile_size}', False, (255,255,255))
             self.display.blit(font_surf, (10, 45))
             self.ui.render_hotbar(self.display)
             self.inventory.render_contents(self.display)
