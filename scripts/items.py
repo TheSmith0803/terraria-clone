@@ -17,6 +17,14 @@ BLOCK_TYPES = {
         'hardness': 1,
         'tools': {'hand', 'pickaxe'}
     },
+    'dirt': {
+        'drop': 'dirt',
+        'autotile': True,
+        'stackable': True,
+        'stack limit': 999,
+        'hardness': 1,
+        'tools': {'hand', 'pickaxe'}
+    },
     'stone': {
         'drop': 'stone',
         'autotile': True,

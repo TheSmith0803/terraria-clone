@@ -15,8 +15,8 @@ class World:
 
         #tile size of world
         if map_size == 'small':
-            map_size = (1248, 208) 
-            #map_size = (64, 64)
+            #map_size = (1248, 208) 
+            map_size = (64, 64)
         if map_size == 'medium':
             map_size = (2496, 800)
         if map_size == 'large':
@@ -36,7 +36,9 @@ class World:
                 y_vals_tiles.append(y)
                 y_vals.append(y*self.tilemap.tile_size)
                 self.tilemap.tile_map[f"{x};{y}"] = {'type': 'block', 'subtype': 'grass', 'variant': 0,'pos': (x*self.tilemap.tile_size, y*self.tilemap.tile_size),}
-                self.tilemap._autotile((x, y), place=True)
+
+        for tile in self.tilemap:
+            self.tilemap._autotile(tile, place=True)
         
         #stupid random terrain i guess
         """y_min = min(y_vals_tiles)

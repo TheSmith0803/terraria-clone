@@ -40,11 +40,9 @@ def swept_aabb(px, py, vx, vy, minkowski_box):
         y_entry = y_inv_entry / vy
         y_exit = y_inv_exit / vy
 
-    x_entry = min(x_entry, x_exit)
-    x_exit  = max(x_entry, x_exit)
+    x_entry, x_exit = min(x_entry, x_exit), max(x_entry, x_exit)
 
-    y_entry = min(y_entry, y_exit)
-    y_exit  = max(y_entry, y_exit)
+    y_entry, y_exit = min(y_entry, y_exit), max(y_entry, y_exit)
 
     #find earliest and latest times of collisionfloat
     entry_time = max(x_entry, y_entry)

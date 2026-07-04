@@ -2,7 +2,7 @@ import pygame
 import json, random, orjson
 import os
 
-from .items import Item, Block
+from .items import Item, Block, BLOCK_TYPES, ORE_TYPES
 
 #rules for spawinging tiles, variants equate to file names --> '0.png'
 AUTOTILE_MAP = {                                            #exposed sides
@@ -14,7 +14,7 @@ AUTOTILE_MAP = {                                            #exposed sides
     tuple(sorted([(-1, 0), (0, 1), (0, -1)])): 5,           #right
     tuple(sorted([(1, 0), (0, 1), (0, -1)])): 6,            #left
     tuple(sorted([(-1, 0), (1, 0), (0, -1)])): 7,           #bottom
-    tuple(sorted([(-1, 0), (1, 0), (0, 1), (0, -1)])): 8,   #none
+    tuple(sorted([(-1, 0), (1, 0), (0, 1), (0, -1)])): 8,   #all
     tuple(sorted([(-1, 0)])): 9,                            #top, right, bottom
     tuple(sorted([(0, 1)])): 10,                            #left, top, right
     tuple(sorted([(1, 0)])): 11,                            #left, top, bottom
@@ -24,7 +24,7 @@ AUTOTILE_MAP = {                                            #exposed sides
     tuple(sorted([])): 15,                                  #none
 }
 
-TILE_OFFSETS = [(-1, 0), (1, 0), (0, -1), (0, 1)]
+TILE_OFFSETS = tuple(sorted([(-1, 0), (1, 0), (0, -1), (0, 1)]))
 AUTOTILE_TPYE = {'grass', 'stone'}
 
 class Tilemap:
@@ -37,6 +37,13 @@ class Tilemap:
 
         self.tile_coords = {}        
 
+    def __iter__(self):
+        for tile in self.tile_map:
+            parts = tile.split(';')
+            coord = tuple(int(c) for c in parts)
+            coord = tuple(coord)
+            yield coord
+    
     #takes in a tuple of tile coords and returns the associated tile data
     def _get_tile_data(self, tile_coords):
         return self.tile_map[f'{str(tile_coords[0])};{str(tile_coords[1])}']
@@ -76,10 +83,15 @@ class Tilemap:
                     check_tiles.append(tile_offset)
             
             check_tiles = tuple(sorted(check_tiles))
-
-            for autotile in AUTOTILE_MAP.keys():
+            for autotile in AUTOTILE_MAP:
                 if check_tiles == autotile:
                     self.tile_map[f'{tile[0]};{tile[1]}']['variant'] = AUTOTILE_MAP[autotile]
+
+                
+                    if AUTOTILE_MAP[autotile] == 8 and self.tile_map[f'{tile[0]};{tile[1]}']['subtype'] == 'grass':
+                        self.tile_map[f'{tile[0]};{tile[1]}']['subtype'] = 'dirt'
+                        print(self.tile_map[f'{tile[0]};{tile[1]}'])
+
 
     #will take in a tile coord string and remove that particular tile from the tilemap will handle tile sprite changes, same with the place tile
     #this is specifically for removing block type objects, the logic for that is natrually simpler
@@ -92,9 +104,8 @@ class Tilemap:
         #currently gets
         
         if remove_tile != None:
-            removed_item = Block(self.tile_map[remove_tile]['subtype'], self.game.tiles[self.tile_map[remove_tile]['subtype']][self.tile_map[remove_tile]['variant']])
+            removed_item = Block(BLOCK_TYPES[self.tile_map[remove_tile]['subtype']]['drop'], self.game.tiles[BLOCK_TYPES[self.tile_map[remove_tile]['subtype']]['drop']][self.tile_map[remove_tile]['variant']])
             self.tile_map.pop(remove_tile)
-
             self._autotile(world_tile_pos)
             
             return removed_item

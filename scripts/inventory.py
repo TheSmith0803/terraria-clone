@@ -40,7 +40,7 @@ class Inventory:
                 if item[1] == 0:
                     self.contents[index][0] = Item(None, None)  
                 if item[0].type in ITEM_TYPES and item[0].subtype != None:
-                    surf.blit(pygame.transform.scale_by(self.game.tiles[item[0].subtype][0], 0.75), (self.ui.pos[0] + self.ui.hotbar_positions[index] + (self.game.inventory_assets['slot'].get_width() / 2 + 1), self.ui.pos[1] + (self.game.inventory_assets['slot'].get_height() / 2 + 1)))
+                    surf.blit(pygame.transform.scale_by(self.game.tiles[item[0].subtype][15], 0.75), (self.ui.pos[0] + self.ui.hotbar_positions[index] + (self.game.inventory_assets['slot'].get_width() / 2 + 1), self.ui.pos[1] + (self.game.inventory_assets['slot'].get_height() / 2 + 1)))
                     font = pygame.font.SysFont('Consolas', 8)
                     text_surf = font.render(str(item[1]), True, (255, 255, 255))
                     text_rect = text_surf.get_rect()
