@@ -70,46 +70,37 @@ class Game:
 
         self.running = True
 
-        #calc player starting pos
-        coord_list = []
-        for tile in self.tilemap.tile_map.keys():
-            tile = tile.split(";")
-            tile = tuple([int(coord) for coord in tile])
-            coord_list.append(tile)
-        middle_coord = f"{coord_list[-1:][0][0] // 2};{coord_list[:-1][0][1]}"
-        print(middle_coord)
-        middle_tile_raw_pos = [self.tilemap.tile_map[middle_coord]['pos'][0] + self.entities['player'].get_width(), self.tilemap.tile_map[middle_coord]['pos'][1] - self.entities['player'].get_height()]
-        print(self.entities['player'].get_height())
-        print(middle_tile_raw_pos)
-        #figure out why this is breaking it
-        #self.pos = [int(middle_tile_raw_pos[0]), int(middle_tile_raw_pos[1])]
         self.pos = [0, 0]
         self.movement = [False, False]
 
         self.scroll = [0, 0]
-        self.last_time = time.time()
         self.delta_time  = 0.0
 
         self.ui = UI(self,[img for img in self.inventory_assets.values()])
         self.inventory = Inventory(self, self.ui)
         self.player = Player(self, self.inventory, self.ui, self.tilemap, self.pos)
-
+        self.player.gravity = 0
         self.console = Console(self)
-
-        self.player.grip, self.player.speed, self.player.friction, self.player.jump_power = 5, 2, 5, 3
 
     def _tile(self, coords: tuple) -> str: #maybe ill use this?
         return f"{coords[0]};{coords[1]}"
 
     def run(self):
         #game loop
+        count = 0
         while self.running:
             #calculate delta time
-            current_time = time.time()
-            self.dt = current_time - self.last_time
-            self.last_time = current_time
+            self.delta_time = self.clock.tick(60) / 16.667
+            self.scroll = [int(self.scroll[0]), int(self.scroll[1])]
             self.player.update(offset=self.scroll)
-            
+
+            #this is hacky af, but it works
+            #keeps you from spawning in floor
+            if count < 5:
+                count += 1
+            else:
+                self.player.gravity = 0.1
+
             #locks the camera when world limit is reached
             if self.scroll[0] <= self.world.lh_world_lim and (self.player.rect().centerx - self.scroll[0]) < self.display.get_width() / 2:
                 self.scroll[0] = self.world.lh_world_lim 
@@ -130,8 +121,6 @@ class Game:
 
             self.display.fill((20, 100, 200))
             self.display.blit(self.assets['background'], (0,0))
-
-            
             self.tilemap.render_map(self.display, offset=render_scroll)
             self.player.render(self.display, offset=render_scroll)
 
@@ -189,7 +178,6 @@ class Game:
             self.inventory.render_contents(self.display)
             self.screen.blit(pygame.transform.scale(self.display, self.screen.get_size()), (0, 0))
             pygame.display.update()
-            self.delta_time = self.clock.tick(60) / 16.667
             #print(self.delta_time)
             pygame.display.set_caption(
                 f"FPS: {self.clock.get_fps():.1f}"

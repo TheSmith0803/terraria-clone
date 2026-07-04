@@ -16,7 +16,6 @@ class PhysicsEntity:
 
         self.type = e_type
         self.action = ''
-        self.set_animation('idle')
 
         self.grip = 0.0700001
         self.air_grip = self.grip * 0.2
@@ -41,9 +40,8 @@ class PhysicsEntity:
         entity_rect = self.rect()        
         self.collisions = {'up': False, 'down': False, 'left': False, 'right': False}
 
-          
         self.velocity[1] = min(self.terminal_velocity, self.velocity[1] + self.gravity) #gravity
-
+        
         prev_y_bottom = entity_rect.bottom
 
         self.pos[1] += self.velocity[1] * self.game.delta_time
@@ -55,13 +53,16 @@ class PhysicsEntity:
             if entity_rect.colliderect(rect):
                 if self.velocity[1] > 0 and prev_y_bottom <= rect.top:
                     entity_rect.bottom = rect.top
-                    self.collisions['down'] = True                    
+                    self.collisions['down'] = True
+                else:
+                    self.collisions['down'] = False                    
                 if self.velocity[1] < 0:
                     entity_rect.top = rect.bottom
                     self.collisions['up'] = True
                 self.pos[1] = entity_rect.y
                 self.velocity[1] = 0
                 break
+
             #variable to ensure that contact is only checked once
             touching_top = (entity_rect.bottom == rect.top 
                             and entity_rect.left < rect.right 
@@ -71,6 +72,8 @@ class PhysicsEntity:
                 self.pos[1] = entity_rect.y
                 self.velocity[1] = 0
                 break
+            else:
+                self.collisions['down'] = False
 
         self.pos[0] += self.velocity[0] * self.game.delta_time
         entity_rect.x = self.pos[0]
@@ -104,7 +107,7 @@ class PhysicsEntity:
             self.flip = False
         if self.velocity[0] < 0:
             self.flip = True
-
+            
         self.animation.update()
 
         #print(self.collisions)
@@ -121,6 +124,7 @@ class Player(PhysicsEntity):
         self.pos = pos
         self.world_mpos_raw = None #raw pixel location of cursor
         self.world_mpos_tile = None #for mining tiles and interacting with UI
+        self.set_animation('idle')
 
         self.jump_power = 3
 
