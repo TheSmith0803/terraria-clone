@@ -29,8 +29,6 @@ class Game:
 
         self.screen = pygame.display.set_mode(self.window_size)
         self.display = pygame.Surface(self.display_res)
-
-        self.clock = pygame.time.Clock()
         
         self.font = pygame.font.SysFont('Consolas', 15)
 
@@ -76,10 +74,10 @@ class Game:
         self.scroll = [0, 0]
         self.delta_time  = 0.0
 
+        self.clock = pygame.time.Clock()
         self.ui = UI(self,[img for img in self.inventory_assets.values()])
         self.inventory = Inventory(self, self.ui)
         self.player = Player(self, self.inventory, self.ui, self.tilemap, self.pos)
-        self.player.gravity = 0
         self.console = Console(self)
 
     def _tile(self, coords: tuple) -> str: #maybe ill use this?
@@ -90,16 +88,12 @@ class Game:
         count = 0
         while self.running:
             #calculate delta time
-            self.delta_time = self.clock.tick(60) / 16.667
+            self.delta_time = min(self.clock.tick(60) / 16.667, 3.0)
             self.scroll = [int(self.scroll[0]), int(self.scroll[1])]
             self.player.update(offset=self.scroll)
 
             #this is hacky af, but it works
             #keeps you from spawning in floor
-            if count < 5:
-                count += 1
-            else:
-                self.player.gravity = 0.1
 
             #locks the camera when world limit is reached
             if self.scroll[0] <= self.world.lh_world_lim and (self.player.rect().centerx - self.scroll[0]) < self.display.get_width() / 2:
