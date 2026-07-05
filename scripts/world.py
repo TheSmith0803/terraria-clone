@@ -41,16 +41,17 @@ class World:
             self.tilemap._autotile(tile, place=True)
         
         #stupid random terrain i guess
-        """y_min = min(y_vals_tiles)
+        amp = 4
+        y_min = min(y_vals_tiles)
         for x in x_vals_tiles:
-            rand_height = random.randint(0, 5)
+            rand_height = random.randint(0, 10)
             pos = self.tilemap.tile_map[f'{x};{y_min}']['pos']
             while rand_height != 0:
                 for num in range(rand_height):
-                    y = y_min - rand_height
+                    y = round(math.sin(y_min - rand_height))
                     self.tilemap.tile_map[f'{x};{y}'] = {'type': 'block', 'subtype': 'grass', 'variant': 0,'pos': (x*self.tilemap.tile_size, y*self.tilemap.tile_size),}
                     self.tilemap._autotile((x, y), place=True)
-                    rand_height -= 1"""
+                    rand_height -= 1
 
 
         self.lh_world_lim = min(x_vals)

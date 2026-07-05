@@ -29,7 +29,7 @@ class PhysicsEntity:
         self.flip = False
 
     def rect(self):
-        return pygame.Rect(*self.pos, *self.size)
+        return pygame.FRect(*self.pos, *self.size)
 
     def set_animation(self, action):
         if action != self.action:
@@ -90,7 +90,7 @@ class PhysicsEntity:
                 self.pos[0] = entity_rect.x
                 self.velocity[0] = 0
                 break
-        
+
         #this is to make sure you dont bounce back in the other direction if friction is high
         #must happen after above collision calculations
         if not self.moving[0] and self.collisions['down']:
@@ -107,12 +107,20 @@ class PhysicsEntity:
             self.flip = False
         if self.velocity[0] < 0:
             self.flip = True
+        
+        #just in case you are somehow flipped right up against a wall
+        if self.velocity[0] == 0 and self.collisions['left']:
+            self.flip = True
+        if self.velocity[1] == 0 and self.collisions['right']:
+            self.flip = False
             
         self.animation.update()
 
         #print(self.collisions)
     def render(self, surf, offset=(0, 0)):
-        surf.blit(pygame.transform.flip(self.animation.img(), self.flip, False), (self.pos[0] - offset[0], self.pos[1] - offset[1]))
+        screen_x = round(self.pos[0] - offset[0])
+        screen_y = round(self.pos[1] - offset[1])
+        surf.blit(pygame.transform.flip(self.animation.img(), self.flip, False), (screen_x, screen_y))
 
 class Player(PhysicsEntity):
     def __init__(self, game, inventory, ui, tilemap, pos):

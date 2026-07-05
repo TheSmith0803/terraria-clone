@@ -22,7 +22,7 @@ class Game:
         self.mixer = pygame.mixer.init()
 
         #these variables are for calculating cursor pos with scaling
-        self.window_size = (2560, 1440)
+        self.window_size = (1920, 1080)
         self.display_res = (self.window_size[0] / 2, self.window_size[1] / 2)
         self.x_res_ratio = self.window_size[0] / self.display_res[0]
         self.y_res_ratio = self.window_size[1] / self.display_res[1]  
@@ -89,11 +89,8 @@ class Game:
         while self.running:
             #calculate delta time
             self.delta_time = min(self.clock.tick(60) / 16.667, 3.0)
-            self.scroll = [int(self.scroll[0]), int(self.scroll[1])]
+            #self.scroll = [int(self.scroll[0]), int(self.scroll[1])]
             self.player.update(offset=self.scroll)
-
-            #this is hacky af, but it works
-            #keeps you from spawning in floor
 
             #locks the camera when world limit is reached
             if self.scroll[0] <= self.world.lh_world_lim and (self.player.rect().centerx - self.scroll[0]) < self.display.get_width() / 2:
@@ -115,8 +112,8 @@ class Game:
 
             self.display.fill((20, 100, 200))
             self.display.blit(self.assets['background'], (0,0))
-            self.tilemap.render_map(self.display, offset=render_scroll)
-            self.player.render(self.display, offset=render_scroll)
+            self.tilemap.render_map(self.display, offset=self.scroll)
+            self.player.render(self.display, offset=self.scroll)
 
             keys_pressed = pygame.key.get_pressed()
 
@@ -131,7 +128,7 @@ class Game:
                 if self.player.collisions['down']:
                     self.player.velocity[0] = max(-self.player.grip + self.player.velocity[0], -self.player.speed)
                 else:
-                    self.player.velocity[0] = max(-self.player.air_grip + self.player.velocity[0], -self.player.speed) 
+                    self.player.velocity[0] = max(-self.player.air_grip + self.player.velocity[0], -self.player.speed)
             if keys_pressed[K_d]:
                 if self.player.collisions['down']:
                     self.player.velocity[0] = min(self.player.grip + self.player.velocity[0], self.player.speed)
