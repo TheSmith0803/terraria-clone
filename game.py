@@ -23,7 +23,7 @@ class Game:
         self.mixer = pygame.mixer.init()
 
         #these variables are for calculating cursor pos with scaling
-        self.window_size = (1920, 1080)
+        self.window_size = (800, 800)
         self.display_res = (self.window_size[0] / 2, self.window_size[1] / 2)
         self.x_res_ratio = self.window_size[0] / self.display_res[0]
         self.y_res_ratio = self.window_size[1] / self.display_res[1]  
@@ -58,7 +58,8 @@ class Game:
             #'cursor': load_image(),
         }
 
-        self.assets['background'] = pygame.transform.scale_by(self.assets['background'], 0.5)
+        #figure out how to keep this visible but maintain aspect ratio
+        self.assets['background'] = pygame.transform.scale_by(self.assets['background'], (self.display.get_width() / self.assets['background'].get_width(), self.display.get_height() / self.assets['background'].get_height()))
 
         
         self.tilemap = Tilemap(self)
@@ -80,6 +81,7 @@ class Game:
         self.inventory = Inventory(self, self.ui)
         self.player = Player(self, self.inventory, self.ui, self.tilemap, self.pos)
         self.console = Console(self)
+        #self.player.speed, self.player.grip, self.player.friction = 10, 10, 10
 
     def _tile(self, coords: tuple) -> str: #maybe ill use this?
         return f"{coords[0]};{coords[1]}"
@@ -112,7 +114,8 @@ class Game:
             render_scroll = (int(self.scroll[0]), int(self.scroll[1]))
 
             self.display.fill((20, 100, 200))
-            self.display.blit(self.assets['background'], (0,0))
+            bg = self.display.blit(self.assets['background'], (-self.scroll[0] /3, -100))
+
             self.tilemap.render_map(self.display, offset=self.scroll)
             self.player.render(self.display, offset=self.scroll)
 
