@@ -77,8 +77,9 @@ class Game:
 
         self.clock = pygame.time.Clock()
         self.ui = UI(self,[img for img in self.inventory_assets.values()])
-        self.inventory = Inventory(self, self.ui)
-        self.player = Player(self, self.inventory, self.ui, self.tilemap, self.pos)
+        self.player_inventory = Inventory(self, self.ui)
+        self.player_inventory.open = False #only for player inventory maybe?
+        self.player = Player(self, self.player_inventory, self.ui, self.tilemap, self.pos)
         self.console = Console(self)
 
     def _tile(self, coords: tuple) -> str: #maybe ill use this?
@@ -136,10 +137,17 @@ class Game:
                 else:
                     self.player.velocity[0] = min(self.player.air_grip + self.player.velocity[0], self.player.speed)
 
-            if pygame.mouse.get_pressed()[0]:
-                self.player.mine_tile()
-            if pygame.mouse.get_pressed()[2]:
-                self.player.place_tile()
+            #player mouse logic if interacting with inventories
+            if self.player.inventory.open:
+                if pygame.mouse.get_just_pressed()[0]:
+                    pass
+                if pygame.mouse.get_just_pressed()[2]:
+                    pass
+            else:
+                if pygame.mouse.get_pressed()[0]:
+                    self.player.mine_tile()
+                if pygame.mouse.get_pressed()[2]:
+                    self.player.place_tile()
 
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
@@ -157,6 +165,9 @@ class Game:
                         self.player.velocity[1] = -self.player.jump_power
                         print("poop")
                     
+                    if event.key == K_TAB:
+                        self.player.inventory.open = not self.player.inventory.open
+
                     if event.key == K_o:
                         self.tilemap.save()
 
@@ -167,7 +178,7 @@ class Game:
             font_surf = self.font.render(f'Player pos\nX: {int(self.player.pos[0]) // self.tilemap.tile_size}\nY: {-int(self.player.pos[1]) // self.tilemap.tile_size}', False, (255,255,255))
             self.display.blit(font_surf, (10, 45))
             self.ui.render_hotbar(self.display)
-            self.inventory.render_contents(self.display)
+            self.player.inventory.render_contents(self.display)
             self.screen.blit(pygame.transform.scale(self.display, self.screen.get_size()), (0, 0))
             pygame.display.update()
             #print(self.delta_time)

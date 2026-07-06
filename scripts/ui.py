@@ -58,4 +58,12 @@ class UI:
             surf.blit(text_surf, text_rect)
             slot_num += 1
 
+    #press tab to open players personal inventory
+    def render_player_inventory(self, surf):
+        pass
+    
+    #will render in the inventory of anything else (chests mostly)
+    def render_misc_inventory(self, surf, inventory_obj):
+        pass
+
         
