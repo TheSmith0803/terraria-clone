@@ -193,7 +193,6 @@ class Player(PhysicsEntity):
 
         super().update()
         
-
     def render(self, surf, offset=(0, 0)):
         self.offset = offset
         super().render(surf, offset=offset)

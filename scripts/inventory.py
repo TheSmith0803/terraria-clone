@@ -10,8 +10,6 @@ class Inventory:
         self.size = 10
         self.contents = []
 
-        self.stack_size = 999
-
         for i in range(10):
             self.contents.append([Item(None, None), 0])
 
@@ -21,6 +19,7 @@ class Inventory:
             if self.contents[self.ui.selected].type == None:
                 return
         
+        #iterate over all items in hotbar/inventory to see if there are matching stacks
         elif isinstance(new_item, Block):
             for index, item in enumerate(self.contents):
                 if item[0].type == None:

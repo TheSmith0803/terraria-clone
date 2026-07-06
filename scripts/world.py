@@ -1,4 +1,5 @@
 import pygame, random, math
+from .objects import *
 
 """
 This class will be responsible for world generation,
@@ -11,7 +12,8 @@ class World:
         self.game = game
         self.tilemap = tilemap
         self.start_pos = (0, 0)
-        self.tiles = self.game.tiles
+
+        self.objects = []
 
         #tile size of world
         if map_size == 'small':
@@ -36,13 +38,11 @@ class World:
                 y_vals_tiles.append(y)
                 y_vals.append(y*self.tilemap.tile_size)
                 self.tilemap.tile_map[f"{x};{y}"] = {'type': 'block', 'subtype': 'grass', 'variant': 0,'pos': (x*self.tilemap.tile_size, y*self.tilemap.tile_size),}
-
-        for tile in self.tilemap:
-            self.tilemap._autotile(tile, place=True)
+                self.tilemap._autotile((x, y), place=True)
+            
         
         #stupid random terrain i guess
-        amp = 4
-        y_min = min(y_vals_tiles)
+        """y_min = min(y_vals_tiles)
         for x in x_vals_tiles:
             rand_height = random.randint(0, 10)
             pos = self.tilemap.tile_map[f'{x};{y_min}']['pos']
@@ -51,7 +51,7 @@ class World:
                     y = round(math.sin(y_min - rand_height))
                     self.tilemap.tile_map[f'{x};{y}'] = {'type': 'block', 'subtype': 'grass', 'variant': 0,'pos': (x*self.tilemap.tile_size, y*self.tilemap.tile_size),}
                     self.tilemap._autotile((x, y), place=True)
-                    rand_height -= 1
+                    rand_height -= 1"""
 
 
         self.lh_world_lim = min(x_vals)

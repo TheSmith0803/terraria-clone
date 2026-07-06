@@ -8,11 +8,12 @@ import os
 
 from scripts.world import World
 from scripts.tilemap import Tilemap
-from scripts.entities import PhysicsEntity, Player
+from scripts.entities import Player
 from scripts.ui import UI
 from scripts.inventory import Inventory
 from scripts.utilities import load_image, load_images, Animation
 from scripts.console import Console
+from scripts.objects import InteractableObjects, Chest
 
 class Game:
     def __init__(self):
