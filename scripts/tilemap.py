@@ -90,7 +90,6 @@ class Tilemap:
                 
                     if AUTOTILE_MAP[autotile] == 8 and self.tile_map[f'{tile[0]};{tile[1]}']['subtype'] == 'grass':
                         self.tile_map[f'{tile[0]};{tile[1]}']['subtype'] = 'dirt'
-                        print(self.tile_map[f'{tile[0]};{tile[1]}'])
 
 
     #will take in a tile coord string and remove that particular tile from the tilemap will handle tile sprite changes, same with the place tile
@@ -107,7 +106,7 @@ class Tilemap:
             removed_item = Block(BLOCK_TYPES[self.tile_map[remove_tile]['subtype']]['drop'], self.game.tiles[BLOCK_TYPES[self.tile_map[remove_tile]['subtype']]['drop']][self.tile_map[remove_tile]['variant']])
             self.tile_map.pop(remove_tile)
             self._autotile(world_tile_pos)
-            
+            print(removed_item)
             return removed_item
         else:
             return None

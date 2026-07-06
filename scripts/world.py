@@ -15,8 +15,8 @@ class World:
 
         #tile size of world
         if map_size == 'small':
-            #map_size = (1248, 208) 
-            map_size = (128, 64)
+            map_size = (1248, 208) 
+            #map_size = (128, 64)
         if map_size == 'medium':
             map_size = (2496, 800)
         if map_size == 'large':

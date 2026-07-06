@@ -1,5 +1,5 @@
 import pygame
-from .items import Item, Block, ITEM_TYPES
+from .items import Item, Block, ITEM_TYPES, BLOCK_TYPES
 
 TILE_TYPES = {'grass'}
 
@@ -15,21 +15,29 @@ class Inventory:
         for i in range(10):
             self.contents.append([Item(None, None), 0])
 
-    def update(self, new_item=None) -> Item | None:
+    def update(self, new_item=None):
         #add new item to inventory
         if new_item == None:
-            hotbar_index = self.ui.selected
             if self.contents[self.ui.selected].type == None:
                 return
-            else:
-                print(self.contents[self.ui.selected])
-
-                    
+        
+        elif isinstance(new_item, Block):
+            for index, item in enumerate(self.contents):
+                if item[0].type == None:
+                    self.contents[index] = [new_item, 1]
+                    break
+                elif item[0].stackable and new_item.subtype == self.contents[index][0].subtype and item[1] < BLOCK_TYPES[new_item.subtype]['stack limit']:
+                    print(item[0].subtype)
+                    self.contents[index][1] += 1
+                    break
+                else:
+                    continue
         else:
             for index, item in enumerate(self.contents):
                 if item[0].type == None:
                     self.contents[index] = [new_item, 1]
                     break
+                #for other items
                 elif item[0].stackable and item[0].type == self.contents[index][0].type and item[1] < self.stack_size:
                     self.contents[index][1] += 1
                     break
