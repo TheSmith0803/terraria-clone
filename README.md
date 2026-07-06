@@ -8,6 +8,11 @@ tasks to complete:
 - get command console working to some extent
 - make interactible objects (new door, make placeable, maybe make chest openable)
 
+- Make chests and chest inventories work!
+ - Need to make chests spawnable in some fashion, preferably owned by the world class
+ - Need to make chests interactable, by changing the function of the players right click action
+ - Need to add different game states (in inventory browser, or not, stuff like that)
+
 things to fix:
 - loading worlds is weird now because of world limits. either calc them on each start or store them in map file or something.
 
