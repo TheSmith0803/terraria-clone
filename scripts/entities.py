@@ -17,14 +17,14 @@ class PhysicsEntity:
         self.type = e_type
         self.action = ''
 
-        self.grip = 0.0700001
+        self.grip = 0.8
         self.air_grip = self.grip * 0.2
-        self.friction = 0.0301
-        self.deadzone = 0.05
-        self.speed = 1.0
+        self.friction = 0.8
+        self.deadzone = .5
+        self.speed = 50
         
-        self.gravity = 0.1
-        self.terminal_velocity = 4
+        self.gravity = 3
+        self.terminal_velocity = 160
 
         self.flip = False
 
@@ -134,7 +134,7 @@ class Player(PhysicsEntity):
         self.world_mpos_tile = None #for mining tiles and interacting with UI
         self.set_animation('idle')
 
-        self.jump_power = 3
+        self.jump_power = 140
         self.health = 100
         self.dead = False
         
@@ -194,8 +194,8 @@ class Player(PhysicsEntity):
             else:
                 self.fall_counter = 0
         
-        max_fall_dist = 32
-        self.fall_dmg_modifer = 0.15
+        max_fall_dist = 12000
+        self.fall_dmg_modifer = 0.001
         if self.fall_counter > max_fall_dist and self.collisions['down']:
             before = self.health
             self.health -= self.fall_counter * self.fall_dmg_modifer

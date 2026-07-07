@@ -98,9 +98,13 @@ class Game:
     def run(self):
         #game loop
         count = 0
+        prev_time = time.time()
         while self.running:
             #calculate delta time
-            self.delta_time = min(self.clock.tick(60) / 16.667, 3.0)
+            #self.delta_time = min(self.clock.tick(60) / 16.667, 3.0)
+            now = time.time()
+            self.delta_time = now - prev_time
+            prev_time = now 
             #self.scroll = [int(self.scroll[0]), int(self.scroll[1])]
             self.player.update(offset=self.scroll)#player must be updated before camera to avoid funny jittery bisuiness
             if self.player.dead:
