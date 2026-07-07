@@ -135,6 +135,10 @@ class Player(PhysicsEntity):
         self.set_animation('idle')
 
         self.jump_power = 3
+        self.health = 100
+        self.dead = False
+        
+        self.fall_counter = 0
 
         #get origin of tile map in order to generate an accurate tilemap for the cursor
         self.tile_pos_origin = None
@@ -184,6 +188,21 @@ class Player(PhysicsEntity):
         self.world_mpos_tile = [int((self.world_mpos_raw[0] - self.tile_pos_origin[0]) // self.tilemap.tile_size) + self.tile_key_origin[0], int((self.world_mpos_raw[1] - self.tile_pos_origin[1]) // self.tilemap.tile_size) + self.tile_key_origin[1]]
 
 
+        if not self.collisions['down']:
+            if self.velocity[1] == self.terminal_velocity:
+                self.fall_counter += self.velocity[1]
+            else:
+                self.fall_counter = 0
+        
+        max_fall_dist = 32
+        self.fall_dmg_modifer = 0.15
+        if self.fall_counter > max_fall_dist and self.collisions['down']:
+            before = self.health
+            self.health -= self.fall_counter * self.fall_dmg_modifer
+            self.health = round(self.health)
+            print(f'{before} - {self.fall_counter * self.fall_dmg_modifer} = {self.health}')
+            self.fall_counter = 0
+
         if self.velocity[0] == 0:
             self.set_animation('idle')
         if self.velocity[0] != 0 and self.collisions['down']:
@@ -191,6 +210,9 @@ class Player(PhysicsEntity):
         if not self.collisions['down']:
             self.animation.frame = 0
 
+        if self.health <= 0:
+            self.dead = True
+        
         super().update()
         
     def render(self, surf, offset=(0, 0)):

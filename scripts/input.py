@@ -10,6 +10,7 @@ class Input:
 
     def update(self):
         keys_pressed = pygame.key.get_pressed()
+        pygame.key.get_just_pressed
 
         #player clontrols
         if keys_pressed[K_a] or keys_pressed[K_d]:
@@ -45,7 +46,7 @@ class Input:
         if event.type == pygame.QUIT:
                 pygame.quit()
                 sys.exit()
-                self.running = False
+                self.game.running = False
 
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_ESCAPE:

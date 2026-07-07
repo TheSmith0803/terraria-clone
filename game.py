@@ -28,7 +28,7 @@ class Game:
         self.window_size = (800, 800)
         self.display_res = (self.window_size[0] / 2, self.window_size[1] / 2)
         self.x_res_ratio = self.window_size[0] / self.display_res[0]
-        self.y_res_ratio = self.window_size[1] / self.display_res[1]  
+        self.y_res_ratio = self.window_size[1] / self.display_res[1]
 
         self.screen = pygame.display.set_mode(self.window_size)
         self.display = pygame.Surface(self.display_res)
@@ -103,6 +103,11 @@ class Game:
             self.delta_time = min(self.clock.tick(60) / 16.667, 3.0)
             #self.scroll = [int(self.scroll[0]), int(self.scroll[1])]
             self.player.update(offset=self.scroll)#player must be updated before camera to avoid funny jittery bisuiness
+            if self.player.dead:
+                print('YOU DIED')
+                pygame.quit()
+                sys.exit()
+                self.running = False
 
             self.camera.update()#takes care of all the scroll code
 
