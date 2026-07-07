@@ -6,9 +6,11 @@ import sys
 import time
 import os
 
+from scripts.camera import Camera
 from scripts.world import World
 from scripts.tilemap import Tilemap
 from scripts.entities import Player
+from scripts.input import Input
 from scripts.ui import UI
 from scripts.inventory import Inventory
 from scripts.utilities import load_image, load_images, Animation
@@ -76,13 +78,19 @@ class Game:
         self.scroll = [0, 0]
         self.delta_time  = 0.0
 
-        self.clock = pygame.time.Clock()
+        
         self.ui = UI(self,[img for img in self.inventory_assets.values()])
         self.player_inventory = Inventory(self, self.ui)
         self.player_inventory.open = False #only for player inventory maybe?
         self.player = Player(self, self.player_inventory, self.ui, self.tilemap, self.pos)
+        self.inputs = Input(self, self.player)
+        self.entites = [] #will hold all active entities
+
+        self.camera = Camera(self, self.display, self.scroll, self.world, self.player, self.entites)
         self.console = Console(self)
         #self.player.speed, self.player.grip, self.player.friction = 10, 10, 10
+
+        self.clock = pygame.time.Clock()
 
     def _tile(self, coords: tuple) -> str: #maybe ill use this?
         return f"{coords[0]};{coords[1]}"
@@ -94,87 +102,20 @@ class Game:
             #calculate delta time
             self.delta_time = min(self.clock.tick(60) / 16.667, 3.0)
             #self.scroll = [int(self.scroll[0]), int(self.scroll[1])]
-            self.player.update(offset=self.scroll)
+            self.player.update(offset=self.scroll)#player must be updated before camera to avoid funny jittery bisuiness
 
-            #locks the camera when world limit is reached
-            if self.scroll[0] <= self.world.lh_world_lim and (self.player.rect().centerx - self.scroll[0]) < self.display.get_width() / 2:
-                self.scroll[0] = self.world.lh_world_lim 
-            elif self.scroll[0] >= self.world.rh_world_lim and (self.player.rect().centerx - self.scroll[0]) > self.display.get_width() / 2:
-                self.scroll[0] = self.world.rh_world_lim
-            else:
-                self.scroll[0] = (self.player.rect().centerx - self.display.get_width() / 2)
-            
-            #locks the camera when world limit is reached
-            if self.scroll[1] <= self.world.upr_world_lim and (self.player.rect().centery - self.scroll[1]) < self.display.get_height() / 2:
-                self.scroll[1] = self.world.upr_world_lim
-            elif self.scroll[1] >= self.world.lwr_world_lim and (self.player.rect().centery - self.scroll[1]) > self.display.get_height() / 2:
-                self.scroll[1] = self.world.lwr_world_lim
-            else:
-                self.scroll[1] = (self.player.rect().centery - self.display.get_height() / 2)
+            self.camera.update()#takes care of all the scroll code
 
             render_scroll = (int(self.scroll[0]), int(self.scroll[1]))
 
             self.display.fill((20, 100, 200))
             bg = self.display.blit(self.assets['background'], (-self.scroll[0] /3, -100))
-
             self.tilemap.render_map(self.display, offset=self.scroll)
             self.player.render(self.display, offset=self.scroll)
 
-            keys_pressed = pygame.key.get_pressed()
-
-            #player clontrols
-            if keys_pressed[K_a] or keys_pressed[K_d]:
-                self.player.moving[0] = True
-            else:
-                self.player.moving[0] = False
-
-            #player x axis logic
-            if keys_pressed[K_a]:
-                if self.player.collisions['down']:
-                    self.player.velocity[0] = max(-self.player.grip + self.player.velocity[0], -self.player.speed)
-                else:
-                    self.player.velocity[0] = max(-self.player.air_grip + self.player.velocity[0], -self.player.speed)
-            if keys_pressed[K_d]:
-                if self.player.collisions['down']:
-                    self.player.velocity[0] = min(self.player.grip + self.player.velocity[0], self.player.speed)
-                else:
-                    self.player.velocity[0] = min(self.player.air_grip + self.player.velocity[0], self.player.speed)
-
-            #player mouse logic if interacting with inventories
-            if self.player.inventory.open:
-                if pygame.mouse.get_just_pressed()[0]:
-                    pass
-                if pygame.mouse.get_just_pressed()[2]:
-                    pass
-            else:
-                if pygame.mouse.get_pressed()[0]:
-                    self.player.mine_tile()
-                if pygame.mouse.get_pressed()[2]:
-                    self.player.place_tile()
-
+            self.inputs.update()
             for event in pygame.event.get():
-                if event.type == pygame.QUIT:
-                    pygame.quit()
-                    sys.exit()
-                    self.running = False
-
-                if event.type == pygame.KEYDOWN:
-                    if event.key == pygame.K_ESCAPE:
-                        pygame.quit()
-                        sys.exit()
-                        self.running = False
-
-                    if event.key == K_w:
-                        self.player.velocity[1] = -self.player.jump_power
-                        print("poop")
-                    
-                    if event.key == K_TAB:
-                        self.player.inventory.open = not self.player.inventory.open
-
-                    if event.key == K_o:
-                        self.tilemap.save()
-
-                
+                self.inputs.update_events(event=event)                
                 self.ui.update(event=event)
                     
             #render ui stuff at the end of the fram
