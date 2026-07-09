@@ -17,13 +17,13 @@ class PhysicsEntity:
         self.type = e_type
         self.action = ''
 
-        self.grip = 0.8
-        self.air_grip = self.grip * 0.2
-        self.friction = 0.8
-        self.deadzone = .5
+        self.acceleration = 1
+        self.air_acceleration = self.acceleration * 0.2
+        self.friction = 1
+        self.deadzone = 5
         self.speed = 50
         
-        self.gravity = 3
+        self.gravity = 5
         self.terminal_velocity = 160
 
         self.flip = False
@@ -134,11 +134,12 @@ class Player(PhysicsEntity):
         self.world_mpos_tile = None #for mining tiles and interacting with UI
         self.set_animation('idle')
 
-        self.jump_power = 140
+        self.jump_power = 150
         self.health = 100
         self.dead = False
         
         self.fall_counter = 0
+        self.fall_damage = True
 
         #get origin of tile map in order to generate an accurate tilemap for the cursor
         self.tile_pos_origin = None
@@ -194,14 +195,16 @@ class Player(PhysicsEntity):
             else:
                 self.fall_counter = 0
         
-        max_fall_dist = 12000
-        self.fall_dmg_modifer = 0.001
-        if self.fall_counter > max_fall_dist and self.collisions['down']:
-            before = self.health
-            self.health -= self.fall_counter * self.fall_dmg_modifer
-            self.health = round(self.health)
-            print(f'{before} - {self.fall_counter * self.fall_dmg_modifer} = {self.health}')
-            self.fall_counter = 0
+        if self.fall_damage:
+            max_fall_dist = 6000
+            self.fall_dmg_modifer = 0.0015 
+            print(self.fall_counter)
+            if self.fall_counter > max_fall_dist and self.collisions['down']:
+                before = self.health
+                self.health -= self.fall_counter * self.fall_dmg_modifer
+                self.health = round(self.health)
+                print(f'{before} - {self.fall_counter * self.fall_dmg_modifer} = {self.health}')
+                self.fall_counter = 0
 
         if self.velocity[0] == 0:
             self.set_animation('idle')
@@ -212,6 +215,11 @@ class Player(PhysicsEntity):
 
         if self.health <= 0:
             self.dead = True
+        
+        if abs(self.velocity[0]) < self.deadzone and not self.moving[0]:
+            self.velocity[0] = 0
+        if abs(self.velocity[1]) < self.deadzone and not self.moving[1]:
+            self.velocity[1] = 0
         
         super().update()
         

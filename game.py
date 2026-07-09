@@ -39,7 +39,7 @@ class Game:
             #player sprite and animations for player
             'player': load_image('assets\\entities\\player.png'),
             'player\\idle': Animation(load_images('assets\\entities\\player\\idle'), img_dur=6),
-            'player\\run': Animation(load_images('assets\\entities\\player\\run'), img_dur=4)
+            'player\\run': Animation(load_images('assets\\entities\\player\\run'), img_dur=5)
         }
 
         self.inventory_assets = {
@@ -89,7 +89,6 @@ class Game:
         self.camera = Camera(self, self.display, self.scroll, self.world, self.player, self.entites)
         self.console = Console(self)
         #self.player.speed, self.player.grip, self.player.friction = 10, 10, 10
-
         self.clock = pygame.time.Clock()
 
     def _tile(self, coords: tuple) -> str: #maybe ill use this?
@@ -97,16 +96,13 @@ class Game:
 
     def run(self):
         #game loop
-        count = 0
-        prev_time = time.time()
         while self.running:
             #calculate delta time
-            #self.delta_time = min(self.clock.tick(60) / 16.667, 3.0)
-            now = time.time()
-            self.delta_time = now - prev_time
-            prev_time = now 
+            self.delta_time = self.clock.tick(60) / 1000.0
+            #print(self.delta_time)
             #self.scroll = [int(self.scroll[0]), int(self.scroll[1])]
             self.player.update(offset=self.scroll)#player must be updated before camera to avoid funny jittery bisuiness
+
             if self.player.dead:
                 print('YOU DIED')
                 pygame.quit()
@@ -134,11 +130,16 @@ class Game:
             self.player.inventory.render_contents(self.display)
             self.screen.blit(pygame.transform.scale(self.display, self.screen.get_size()), (0, 0))
             pygame.display.update()
-            #print(self.delta_time)
-            pygame.display.set_caption(
-                f"FPS: {self.clock.get_fps():.1f}"
-            )
 
+            #fps timer
+            #frame_ratio = 60 / (1/self.delta_time)
+            
+            #print(frame_ratio)
+            pygame.display.set_caption(
+                f"FPS: {1 / self.delta_time:.2f}"
+            )
+            #if not frame_ratio > 1:
+            #this is really dumb and wont work on every system
             #print(self.player.velocity, self.player.pos)
             #print(self.player.velocity)
             #print(self.player.pos)

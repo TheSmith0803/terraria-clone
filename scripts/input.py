@@ -21,14 +21,14 @@ class Input:
         #player x axis logic
         if keys_pressed[K_a]:
             if self.player.collisions['down']:
-                self.player.velocity[0] = max(-self.player.grip + self.player.velocity[0], -self.player.speed)
+                self.player.velocity[0] = max(-self.player.acceleration + self.player.velocity[0], -self.player.speed)
             else:
-                self.player.velocity[0] = max(-self.player.air_grip + self.player.velocity[0], -self.player.speed)
+                self.player.velocity[0] = max(-self.player.air_acceleration + self.player.velocity[0], -self.player.speed)
         if keys_pressed[K_d]:
             if self.player.collisions['down']:
-                self.player.velocity[0] = min(self.player.grip + self.player.velocity[0], self.player.speed)
+                self.player.velocity[0] = min(self.player.acceleration + self.player.velocity[0], self.player.speed)
             else:
-                self.player.velocity[0] = min(self.player.air_grip + self.player.velocity[0], self.player.speed)
+                self.player.velocity[0] = min(self.player.air_acceleration + self.player.velocity[0], self.player.speed)
 
         #player mouse logic if interacting with inventories
         if self.player.inventory.open:
