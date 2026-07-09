@@ -1,5 +1,5 @@
 import pygame
-import json, random, orjson
+import json, random, orjson, pickle
 import os
 
 from .items import Item, Block, BLOCK_TYPES, ORE_TYPES
@@ -54,8 +54,10 @@ class Tilemap:
         tiles_around = []
         for adjacent_tile in offsets:
             if str(int(pos[0] // self.tile_size) + adjacent_tile[0]) + ";" + str(int(pos[1] // self.tile_size) + adjacent_tile[1]) in self.tile_map:
-                tiles_around.append(pygame.Rect(self.tile_map[str(int(pos[0] // self.tile_size) + adjacent_tile[0]) + ";" + str(int(pos[1] // self.tile_size) + adjacent_tile[1])]['pos'], (self.tile_size, self.tile_size)))
+                rect = pygame.Rect(self.tile_map[str(int(pos[0] // self.tile_size) + adjacent_tile[0]) + ";" + str(int(pos[1] // self.tile_size) + adjacent_tile[1])]['pos'], (self.tile_size, self.tile_size))
+                tiles_around.append(rect)
         return tiles_around
+    
 
     #this is just to check the surrounding tiles on a tilemap change, for both placement and removal
     def _block_type_check(self, tile):
@@ -157,16 +159,16 @@ class Tilemap:
     def generate_map(self):
         pass
 
-    def save(self, filepath=r'map.json'):
-        json_bytes = orjson.dumps(self.tile_map)
+    def save(self, filepath=r'map.bin'):
+        bytes = pickle.dumps(self.tile_map)
         with open(filepath, "wb") as f:
-            f.write(json_bytes)
+            f.write(bytes)
     
-    def load(self, filepath=r'map.json'):
+    def load(self, filepath=r'map.bin'):
         if os.path.exists(filepath):
             with open(filepath, 'rb') as f:
                 file = f.read()
-                self.tile_map = orjson.loads(file)
+                self.tile_map = pickle.loads(file)
             return True
         else:
             return False

@@ -4,8 +4,9 @@ import sys
 
 
 class Input:
-    def __init__(self, game, player):
+    def __init__(self, game, tilemap, player):
         self.game = game
+        self.tilemap = tilemap
         self.player = player
 
     def update(self):

@@ -67,8 +67,28 @@ class Game:
         self.tilemap = Tilemap(self)
         self.world = World(self, 'small', self.tilemap)
         self.world_size_pix = (self.world.map_size[0] * self.tilemap.tile_size, self.world.map_size[1] * self.tilemap.tile_size)
-        print(self.world_size_pix)
-        self.world.generate_world()
+        
+        success = self.tilemap.load()
+        if success:
+            print('loading world')
+            x = []
+            y = []
+            for tile in self.tilemap.tile_map:
+                tile = tile.split(';')
+                x.append(int(tile[0]))
+                y.append(int(tile[1]))
+                x_min, y_min, x_max, y_max = min(x), min(y), max(x), max(y)
+                
+            self.world.lh_world_lim = self.tilemap.tile_map[f'{x_min};{y_min}']['pos'][0]
+            self.world.rh_world_lim = self.tilemap.tile_map[f'{x_max};{y_min}']['pos'][0] + self.tilemap.tile_size - self.display.get_width()
+            self.world.upr_world_lim = self.tilemap.tile_map[f'{x_min};{y_min}']['pos'][1] - 1200
+            self.world.lwr_world_lim = self.tilemap.tile_map[f'{x_min};{y_max}']['pos'][1] + self.tilemap.tile_size - self.display.get_height()
+            print(self.world.lh_world_lim, self.world.rh_world_lim, self.world.upr_world_lim, self.world.lwr_world_lim)
+                              
+        else:
+            print('generating world')
+            self.world.generate_world()
+            print(self.world.lh_world_lim, self.world.rh_world_lim, self.world.upr_world_lim, self.world.lwr_world_lim)
 
         self.running = True
 
@@ -76,14 +96,12 @@ class Game:
         self.movement = [False, False]
 
         self.scroll = [0, 0]
-        self.delta_time  = 0.0
-
         
         self.ui = UI(self,[img for img in self.inventory_assets.values()])
         self.player_inventory = Inventory(self, self.ui)
         self.player_inventory.open = False #only for player inventory maybe?
         self.player = Player(self, self.player_inventory, self.ui, self.tilemap, self.pos)
-        self.inputs = Input(self, self.player)
+        self.inputs = Input(self, self.tilemap, self.player)
         self.entites = [] #will hold all active entities
 
         self.camera = Camera(self, self.display, self.scroll, self.world, self.player, self.entites)
@@ -101,10 +119,7 @@ class Game:
         prev_time = time.time()
         while self.running:
             #calculate delta time
-            #self.delta_time = min(self.clock.tick(60) / 16.667, 3.0)
-            now = time.time()
-            self.delta_time = now - prev_time
-            prev_time = now 
+            self.delta_time = self.clock.tick(60) / 1000.0
             #self.scroll = [int(self.scroll[0]), int(self.scroll[1])]
             self.player.update(offset=self.scroll)#player must be updated before camera to avoid funny jittery bisuiness
             if self.player.dead:
@@ -132,12 +147,18 @@ class Game:
             self.display.blit(font_surf, (10, 45))
             self.ui.render_hotbar(self.display)
             self.player.inventory.render_contents(self.display)
+            for rect in self.tilemap.physics_rects_around(self.player.pos):
+                rect.x -= self.scroll[0]
+                rect.y -= self.scroll[1]
+                pygame.draw.rect(self.display, (255, 0, 0), rect)
             self.screen.blit(pygame.transform.scale(self.display, self.screen.get_size()), (0, 0))
             pygame.display.update()
             #print(self.delta_time)
             pygame.display.set_caption(
                 f"FPS: {self.clock.get_fps():.1f}"
             )
+            
+            
 
             #print(self.player.velocity, self.player.pos)
             #print(self.player.velocity)
