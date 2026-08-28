@@ -197,8 +197,7 @@ class Player(PhysicsEntity):
         
         if self.fall_damage:
             max_fall_dist = 6000
-            self.fall_dmg_modifer = 0.0015 
-            print(self.fall_counter)
+            self.fall_dmg_modifer = 0.0015
             if self.fall_counter > max_fall_dist and self.collisions['down']:
                 before = self.health
                 self.health -= self.fall_counter * self.fall_dmg_modifer
@@ -226,12 +225,22 @@ class Player(PhysicsEntity):
     def render(self, surf, offset=(0, 0)):
         self.offset = offset
         super().render(surf, offset=offset)
-        
-
-
 
 class NPC(PhysicsEntity):
-    pass
+    def __init__(self, game, tilemap, e_name, inventory, pos):
+        super().__init__(game, tilemap, e_name, game.entities[e_name], pos, game.entities[e_name].get_size())
+        self.game = game
+        self.tilemap = tilemap
+        self.entity_name = e_name
+        self.inventory = inventory
+        self.pos = pos
+        
 
 class Enemy(PhysicsEntity):
-    pass
+    def __init__(self, game, tilemap, e_name, inventory, pos):
+        super().__init__(game, tilemap, e_name, game.entities[e_name], pos, game.entities[e_name].get_size())
+        self.game = game
+        self.tilemap = tilemap
+        self.entity_name = e_name
+        self.inventory = inventory
+        self.pos = pos

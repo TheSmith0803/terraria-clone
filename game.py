@@ -16,6 +16,7 @@ from scripts.inventory import Inventory
 from scripts.utilities import load_image, load_images, Animation
 from scripts.console import Console
 from scripts.objects import InteractableObjects, Chest
+from scripts.debugger import Debugger
 
 class Game:
     def __init__(self):
@@ -106,6 +107,7 @@ class Game:
 
         self.camera = Camera(self, self.display, self.scroll, self.world, self.player, self.entites)
         self.console = Console(self)
+        self.debugger = Debugger(self)
         #self.player.speed, self.player.grip, self.player.friction = 10, 10, 10
         self.clock = pygame.time.Clock()
 
@@ -145,10 +147,7 @@ class Game:
             self.display.blit(font_surf, (10, 45))
             self.ui.render_hotbar(self.display)
             self.player.inventory.render_contents(self.display)
-            for rect in self.tilemap.physics_rects_around(self.player.pos):
-                rect.x -= self.scroll[0]
-                rect.y -= self.scroll[1]
-                pygame.draw.rect(self.display, (255, 0, 0), rect)
+            #self.debugger.render_collision_boxes()
             self.screen.blit(pygame.transform.scale(self.display, self.screen.get_size()), (0, 0))
             pygame.display.update()
             #print(self.delta_time)
