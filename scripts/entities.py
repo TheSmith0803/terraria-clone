@@ -2,6 +2,7 @@ import pygame
 
 from .physics import swept_aabb
 from .items import *
+from .inventory import Inventory
 
 class PhysicsEntity:
     def __init__(self, game, tilemap, e_type, img, pos, size):
@@ -123,11 +124,12 @@ class PhysicsEntity:
         surf.blit(pygame.transform.flip(self.animation.img(), self.flip, False), (screen_x, screen_y))
 
 class Player(PhysicsEntity):
-    def __init__(self, game, inventory, ui, tilemap, pos):
+    def __init__(self, game, ui, tilemap, pos):
         super().__init__(game, tilemap, 'player', game.entities['player'], pos, game.entities['player'].get_size())
         self.game = game
-        self.inventory = inventory
         self.ui = ui
+        self.inventory = Inventory(game, self.ui)
+        self.inventory.open = False
         self.tilemap = tilemap
         self.pos = pos
         self.world_mpos_raw = None #raw pixel location of cursor
@@ -197,8 +199,9 @@ class Player(PhysicsEntity):
         
         if self.fall_damage:
             max_fall_dist = 6000
-            self.fall_dmg_modifer = 0.0015
+            self.fall_dmg_modifer = 0.0022
             if self.fall_counter > max_fall_dist and self.collisions['down']:
+                
                 before = self.health
                 self.health -= self.fall_counter * self.fall_dmg_modifer
                 self.health = round(self.health)
@@ -219,6 +222,9 @@ class Player(PhysicsEntity):
             self.velocity[0] = 0
         if abs(self.velocity[1]) < self.deadzone and not self.moving[1]:
             self.velocity[1] = 0
+
+        if self.health < 0:
+            self.health = 0
         
         super().update()
         

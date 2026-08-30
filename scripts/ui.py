@@ -4,13 +4,19 @@ class UI:
     def __init__(self, game, images):
         self.game = game
         self.images = images
-        for img in self.images:
-            img.set_alpha(150)
+        self.images[0].set_alpha(150)
+        self.images[1].set_alpha(150)
+        
         self.x_offset = 8
         self.y_offset = 10
-        self.pos = (self.x_offset, self.y_offset)
-        self.spacing = 35 #space between each inventory slot
-        self.hotbar_positions = [x * self.spacing for x in range(10)] #individual positions for hotbar
+        self.hotbar_origin = (self.x_offset, self.y_offset)
+        self.hotbar_spacing = 35 #space between each inventory slot
+        self.hotbar_positions = [x * self.hotbar_spacing for x in range(10)] #individual positions for hotbar
+
+        self.amt_hearts = 5
+        self.healthbar_spacing = 15
+        self.healthbar_origin = (self.game.display.get_width() - self.healthbar_spacing * self.amt_hearts - 10, 10)
+        self.healthbar_positions = [x * self.healthbar_spacing for x in range(self.amt_hearts)]
 
         self.selected = 0
 
@@ -40,23 +46,35 @@ class UI:
             if event.key == pygame.K_0:
                 self.selected = 9
         #updates to player inventory
+        #inventory = self.game.player.inventory
 
-        inventory = self.game.player.inventory
         #updates to world container inventories
 
     def render_hotbar(self, surf):
         slot_num = 1
         for pos in self.hotbar_positions:
             if self.selected + 1 == slot_num:
-                surf.blit(pygame.transform.scale_by(self.images[1], 2), (self.pos[0] + pos, self.pos[1]))
+                surf.blit(pygame.transform.scale_by(self.images[1], 2), (self.hotbar_origin[0] + pos, self.hotbar_origin[1]))
             else:
-                surf.blit(pygame.transform.scale_by(self.images[0], 2), (self.pos[0] + pos, self.pos[1]))
+                surf.blit(pygame.transform.scale_by(self.images[0], 2), (self.hotbar_origin[0] + pos, self.hotbar_origin[1]))
             font = pygame.font.SysFont('Consolas', 8)
             text_surf = font.render(str(slot_num), True, (255, 255, 255))
             text_rect = text_surf.get_rect()
-            text_rect.topleft = (self.pos[0] + pos + 3, self.pos[1] + 3)
+            text_rect.topleft = (self.hotbar_origin[0] + pos + 3, self.hotbar_origin[1] + 3)
             surf.blit(text_surf, text_rect)
             slot_num += 1
+
+    def render_healthbar(self, surf):
+        health = self.game.player.health
+        for index, pos in enumerate(self.healthbar_positions):
+            heart_num = index + 1
+            max_health = 20 * heart_num
+            if health >= max_health:
+                surf.blit(self.images[2], (self.healthbar_origin[0] + pos, self.healthbar_origin[1]))
+            elif health <= max_health - 10 and health > max_health - 20:
+                surf.blit(self.images[3], (self.healthbar_origin[0] + pos, self.healthbar_origin[1]))
+            elif health <= max_health - 20:
+                surf.blit(self.images[4], (self.healthbar_origin[0] + pos, self.healthbar_origin[1]))
 
     #press tab to open players personal inventory
     def render_player_inventory(self, surf):

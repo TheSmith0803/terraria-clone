@@ -47,11 +47,11 @@ class Inventory:
                 if item[1] == 0:
                     self.contents[index][0] = Item(None, None)  
                 if item[0].type in ITEM_TYPES and item[0].subtype != None:
-                    surf.blit(pygame.transform.scale_by(self.game.tiles[item[0].subtype][15], 0.75), (self.ui.pos[0] + self.ui.hotbar_positions[index] + (self.game.inventory_assets['slot'].get_width() / 2 + 1), self.ui.pos[1] + (self.game.inventory_assets['slot'].get_height() / 2 + 1)))
+                    surf.blit(pygame.transform.scale_by(self.game.tiles[item[0].subtype][15], 0.75), (self.ui.hotbar_origin[0] + self.ui.hotbar_positions[index] + (self.game.ui_assets['slot'].get_width() / 2 + 1), self.ui.hotbar_origin[1] + (self.game.ui_assets['slot'].get_height() / 2 + 1)))
                     font = pygame.font.SysFont('Consolas', 8)
                     text_surf = font.render(str(item[1]), True, (255, 255, 255))
                     text_rect = text_surf.get_rect()
                     hotbar_offset = (self.ui.hotbar_positions[index] + self.ui.x_offset, self.ui.y_offset)
-                    text_rect.bottomright = (self.ui.pos[0] + hotbar_offset[0] + self.game.inventory_assets['slot'].get_width() + 5, self.ui.pos[1] + hotbar_offset[1] + self.game.inventory_assets['slot'].get_height() + 5)
+                    text_rect.bottomright = (self.ui.hotbar_origin[0] + hotbar_offset[0] + self.game.ui_assets['slot'].get_width() + 5, self.ui.hotbar_origin[1] + hotbar_offset[1] + self.game.ui_assets['slot'].get_height() + 5)
                     surf.blit(text_surf, text_rect)
                       

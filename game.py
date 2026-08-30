@@ -26,7 +26,7 @@ class Game:
         self.mixer = pygame.mixer.init()
 
         #these variables are for calculating cursor pos with scaling
-        self.window_size = (800, 800)
+        self.window_size = (1480, 960)
         self.display_res = (self.window_size[0] / 2, self.window_size[1] / 2)
         self.x_res_ratio = self.window_size[0] / self.display_res[0]
         self.y_res_ratio = self.window_size[1] / self.display_res[1]
@@ -43,9 +43,12 @@ class Game:
             'player\\run': Animation(load_images('assets\\entities\\player\\run'), img_dur=5)
         }
 
-        self.inventory_assets = {
+        self.ui_assets = {
             'slot': load_image('assets\\ui\\inventory-slot.png'),
-            'selected-slot': load_image('assets\\ui\\inventory-slot-selected.png')
+            'selected-slot': load_image('assets\\ui\\inventory-slot-selected.png'),
+            'full-heart': load_image('assets\\ui\\full-heart.png'),
+            'half-heart': load_image('assets\\ui\\half-heart.png'),
+            'empty-heart': load_image('assets\\ui\\empty-heart.png'),
         }
 
         self.tiles = {
@@ -98,10 +101,8 @@ class Game:
 
         self.scroll = [0, 0]
         
-        self.ui = UI(self,[img for img in self.inventory_assets.values()])
-        self.player_inventory = Inventory(self, self.ui)
-        self.player_inventory.open = False #only for player inventory maybe?
-        self.player = Player(self, self.player_inventory, self.ui, self.tilemap, self.pos)
+        self.ui = UI(self,[img for img in self.ui_assets.values()])
+        self.player = Player(self, self.ui, self.tilemap, self.pos)
         self.inputs = Input(self, self.tilemap, self.player)
         self.entites = [] #will hold all active entities
 
@@ -122,6 +123,7 @@ class Game:
             #self.scroll = [int(self.scroll[0]), int(self.scroll[1])]
             self.player.update(offset=self.scroll)#player must be updated before camera to avoid funny jittery bisuiness
 
+            #goofy player death
             if self.player.dead:
                 print('YOU DIED')
                 pygame.quit()
@@ -146,6 +148,7 @@ class Game:
             font_surf = self.font.render(f'Player pos\nX: {int(self.player.pos[0]) // self.tilemap.tile_size}\nY: {-int(self.player.pos[1]) // self.tilemap.tile_size}', False, (255,255,255))
             self.display.blit(font_surf, (10, 45))
             self.ui.render_hotbar(self.display)
+            self.ui.render_healthbar(self.display)
             self.player.inventory.render_contents(self.display)
             #self.debugger.render_collision_boxes()
             self.screen.blit(pygame.transform.scale(self.display, self.screen.get_size()), (0, 0))
