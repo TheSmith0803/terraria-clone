@@ -64,4 +64,14 @@ class Input:
 
             if event.key == K_o:
                 self.tilemap.save()
+
+            if event.key == K_v:
+                self.player.health_cap += 20
+                self.player.ui.amt_hearts += 1
+                print(self.player.health)
+
+            if event.key == K_c:
+                self.player.health_cap -= 20
+                self.player.ui.amt_hearts -= 1
+                print(self.player.health)
             

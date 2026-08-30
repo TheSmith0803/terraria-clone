@@ -137,6 +137,8 @@ class Player(PhysicsEntity):
         self.set_animation('idle')
 
         self.jump_power = 150
+
+        self.health_cap = self.ui.amt_hearts * 20
         self.health = 100
         self.dead = False
         
@@ -180,6 +182,12 @@ class Player(PhysicsEntity):
         pass
 
     def update(self, offset):
+        
+        if self.health < self.health_cap:
+            if self.game.frames % 90 == 0:
+                self.health += 1
+                print(self.health)
+
         
         mpos = list(pygame.mouse.get_pos())
         if mpos[0] != 0:

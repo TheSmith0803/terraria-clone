@@ -65,14 +65,18 @@ class UI:
             slot_num += 1
 
     def render_healthbar(self, surf):
+        self.healthbar_positions = [x * self.healthbar_spacing for x in range(self.amt_hearts)]
+        self.healthbar_origin = (self.game.display.get_width() - self.healthbar_spacing * self.amt_hearts - 10, 10)
         health = self.game.player.health
         for index, pos in enumerate(self.healthbar_positions):
             heart_num = index + 1
             max_health = 20 * heart_num
-            if health >= max_health:
+            if health >= max_health or health > max_health - 10:
                 surf.blit(self.images[2], (self.healthbar_origin[0] + pos, self.healthbar_origin[1]))
+                continue
             elif health <= max_health - 10 and health > max_health - 20:
                 surf.blit(self.images[3], (self.healthbar_origin[0] + pos, self.healthbar_origin[1]))
+                continue
             elif health <= max_health - 20:
                 surf.blit(self.images[4], (self.healthbar_origin[0] + pos, self.healthbar_origin[1]))
 
