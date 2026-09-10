@@ -12,6 +12,7 @@ from scripts.tilemap import Tilemap
 from scripts.entities import Player
 from scripts.input import Input
 from scripts.ui import UI
+from scripts.background import Background
 from scripts.inventory import Inventory
 from scripts.utilities import load_image, load_images, Animation
 from scripts.console import Console
@@ -61,13 +62,16 @@ class Game:
         
         #everything else lol
         self.assets = {
-            'background': load_image('assets\\shitty-background.png'),
             'chest': load_image('assets\\chests\\chest-regular.png'),
             #'cursor': load_image(),
         }
 
+        self.backgrounds = {
+            'forest': load_image('assets\\forest-background.png')
+        }
+
         #figure out how to keep this visible but maintain aspect ratio
-        self.assets['background'] = pygame.transform.scale_by(self.assets['background'], (self.display.get_width() / self.assets['background'].get_width(), self.display.get_height() / self.assets['background'].get_height()))
+        self.backgrounds['forest'] = pygame.transform.scale_by(self.backgrounds['forest'], (self.display.get_width() / self.backgrounds['forest'].get_width(), self.display.get_height() / self.backgrounds['forest'].get_height()))
 
         
         self.tilemap = Tilemap(self)
@@ -104,6 +108,7 @@ class Game:
         self.scroll = [0, 0]
         
         self.ui = UI(self,[img for img in self.ui_assets.values()])
+        self.background = Background(self, 'forest')
         self.player = Player(self, self.ui, self.tilemap, self.pos)
         self.inputs = Input(self, self.tilemap, self.player)
         self.entites = [] #will hold all active entities
@@ -141,7 +146,7 @@ class Game:
             render_scroll = (int(self.scroll[0]), int(self.scroll[1]))
 
             self.display.fill((20, 100, 200))
-            bg = self.display.blit(self.assets['background'], (-self.scroll[0] /3, -100))
+            self.background.render_background()
             self.tilemap.render_map(self.display, offset=self.scroll)
             self.player.render(self.display, offset=self.scroll)
 
