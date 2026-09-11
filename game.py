@@ -67,11 +67,15 @@ class Game:
         }
 
         self.backgrounds = {
-            'forest': load_image('assets\\forest-background.png')
+            'forest': {
+                'pine-background': load_image('assets\\background\\forest\\pine-background.png'),
+                'pine-midground': load_image('assets\\background\\forest\\pine-midground.png'),
+                'pine-foreground': load_image('assets\\background\\forest\\pine-foreground.png'),
+            },
         }
 
         #figure out how to keep this visible but maintain aspect ratio
-        self.backgrounds['forest'] = pygame.transform.scale_by(self.backgrounds['forest'], (self.display.get_width() / self.backgrounds['forest'].get_width(), self.display.get_height() / self.backgrounds['forest'].get_height()))
+        #self.backgrounds['forest'] = pygame.transform.scale_by(self.backgrounds['forest'][], (self.display.get_width() / self.backgrounds['forest'].get_width(), self.display.get_height() / self.backgrounds['forest'].get_height()))
 
         
         self.tilemap = Tilemap(self)
