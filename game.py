@@ -71,6 +71,7 @@ class Game:
                 'pine-background': load_image('assets\\background\\forest\\pine-background.png'),
                 'pine-midground': load_image('assets\\background\\forest\\pine-midground.png'),
                 'pine-foreground': load_image('assets\\background\\forest\\pine-foreground.png'),
+                'parralax-mod': 8,
             },
         }
 
