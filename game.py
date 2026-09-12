@@ -34,8 +34,6 @@ class Game:
 
         self.screen = pygame.display.set_mode(self.window_size)
         self.display = pygame.Surface(self.display_res)
-
-        self.frames = 1
         
         self.font = pygame.font.SysFont('Consolas', 15)
 
@@ -131,9 +129,6 @@ class Game:
         #game loop
         while self.running:
             #frame ticker for stuffs sometimes
-            self.frames += 1
-            if self.frames > 1000000:
-                self.frames = 1
             #calculate delta time
             self.delta_time = self.clock.tick(60) / 1000.0
             #self.scroll = [int(self.scroll[0]), int(self.scroll[1])]

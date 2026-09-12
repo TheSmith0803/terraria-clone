@@ -140,6 +140,8 @@ class Player(PhysicsEntity):
 
         self.health_cap = self.ui.amt_hearts * 20
         self.health = 100
+        self.health_regen_rate = 90
+        self.frames = 1 #for spacing out heath regen
         self.dead = False
         
         self.fall_counter = 0
@@ -182,12 +184,16 @@ class Player(PhysicsEntity):
         pass
 
     def update(self, offset):
+        #health regen
         
         if self.health < self.health_cap:
-            if self.game.frames % 90 == 0:
+            self.frames += 1
+            if self.frames % self.health_regen_rate == 0: # 90 frames (every second and a half)
                 self.health += 1
                 print(self.health)
 
+        if self.frames > 100000:
+            self.frames = 1
         
         mpos = list(pygame.mouse.get_pos())
         if mpos[0] != 0:

@@ -41,6 +41,7 @@ class Inventory:
                     self.contents[index][1] += 1
                     break
 
+    #specific to the player                
     def render_contents(self, surf):
         for index, item in enumerate(self.contents):
             if item[0].type != None: #item[0] contains item obj, item[1] is just the quanity of that item
