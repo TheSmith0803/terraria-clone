@@ -69,7 +69,7 @@ class Game:
                 'pine-background': load_image('assets\\background\\forest\\pine-background.png'),
                 'pine-midground': load_image('assets\\background\\forest\\pine-midground.png'),
                 'pine-foreground': load_image('assets\\background\\forest\\pine-foreground.png'),
-                'parralax-mod': 8,
+                'parallax-mod': 8,
             },
         }
 
@@ -144,8 +144,10 @@ class Game:
             self.camera.update()#takes care of all the scroll code
 
             render_scroll = (int(self.scroll[0]), int(self.scroll[1]))
-
-            self.display.fill((20, 100, 200))
+            print(f'PLAYER POS: {self.player.pos[0] // self.tilemap.tile_size}, {self.player.pos[1] // self.tilemap.tile_size}')
+            self.display.fill((min(max(0, 20 + self.player.pos[1] // 6), 255),
+                               min(max(0, 100 + self.player.pos[1] // 6), 255),
+                               min(max(0, 200 + self.player.pos[1] // 6), 255)))
             self.background.render_background()
             self.tilemap.render_map(self.display, offset=self.scroll)
             self.player.render(self.display, offset=self.scroll)
