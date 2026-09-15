@@ -159,16 +159,14 @@ class Tilemap:
     def generate_map(self):
         pass
 
-    def save(self, filepath=r'map.bin'):
-        bytes = pickle.dumps(self.tile_map)
-        with open(filepath, "wb") as f:
-            f.write(bytes)
+    def save(self, filepath=r'map.json'):
+        with open(filepath, "w") as f:
+            json.dump(self.tile_map, f)
     
-    def load(self, filepath=r'map.bin'):
+    def load(self, filepath=r'map.json'):
         if os.path.exists(filepath):
-            with open(filepath, 'rb') as f:
-                file = f.read()
-                self.tile_map = pickle.loads(file)
+            with open(filepath, 'r') as f:
+                self.tile_map = json.load(f)
             return True
         else:
             return False
