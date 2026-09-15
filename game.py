@@ -69,7 +69,8 @@ class Game:
                 'pine-background': load_image('assets\\background\\forest\\pine-background.png'),
                 'pine-midground': load_image('assets\\background\\forest\\pine-midground.png'),
                 'pine-foreground': load_image('assets\\background\\forest\\pine-foreground.png'),
-                'parallax-mod': 8,
+                'parallax-mod-x': 8,
+                'parallax-mod-y': 2,
             },
         }
 
