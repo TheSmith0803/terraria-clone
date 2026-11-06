@@ -14,7 +14,7 @@ BLOCK_TYPES = {
         'autotile': True,
         'stackable': True,
         'stack limit': 999,
-        'hardness': 1,
+        'hardness': 2,
         'tools': {'hand', 'pickaxe'}
     },
     'dirt': {
@@ -22,7 +22,7 @@ BLOCK_TYPES = {
         'autotile': True,
         'stackable': True,
         'stack limit': 999,
-        'hardness': 1,
+        'hardness': 2,
         'tools': {'hand', 'pickaxe'}
     },
     'stone': {
@@ -30,7 +30,7 @@ BLOCK_TYPES = {
         'autotile': True,
         'stackable': True,
         'stack limit': 999,
-        'hardness': 2,
+        'hardness': 5,
         'tools': {'pickaxe'}
     },
     'wood' : {
@@ -38,7 +38,7 @@ BLOCK_TYPES = {
         'autotile': True,
         'stackable': True,
         'stack limit': 999,
-        'hardness': 2,
+        'hardness': 3,
         'tools': {'axe'}
     }
 }
