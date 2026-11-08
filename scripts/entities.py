@@ -151,8 +151,8 @@ class Player(PhysicsEntity):
         self.tile_pos_origin = None
         self.tile_key_origin = None
 
-        for coord in self.tilemap.tile_map.keys():
-            self.tile_pos_origin = self.tilemap.tile_map[coord]['pos']
+        for coord in self.tilemap.tile_map["tiles"].keys():
+            self.tile_pos_origin = self.tilemap.tile_map["tiles"][coord]['pos']
             self.tile_key_origin = coord.split(';')
             self.tile_key_origin[0] = int(self.tile_key_origin[0])
             self.tile_key_origin[1] = int(self.tile_key_origin[1])

@@ -25,19 +25,18 @@ class World:
             map_size = (5000, 1200)
         self.map_size = map_size
 
-    #generates the tiles for the map and sets the world limits
     def _generate_tiles(self):
-        x_vals_tiles = []
-        y_vals_tiles = []
+        """
+        Base tile generation.
+        Generates a base block of grass and dirt tiles.
+        """
         x_vals = []
         y_vals = []
         for x in range(-self.map_size[0] // 2, self.map_size[0] // 2):
-            x_vals_tiles.append(x)
             x_vals.append(x*self.tilemap.tile_size)
             for y in range(1, self.map_size[1]):
-                y_vals_tiles.append(y)
                 y_vals.append(y*self.tilemap.tile_size)
-                self.tilemap.tile_map[f"{x};{y}"] = {'type': 'block', 'subtype': 'grass', 'variant': 0,'pos': (x*self.tilemap.tile_size, y*self.tilemap.tile_size),}
+                self.tilemap.tile_map["tiles"][f"{x};{y}"] = {'type': 'block', 'subtype': 'grass', 'variant': 0,'pos': (x*self.tilemap.tile_size, y*self.tilemap.tile_size),}
                 self.tilemap._autotile((x, y), place=True)
             
         
@@ -53,14 +52,29 @@ class World:
                     self.tilemap._autotile((x, y), place=True)
                     rand_height -= 1"""
 
-
+        
         self.lh_world_lim = min(x_vals)
         self.rh_world_lim = max(x_vals) + self.tilemap.tile_size - self.game.display.get_width()
         self.upr_world_lim = min(y_vals) - 1200
         self.lwr_world_lim = max(y_vals) + self.tilemap.tile_size - self.game.display.get_height()
 
+        self.tilemap.tile_map["world limits"]["left world limit"] = self.lh_world_lim
+        self.tilemap.tile_map["world limits"]["right world limit"] = self.rh_world_lim
+        self.tilemap.tile_map["world limits"]["upper world limit"] = self.upr_world_lim
+        self.tilemap.tile_map["world limits"]["lower world limit"] = self.lwr_world_lim
+
+    def _surface_noise_pass(self):
+        """Creates dynamic terrain on the surface. Will eventually change based upon biome"""
+        
+        pass
+
     def generate_world(self):
+        """Generates the world. Includes all noise passes."""
         self._generate_tiles()
+        self._surface_noise_pass()
+
+    def save_world(self):
+        pass
 
     def load_world(self):
         pass

@@ -79,26 +79,16 @@ class Game:
 
         
         self.tilemap = Tilemap(self)
-        self.world = World(self, 'small', self.tilemap)
+        self.world = World(self, 'large', self.tilemap)
         self.world_size_pix = (self.world.map_size[0] * self.tilemap.tile_size, self.world.map_size[1] * self.tilemap.tile_size)
         
-        success = self.tilemap.load()
+        success = self.tilemap.load("map.json")
         if success:
-            print('loading world')
-            x = []
-            y = []
-            for tile in self.tilemap.tile_map:
-                tile = tile.split(';')
-                x.append(int(tile[0]))
-                y.append(int(tile[1]))
-                x_min, y_min, x_max, y_max = min(x), min(y), max(x), max(y)
-                
-            self.world.lh_world_lim = self.tilemap.tile_map[f'{x_min};{y_min}']['pos'][0]
-            self.world.rh_world_lim = self.tilemap.tile_map[f'{x_max};{y_min}']['pos'][0] + self.tilemap.tile_size - self.display.get_width()
-            self.world.upr_world_lim = self.tilemap.tile_map[f'{x_min};{y_min}']['pos'][1] - 1200
-            self.world.lwr_world_lim = self.tilemap.tile_map[f'{x_min};{y_max}']['pos'][1] + self.tilemap.tile_size - self.display.get_height()
-            print(self.world.lh_world_lim, self.world.rh_world_lim, self.world.upr_world_lim, self.world.lwr_world_lim)
-                              
+            self.world.lh_world_lim = self.tilemap.tile_map["world limits"]["left world limit"]
+            self.world.rh_world_lim = self.tilemap.tile_map["world limits"]["right world limit"]
+            self.world.upr_world_lim = self.tilemap.tile_map["world limits"]["upper world limit"]
+            self.world.lwr_world_lim = self.tilemap.tile_map["world limits"]["lower world limit"]
+            print(self.world.lh_world_lim, self.world.rh_world_lim, self.world.upr_world_lim, self.world.lwr_world_lim)      
         else:
             print('generating world')
             self.world.generate_world()
@@ -145,7 +135,6 @@ class Game:
             self.camera.update()#takes care of all the scroll code
 
             render_scroll = (int(self.scroll[0]), int(self.scroll[1]))
-            print(f'PLAYER POS: {self.player.pos[0] // self.tilemap.tile_size}, {self.player.pos[1] // self.tilemap.tile_size}')
             self.display.fill((min(max(0, 20 + self.player.pos[1] // 6), 255),
                                min(max(0, 100 + self.player.pos[1] // 6), 255),
                                min(max(0, 200 + self.player.pos[1] // 6), 255)))
