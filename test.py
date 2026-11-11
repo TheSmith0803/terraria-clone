@@ -1,23 +1,36 @@
-import pickle, os, struct
-savepth = r'C:\Repos\terraria-clone\saves'
-if not os.path.exists(savepth):
-    os.makedirs(savepth)
+import struct
+HEADER = b"HEADER"
 
-wld = {}
+HEADER_FMT = "<6s"
 
+header_bytes = struct.pack(HEADER_FMT, HEADER)
+
+nums = []
 for i in range(200):
-    chunk = [(1, 12) for i in range(256)]
-    wld[f'chunk_{i}'] = chunk
+    nums.append(struct.pack("<i", i))
 
-def sv_chk(data):
-    raw = bytes(data)
-    with open(os.path.join(savepth, "wld.bin"), "w+b") as f:
-        f.write(raw)
+def save_bin_data(data):
+    with open('file.bin', "wb") as f:
+        f.write(data)
+        for num in nums:
+            f.write(num)
 
-def read_chk(offset):
-    with open(os.path.join(savepth, "wld.bin"), "r+b") as f:
-        f.seek(offset)
-        data = f.read(2)
-    return data
+def load_bin_data(path):
+    with open(path, "rb") as f:
+        data = f.read()
+
+    header = data[:6]
+
+    list_of_nums = []
+    for i in range(6, len(data), 4):
+        num = struct.unpack("<I", data[i:i+4])[0]
+        list_of_nums.append(num)
+    return header, list_of_nums
+
+
+save_bin_data(header_bytes)
+
+h, l = load_bin_data('file.bin')
+print(h, l)
 
 
