@@ -18,6 +18,7 @@ from scripts.utilities import load_image, load_images, Animation
 from scripts.console import Console
 from scripts.objects import InteractableObjects, Chest
 from scripts.debugger import Debugger
+from scripts.items import *
 
 class Game:
     def __init__(self):
@@ -27,7 +28,7 @@ class Game:
         self.mixer = pygame.mixer.init()
 
         #these variables are for calculating cursor pos with scaling
-        self.window_size = (1480, 960)
+        self.window_size = (300, 300)
         self.display_res = (self.window_size[0] / 2, self.window_size[1] / 2)
         self.x_res_ratio = self.window_size[0] / self.display_res[0]
         self.y_res_ratio = self.window_size[1] / self.display_res[1]
@@ -54,8 +55,8 @@ class Game:
 
         self.tiles = {
             #grass tiles
-            'grass': load_images('assets\\tiles\\grass', numeric=True),
-            'dirt': load_images('assets\\tiles\\dirt', numeric=True)
+            BlockType.GRASS: load_images('assets\\tiles\\grass', numeric=True),
+            BlockType.DIRT: load_images('assets\\tiles\\dirt', numeric=True)
         }
         
         #everything else lol
@@ -79,7 +80,7 @@ class Game:
 
         
         self.tilemap = Tilemap(self)
-        self.world = World(self, 'large', self.tilemap)
+        self.world = World(self, 'small', self.tilemap)
         self.world_size_pix = (self.world.map_size[0] * self.tilemap.tile_size, self.world.map_size[1] * self.tilemap.tile_size)
         
         success = self.tilemap.load("map.json")

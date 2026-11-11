@@ -1,4 +1,5 @@
 import pygame, random, math
+from .items import *
 from .objects import *
 
 """
@@ -36,7 +37,7 @@ class World:
             x_vals.append(x*self.tilemap.tile_size)
             for y in range(1, self.map_size[1]):
                 y_vals.append(y*self.tilemap.tile_size)
-                self.tilemap.tile_map["tiles"][f"{x};{y}"] = {'type': 'block', 'subtype': 'grass', 'variant': 0,'pos': (x*self.tilemap.tile_size, y*self.tilemap.tile_size),}
+                self.tilemap.tile_map["tiles"][f"{x};{y}"] = {'type': 'block', 'subtype': BlockType.GRASS, 'variant': 0,'pos': (x*self.tilemap.tile_size, y*self.tilemap.tile_size),}
                 self.tilemap._autotile((x, y), place=True)
             
         

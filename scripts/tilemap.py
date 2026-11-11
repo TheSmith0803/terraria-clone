@@ -1,8 +1,9 @@
 import pygame
 import json, random, orjson, pickle
 import os
+from .items import *
 
-from .items import Item, Block, BLOCK_TYPES, ORE_TYPES
+from .items import Item, Block, BLOCK_DATA, ORE_TYPES
 
 #rules for spawinging tiles, variants equate to file names --> '0.png'
 AUTOTILE_MAP = {                                            #exposed sides
@@ -93,8 +94,8 @@ class Tilemap:
                     self.tile_map["tiles"][f'{tile[0]};{tile[1]}']['variant'] = AUTOTILE_MAP[autotile]
 
                 
-                    if AUTOTILE_MAP[autotile] == 8 and self.tile_map["tiles"][f'{tile[0]};{tile[1]}']['subtype'] == 'grass':
-                        self.tile_map["tiles"][f'{tile[0]};{tile[1]}']['subtype'] = 'dirt'
+                    if AUTOTILE_MAP[autotile] == 8 and self.tile_map["tiles"][f'{tile[0]};{tile[1]}']['subtype'] == BlockType.GRASS:
+                        self.tile_map["tiles"][f'{tile[0]};{tile[1]}']['subtype'] = BlockType.DIRT
 
 
     #will take in a tile coord string and remove that particular tile from the tilemap will handle tile sprite changes, same with the place tile
@@ -108,7 +109,7 @@ class Tilemap:
         #currently gets
         
         if remove_tile != None:
-            removed_item = Block(BLOCK_TYPES[self.tile_map["tiles"][remove_tile]['subtype']]['drop'], self.game.tiles[BLOCK_TYPES[self.tile_map["tiles"][remove_tile]['subtype']]['drop']][self.tile_map["tiles"][remove_tile]['variant']])
+            removed_item = Block(BLOCK_DATA[self.tile_map["tiles"][remove_tile]['subtype']]['drop'], self.game.tiles[BLOCK_DATA[self.tile_map["tiles"][remove_tile]['subtype']]['drop']][self.tile_map["tiles"][remove_tile]['variant']])
             self.tile_map["tiles"].pop(remove_tile)
             self._autotile(world_tile_pos)
             print(removed_item)
