@@ -28,7 +28,7 @@ class Game:
         self.mixer = pygame.mixer.init()
 
         #these variables are for calculating cursor pos with scaling
-        self.window_size = (300, 300)
+        self.window_size = (1920, 1080)
         self.display_res = (self.window_size[0] / 2, self.window_size[1] / 2)
         self.x_res_ratio = self.window_size[0] / self.display_res[0]
         self.y_res_ratio = self.window_size[1] / self.display_res[1]
@@ -85,19 +85,17 @@ class Game:
         
         success = self.tilemap.load("map.json")
         if success:
-            self.world.lh_world_lim = self.tilemap.tile_map["world limits"]["left world limit"]
-            self.world.rh_world_lim = self.tilemap.tile_map["world limits"]["right world limit"]
-            self.world.upr_world_lim = self.tilemap.tile_map["world limits"]["upper world limit"]
-            self.world.lwr_world_lim = self.tilemap.tile_map["world limits"]["lower world limit"]
-            print(self.world.lh_world_lim, self.world.rh_world_lim, self.world.upr_world_lim, self.world.lwr_world_lim)      
+            self.world.lh_world_lim = self.tilemap._tile_map["world limits"]["left world limit"]
+            self.world.rh_world_lim = self.tilemap._tile_map["world limits"]["right world limit"]
+            self.world.upr_world_lim = self.tilemap._tile_map["world limits"]["upper world limit"]
+            self.world.lwr_world_lim = self.tilemap._tile_map["world limits"]["lower world limit"]     
         else:
             print('generating world')
             self.world.generate_world()
-            print(self.world.lh_world_lim, self.world.rh_world_lim, self.world.upr_world_lim, self.world.lwr_world_lim)
 
         self.running = True
 
-        self.pos = [0, 0]
+        self.pos = [(self.world.map_size[0] // 2) * self.tilemap.tile_size, 0] #temporary so i dont fall 
         self.movement = [False, False]
 
         self.scroll = [0, 0]

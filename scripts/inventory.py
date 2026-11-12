@@ -26,7 +26,6 @@ class Inventory:
                     self.contents[index] = [new_item, 1]
                     break
                 elif item[0].stackable and new_item.subtype == self.contents[index][0].subtype and item[1] < BLOCK_DATA[new_item.subtype]['stack limit']:
-                    print(item[0].subtype)
                     self.contents[index][1] += 1
                     break
                 else:

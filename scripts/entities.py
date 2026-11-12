@@ -138,7 +138,7 @@ class Player(PhysicsEntity):
 
         self.jump_power = 150
 
-        self.health_cap = self.ui.amt_hearts * 20
+        self.health_cap = self.ui.amt_hearts * 20 #each heart worth 20 health
         self.health = 100
         self.health_regen_rate = 90
         self.frames = 1 #for spacing out heath regen
@@ -151,8 +151,8 @@ class Player(PhysicsEntity):
         self.tile_pos_origin = None
         self.tile_key_origin = None
 
-        for coord in self.tilemap.tile_map["tiles"].keys():
-            self.tile_pos_origin = self.tilemap.tile_map["tiles"][coord]['pos']
+        for coord in self.tilemap.keys():
+            self.tile_pos_origin = self.tilemap[coord]['pos']
             self.tile_key_origin = coord.split(';')
             self.tile_key_origin[0] = int(self.tile_key_origin[0])
             self.tile_key_origin[1] = int(self.tile_key_origin[1])
