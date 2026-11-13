@@ -101,12 +101,15 @@ def load_world(filename):
             raw_data.append(info)
 
     data = {}
+    x_col = 0
+    y_col = 0 
     for cy in range(map_size[1]//16):
         for cx in range(map_size[0]//16):
             data[(cx, cy)] = []
             for y in range(cy*16, cy*16+16):
                 for x in range(cx*16, cx*16+16):
-                    data[(cx, cy)].append(raw_data[x+y])
+                    data[(cx, cy)].append(raw_data[figure_out_this_index])
+
 
 
     return data
