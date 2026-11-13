@@ -36,7 +36,9 @@ def generate_base_world(mapsize):
                     else:
                         chunks[chk_key].append([BlockType.GRASS, 0])
 
-    return chunks
+    world_limits = [mapsize[0]*16,mapsize[1]*16]
+
+    return chunks, world_limits
 
 #x and y are pixel positions
 def find_chunk(chks, x, y):
@@ -51,7 +53,8 @@ def find_chunk(chks, x, y):
         raise KeyError(f"chunk ({chk_x}, {chk_y}) does not exist. Out of range.")
     
 chunks = {}
-chunks = generate_base_world(mapsize=map_size)
+chunks, wld_limits = generate_base_world(mapsize=map_size)
+print(wld_limits)
 find_chunk(chunks, 2100, 456)
 
 def save_world(filename, size=None):

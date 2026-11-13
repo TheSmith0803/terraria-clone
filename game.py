@@ -13,7 +13,6 @@ from scripts.entities import Player
 from scripts.input import Input
 from scripts.ui import UI
 from scripts.background import Background
-from scripts.inventory import Inventory
 from scripts.utilities import load_image, load_images, Animation
 from scripts.console import Console
 from scripts.objects import InteractableObjects, Chest
@@ -28,7 +27,7 @@ class Game:
         self.mixer = pygame.mixer.init()
 
         #these variables are for calculating cursor pos with scaling
-        self.window_size = (1920, 1080)
+        self.window_size = (1200, 800)
         self.display_res = (self.window_size[0] / 2, self.window_size[1] / 2)
         self.x_res_ratio = self.window_size[0] / self.display_res[0]
         self.y_res_ratio = self.window_size[1] / self.display_res[1]
@@ -134,6 +133,7 @@ class Game:
             self.camera.update()#takes care of all the scroll code
 
             render_scroll = (int(self.scroll[0]), int(self.scroll[1]))
+            print(min(max(0, 20 + self.player.pos[1] // 6), 255))
             self.display.fill((min(max(0, 20 + self.player.pos[1] // 6), 255),
                                min(max(0, 100 + self.player.pos[1] // 6), 255),
                                min(max(0, 200 + self.player.pos[1] // 6), 255)))

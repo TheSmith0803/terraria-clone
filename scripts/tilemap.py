@@ -162,7 +162,6 @@ class Tilemap:
                                 )
                              )
 
-
     #maybe implement chunking? also make world saving async
     def save(self, filename=r'map.json'):
             
