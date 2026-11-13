@@ -17,14 +17,18 @@ class World:
         self.objects = []
 
         #tile size of world
+        if map_size == 'debug':
+            self.map_size = (800, 600)
+            self.surface_height = 400
         if map_size == 'small':
-            map_size = (1248, 208) 
-            #map_size = (128, 64)
+            self.map_size = (2800, 1200) 
+            self.surface_height = 1000
         if map_size == 'medium':
-            map_size = (2496, 800)
+            self.map_size = (5000, 1488)
+            self.surface_height = 1288
         if map_size == 'large':
-            map_size = (5000, 1200)
-        self.map_size = map_size
+            self.map_size = (8000, 2000)
+            self.surface_height = 1800
 
     def _generate_tiles(self):
         """
