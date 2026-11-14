@@ -14,8 +14,8 @@ tiles -> MAP
 
 
 
-map_size = (800, 600) 
-surface_height = 240
+map_size = (32, 32) 
+surface_height = 16
 CHK_SIZE = 256
 num_chunks = map_size[0]*map_size[1] // CHK_SIZE
 
@@ -53,8 +53,7 @@ def find_chunk(chks, x, y):
     
 chunks = {}
 chunks, wld_limits = generate_base_world(mapsize=map_size)
-print(wld_limits)
-find_chunk(chunks, 2100, 456)
+
 
 def save_world(filename, size=None):
     """saves entire world"""
@@ -85,9 +84,8 @@ def load_world(filename):
         #read map size and convert to string ('S'=small, 'M'=medium, 'L'=large, 'D'=debug)
         map_size = f.read(1)
         map_size = struct.unpack("<s", map_size)[0].decode('utf-8')
-        print(map_size)
         if map_size == 'D':
-            map_size = (800, 600) 
+            map_size = (32, 32) 
         
         cursor_pos += 1
         f.seek(cursor_pos)
@@ -100,14 +98,13 @@ def load_world(filename):
             raw_data.append(info)
 
     data = {}
-    x_col = 0
-    y_col = 0 
+    chk_num = 0
     for cy in range(map_size[1]//16):
         for cx in range(map_size[0]//16):
             data[(cx, cy)] = []
-            for y in range(cy*16, cy*16+16):
-                for x in range(cx*16, cx*16+16):
-                    data[(cx, cy)].append(raw_data[0])
+            for indx in range(chk_num*256, chk_num*256+256):
+                data[(cx, cy)].append(raw_data[indx])
+            chk_num += 1
 
 
 
@@ -119,3 +116,5 @@ def save_chunk():
 
 save_world('test.world')
 chunks = load_world('test.world')
+for k, v in chunks.items():
+    print(k, v, end='\n\n\n')
