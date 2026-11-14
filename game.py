@@ -79,16 +79,11 @@ class Game:
 
         
         self.tilemap = Tilemap(self)
-        self.world = World(self, 'small', self.tilemap)
+        self.world = World(self, 'debug', self.tilemap)
         self.world_size_pix = (self.world.map_size[0] * self.tilemap.tile_size, self.world.map_size[1] * self.tilemap.tile_size)
         
         success = self.tilemap.load("map.json")
-        if success:
-            self.world.lh_world_lim = self.tilemap._tile_map["world limits"]["left world limit"]
-            self.world.rh_world_lim = self.tilemap._tile_map["world limits"]["right world limit"]
-            self.world.upr_world_lim = self.tilemap._tile_map["world limits"]["upper world limit"]
-            self.world.lwr_world_lim = self.tilemap._tile_map["world limits"]["lower world limit"]     
-        else:
+        if not success:
             print('generating world')
             self.world.generate_world()
 

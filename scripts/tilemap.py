@@ -173,7 +173,12 @@ class Tilemap:
             with open(filepath, 'r') as f:
                 print("loading world")
                 self._tile_map = json.load(f)
-                return True
+                
+            self.game.world.lh_world_lim = self._tile_map["world limits"]["left world limit"]
+            self.game.world.rh_world_lim = self._tile_map["world limits"]["right world limit"]
+            self.game.world.upr_world_lim = self._tile_map["world limits"]["upper world limit"]
+            self.game.world.lwr_world_lim = self._tile_map["world limits"]["lower world limit"]
+            return True 
         except FileNotFoundError:
             print(f"{filepath} does not exist.")
             return False

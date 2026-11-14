@@ -11,8 +11,7 @@ tiles -> MAP
         u_int(tile_pos_x), u_int(tile_pos_y), u_int(blocktype), u_int(blockvariant) 
 """
 
-with open('map.json', 'r') as f:
-    data = json.load(f)
+
 
 
 map_size = (800, 600) 
@@ -32,7 +31,7 @@ def generate_base_world(mapsize):
             for y in range(cy*16,cy*16+16):
                 for x in range(cx*16,cx*16+16):
                     if y < surface_height:
-                        chunks[chk_key].append([BlockType.AIR, 0])
+                        chunks[chk_key].append([BlockType.AIR, 0]) 
                     else:
                         chunks[chk_key].append([BlockType.GRASS, 0])
 
@@ -108,7 +107,7 @@ def load_world(filename):
             data[(cx, cy)] = []
             for y in range(cy*16, cy*16+16):
                 for x in range(cx*16, cx*16+16):
-                    data[(cx, cy)].append(raw_data[figure_out_this_index])
+                    data[(cx, cy)].append(raw_data[0])
 
 
 
