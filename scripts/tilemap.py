@@ -34,34 +34,32 @@ class Tilemap:
         self.tile_size = tile_size
     
         self._tile_map = {}
-        self._tile_map["tiles"] = {} #where actual tile data is stored
-        self._tile_map["world limits"] = {} #world limit information
 
         self.offgrid_tiles = []
 
         self.tile_coords = {}        
 
+    #this is probably broken at the moment, will eventually implement a "get tile" function in the world class
     def __iter__(self):
-        for tile in self._tile_map["tiles"]:
-            parts = tile.split(';')
-            coord = tuple(int(c) for c in parts)
-            coord = tuple(coord)
-            yield coord
+        for chunk in self._tile_map.keys(): # chunk == key == Ex. (15, 21)
+            for indx, tile in enumerate(self._tile_map[chunk]):
+                coord = tuple([chunk[0]+indx*chunk[0],chunk[1]+indx*chunk[1]])
+                yield coord
 
     def __getitem__(self, key):
-        return self._tile_map["tiles"][key]
+        return self._tile_map[key]
     
     def __setitem__(self, key, value):
-            self._tile_map["tiles"][key] = value
+            self._tile_map[key] = value
 
     def keys(self):
-        return self._tile_map["tiles"].keys()
+        return self._tile_map.keys()
 
     def values(self):
-        return self._tile_map["tiles"].values()
+        return self._tile_map.values()
 
     def items(self):
-        return self._tile_map["tiles"].items()
+        return self._tile_map.items()
     
     #takes in a tuple of tile coords and returns the associated tile data
     def _get_tile_data(self, tile_coords):
@@ -72,7 +70,7 @@ class Tilemap:
 
         tiles_around = []
         for adjacent_tile in offsets:
-            if str(int(pos[0] // self.tile_size) + adjacent_tile[0]) + ";" + str(int(pos[1] // self.tile_size) + adjacent_tile[1]) in self._tile_map["tiles"]:
+            if (int(pos[0] // self.tile_size) + adjacent_tile[0], int(pos[1] // self.tile_size) + adjacent_tile[1]) in self._tile_map:
                 rect = pygame.Rect(self._tile_map["tiles"][str(int(pos[0] // self.tile_size) + adjacent_tile[0]) + ";" + str(int(pos[1] // self.tile_size) + adjacent_tile[1])]['pos'], (self.tile_size, self.tile_size))
                 tiles_around.append(rect)
         return tiles_around

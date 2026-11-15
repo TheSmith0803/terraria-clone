@@ -1,4 +1,4 @@
-import pygame, random, math
+import pygame, random, math, struct
 from .items import *
 from .objects import *
 
@@ -13,7 +13,7 @@ class World:
         self.game = game
         self.tilemap = tilemap
         self.start_pos = (0, 0)
-
+        self.map_size_str = map_size
         self.objects = []
 
         #tile size of world
@@ -35,38 +35,25 @@ class World:
         Base tile generation.
         Generates a base block of grass and dirt tiles.
         """
-        x_vals = []
-        y_vals = []
-        for x in range(1, self.map_size[0]):
-            x_vals.append(x*self.tilemap.tile_size)
-            for y in range(1, self.map_size[1]):
-                y_vals.append(y*self.tilemap.tile_size)
-                self.tilemap[f"{x};{y}"] = {'type': 'block', 'subtype': BlockType.GRASS, 'variant': 0,'pos': (x*self.tilemap.tile_size, y*self.tilemap.tile_size),}
-                self.tilemap._autotile((x, y), place=True)
-            
-        
-        #stupid random terrain i guess
-        """y_min = min(y_vals_tiles)
-        for x in x_vals_tiles:
-            rand_height = random.randint(0, 10)
-            pos = self.tilemap._tile_map[f'{x};{y_min}']['pos']
-            while rand_height != 0:
-                for num in range(rand_height):
-                    y = round(math.sin(y_min - rand_height))
-                    self.tilemap._tile_map[f'{x};{y}'] = {'type': 'block', 'subtype': 'grass', 'variant': 0,'pos': (x*self.tilemap.tile_size, y*self.tilemap.tile_size),}
-                    self.tilemap._autotile((x, y), place=True)
-                    rand_height -= 1"""
 
         
-        self.lh_world_lim = min(x_vals)
-        self.rh_world_lim = max(x_vals) + self.tilemap.tile_size - self.game.display.get_width()
-        self.upr_world_lim = min(y_vals) - 1200 #1200 == 75 tiles
-        self.lwr_world_lim = max(y_vals) + self.tilemap.tile_size - self.game.display.get_height()
+        for cy in range(self.map_size[1]//16):
+            for cx in range(self.map_size[0]//16):
+                chk_key = (cx, cy)
+                self.tilemap._tile_map[chk_key] = []
+                for y in range(cy*16,cy*16+16):
+                    for x in range(cx*16,cx*16+16):
+                        if y < self.surface_height:
+                            self.tilemap._tile_map[chk_key].append([BlockType.AIR, 0]) 
+                        else:
+                            self.tilemap._tile_map[chk_key].append([BlockType.GRASS, 0])
 
-        self.tilemap._tile_map["world limits"]["left world limit"] = self.lh_world_lim
-        self.tilemap._tile_map["world limits"]["right world limit"] = self.rh_world_lim
-        self.tilemap._tile_map["world limits"]["upper world limit"] = self.upr_world_lim
-        self.tilemap._tile_map["world limits"]["lower world limit"] = self.lwr_world_lim
+        world_limits = [0, 0, self.map_size[0]*16, self.map_size[1]*16]
+
+        self.lh_world_lim = world_limits[0]
+        self.rh_world_lim = world_limits[2]
+        self.upr_world_lim = world_limits[1]
+        self.lwr_world_lim = world_limits[3]
 
     def _surface_noise_pass(self):
         """Creates dynamic terrain on the surface. Will eventually change based upon biome"""
@@ -78,8 +65,26 @@ class World:
         self._generate_tiles()
         self._surface_noise_pass()
 
-    def save_world(self):
-        pass
+    def save_world(self, filename):
+        """saves entire world"""
+        with open(filename, "wb") as f:
+            WLD_SV_HDR = b"WORLDSTART"
+            MAP_HDR = b"TILEMAP"
+            MAP_SIZE = b"S" if self.map_size_str == "small" else \
+                       b"M" if self.map_size_str == "medium" else \
+                       b"L" if self.map_size_str == "large" else b"D"
+            wld_hdr_bytes = struct.pack("<10s", WLD_SV_HDR)
+            map_hdr_bytes = struct.pack("<7s", MAP_HDR)
+            map_size_bytes = struct.pack("<s", MAP_SIZE)
+
+            f.write(wld_hdr_bytes)  #indicates a world file
+            f.write(map_hdr_bytes)  #indicates start of map
+            f.write(map_size_bytes) #indicated size of map
+
+            #saving of world chunks
+            for k in self.tilemap._tile_map.keys():
+                for block in self.tilemap._tile_map[k]:
+                    f.write(struct.pack("<2I", *block))
 
     def load_world(self):
         pass

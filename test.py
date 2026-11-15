@@ -35,7 +35,7 @@ def generate_base_world(mapsize):
                     else:
                         chunks[chk_key].append([BlockType.GRASS, 0])
 
-    world_limits = [mapsize[0]*16,mapsize[1]*16]
+    world_limits = [0, 0, mapsize[0]*16, mapsize[1]*16]
 
     return chunks, world_limits
 

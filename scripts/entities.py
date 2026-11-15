@@ -151,11 +151,8 @@ class Player(PhysicsEntity):
         self.tile_pos_origin = None
         self.tile_key_origin = None
 
-        for coord in self.tilemap.keys():
-            self.tile_pos_origin = self.tilemap[coord]['pos']
-            self.tile_key_origin = coord.split(';')
-            self.tile_key_origin[0] = int(self.tile_key_origin[0])
-            self.tile_key_origin[1] = int(self.tile_key_origin[1])
+        for coord in self.tilemap:
+            self.tile_pos_origin = coord
             break
 
         #FIGURE OUT HOW TO USE THIS ^^^^^ TO MAP THE MOUSE POS TO THE TILE GRID LOL
@@ -202,8 +199,7 @@ class Player(PhysicsEntity):
             mpos[1] /= self.game.y_res_ratio 
         
         self.world_mpos_raw = [mpos[0] + offset[0], mpos[1] + offset[1]]
-        self.world_mpos_tile = [int((self.world_mpos_raw[0] - self.tile_pos_origin[0]) // self.tilemap.tile_size) + self.tile_key_origin[0], int((self.world_mpos_raw[1] - self.tile_pos_origin[1]) // self.tilemap.tile_size) + self.tile_key_origin[1]]
-
+        self.world_mpos_tile = [mpos[0] // self.tilemap.tile_size, mpos[1] // self.tilemap.tile_size]
 
         if not self.collisions['down']:
             if self.velocity[1] == self.terminal_velocity:
