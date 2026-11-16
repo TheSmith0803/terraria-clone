@@ -66,13 +66,14 @@ class Tilemap:
     def _get_tile_data(self, tile_coords):
         return self._tile_map["tiles"][f'{str(tile_coords[0])};{str(tile_coords[1])}']
 
+    #this needs to work before we do anything else, fix collisions
     def physics_rects_around(self, pos):
         offsets = [(1, 0), (-1, 0), (0, 1), (0, -1), (-1, -1), (-1, 1), (1, 1), (1, -1), (0, 0)]
 
         tiles_around = []
         for adjacent_tile in offsets:
             if (int(pos[0] // self.tile_size) + adjacent_tile[0], int(pos[1] // self.tile_size) + adjacent_tile[1]) in self._tile_map:
-                rect = pygame.Rect(self._tile_map["tiles"][str(int(pos[0] // self.tile_size) + adjacent_tile[0]) + ";" + str(int(pos[1] // self.tile_size) + adjacent_tile[1])]['pos'], (self.tile_size, self.tile_size))
+                rect = pygame.Rect(self._tile_map[(int(pos[0] // self.tile_size) + adjacent_tile[0], int(pos[1] // self.tile_size) + adjacent_tile[1]), (self.tile_size, self.tile_size))
                 tiles_around.append(rect)
         return tiles_around
     
