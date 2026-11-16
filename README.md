@@ -14,9 +14,12 @@ tasks to complete:
  - Need to add different game states (in inventory browser, or not, stuff like that)
 
 things to fix:
-- loading worlds is weird now because of world limits. either calc them on each start or store them in map file or something. ✅ stored world limits inside map save file
-- CURRENT PROBELM: seperate out world into chunks, and keep track of "dirty" chunks
-(chunks that have been modified) and only save those on a save. Maybe could implement autosave as well.
+    Collisions!: We need to be able to index the new file in order to find particular tiles, and generate a position somehow.
+    Brainstorming will be required for this task
+
+    I made the debug world size SUPER small. 32x32, 4 chunks.
+
+    Figure out why tiles are only rendering in one spot. (top left world tile)
 
 ideas:
 
