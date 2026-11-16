@@ -29,9 +29,10 @@ TILE_OFFSETS = tuple(sorted([(-1, 0), (1, 0), (0, -1), (0, 1)]))
 AUTOTILE_TPYE = {'grass', 'stone'}
 
 class Tilemap:
-    def __init__(self, game, tile_size=16):
+    def __init__(self, game, tile_size=16, chunk_size=16):
         self.game = game
         self.tile_size = tile_size
+        self.chunk_size = chunk_size
     
         self._tile_map = {}
 
@@ -115,8 +116,8 @@ class Tilemap:
     #this is specifically for removing block type objects, the logic for that is natrually simpler
     def rmv_tile(self, world_tile_pos) -> Block:
         remove_tile = None
-        if f'{str(world_tile_pos[0])};{str(world_tile_pos[1])}' in self._tile_map["tiles"].keys():
-                remove_tile = f'{str(world_tile_pos[0])};{str(world_tile_pos[1])}'
+        if (world_tile_pos[0], world_tile_pos[1]) in self._tile_map.keys():
+                remove_tile = (world_tile_pos[0], world_tile_pos[1])
         #print(remove_tile)
         #maybe make the tile actually pop out into the world later, right now it is just removed
         #currently gets
@@ -147,19 +148,25 @@ class Tilemap:
     def render_map(self, surf , offset=(0, 0)):
         
         #this is da way
-        for x in range(int(offset[0] // self.tile_size), int((offset[0] + surf.get_width()) // self.tile_size + 1)):
-            for y in range(int(offset[1] // self.tile_size), int((offset[1] + surf.get_height()) // self.tile_size + 1)):
-                loc = (f'{x};{y}')
+        for x in range(int(offset[0] // self.tile_size // self.chunk_size - 1), int((offset[0] + surf.get_width()) // self.tile_size // self.chunk_size + 1)):
+            for y in range(int(offset[1] // self.tile_size // self.chunk_size - 1), int((offset[1] + surf.get_height()) // self.tile_size // self.chunk_size + 1)):
+                chk = (x, y)
                 
-                if loc in self._tile_map["tiles"]:
-                    tile = self._tile_map["tiles"][loc]
-                    surf.blit(self.game.tiles[tile['subtype']][tile['variant']], 
-                                (
-                                    tile['pos'][0] - offset[0], 
-                                    tile['pos'][1] - offset[1]
-                                )
-                             )
-
+                if chk in self._tile_map.keys():
+                    chunk = self._tile_map[chk]
+                    for block_type, variant in chunk:
+                        cx = chk[0]
+                        cy = chk[1]
+                        if block_type == BlockType.AIR:
+                            continue
+                        else:
+                            pos = (cx*16*16%256, cy*16*16)
+                            surf.blit(self.game.tiles[block_type][variant], 
+                                        (
+                                            pos[0] - offset[0], 
+                                            pos[1] - offset[1]
+                                        )
+                                    )
     #maybe implement chunking? also make world saving async
     def save(self, filename=r'map.json'):
             

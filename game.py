@@ -27,7 +27,7 @@ class Game:
         self.mixer = pygame.mixer.init()
 
         #these variables are for calculating cursor pos with scaling
-        self.window_size = (1200, 800)
+        self.window_size = (600, 600)
         self.display_res = (self.window_size[0] / 2, self.window_size[1] / 2)
         self.x_res_ratio = self.window_size[0] / self.display_res[0]
         self.y_res_ratio = self.window_size[1] / self.display_res[1]
@@ -142,7 +142,7 @@ class Game:
                 self.ui.update(event=event)
                     
             #render ui stuff at the end of the fram
-            font_surf = self.font.render(f'Player pos\nX: {int(self.player.pos[0]) // self.tilemap.tile_size}\nY: {-int(self.player.pos[1]) // self.tilemap.tile_size}', False, (255,255,255))
+            font_surf = self.font.render(f'Player pos\nX: {int(self.player.pos[0]) // self.tilemap.tile_size}\nY: {int(self.player.pos[1]) // self.tilemap.tile_size}', False, (255,255,255))
             self.display.blit(font_surf, (10, 45))
             self.ui.render_hotbar(self.display)
             self.ui.render_healthbar(self.display)

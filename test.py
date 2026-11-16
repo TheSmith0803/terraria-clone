@@ -74,8 +74,13 @@ def save_world(filename, size=None):
             for block in chunks[k]:
                 f.write(struct.pack("<2I", *block))
 
-def load_world(filename):
-    """loads world data"""
+def load_world(filename) -> dict:
+    """ Loads world data.
+        Returns a dictionary of chunks
+        Key:
+            tuple(x, y) chunk coords. Ex. -> (0,0) top left chunk, (0,1) chunk under top left chunk.
+        Value:
+            list(256 tiles) -> each tile represented as [BlockType[IntEnum], variant[int]]"""
     with open(filename, "rb") as f:
         #world and map headers are 17 bytes
         cursor_pos = 17
@@ -110,9 +115,12 @@ def load_world(filename):
 
     return data
 
-def save_chunk():
+def get_chunk():
     """this function saves a particular chunk at a particular position."""
     pass
+
+
+
 
 save_world('test.world')
 chunks = load_world('test.world')

@@ -40,13 +40,13 @@ class World:
         for cy in range(self.map_size[1]//16):
             for cx in range(self.map_size[0]//16):
                 chk_key = (cx, cy)
-                self.tilemap._tile_map[chk_key] = []
+                self.tilemap[chk_key] = []
                 for y in range(cy*16,cy*16+16):
                     for x in range(cx*16,cx*16+16):
                         if y < self.surface_height:
-                            self.tilemap._tile_map[chk_key].append([BlockType.AIR, 0]) 
+                            self.tilemap[chk_key].append([BlockType.AIR, 0]) 
                         else:
-                            self.tilemap._tile_map[chk_key].append([BlockType.GRASS, 0])
+                            self.tilemap[chk_key].append([BlockType.GRASS, 0])
 
         world_limits = [0, 0, self.map_size[0]*16, self.map_size[1]*16]
 
@@ -82,11 +82,14 @@ class World:
             f.write(map_size_bytes) #indicated size of map
 
             #saving of world chunks
-            for k in self.tilemap._tile_map.keys():
-                for block in self.tilemap._tile_map[k]:
+            for k in self.tilemap.keys():
+                for block in self.tilemap[k]:
                     f.write(struct.pack("<2I", *block))
 
     def load_world(self):
+        pass
+    
+    def get_tile_pos_world(x, y) -> list [int, int]:
         pass
 
 class WorldObject:
