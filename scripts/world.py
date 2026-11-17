@@ -50,9 +50,9 @@ class World:
 
         world_limits = [0, 0, self.map_size[0]*16-256, self.map_size[1]*16-256]
 
-        self.lh_world_lim = world_limits[0]
+        self.lh_world_lim = -16
         self.rh_world_lim = world_limits[2]
-        self.upr_world_lim = world_limits[1]
+        self.upr_world_lim = 0
         self.lwr_world_lim = world_limits[3]
 
     def _surface_noise_pass(self):
