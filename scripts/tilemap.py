@@ -148,7 +148,7 @@ class Tilemap:
 
 
     def render_map(self, surf , offset=(0, 0)):
-        
+        count = 0
         #this is da way
         for x in range(int(offset[0] // self.tile_size // self.chunk_size - 1), int((offset[0] + surf.get_width()) // self.tile_size // self.chunk_size + 1)):
             for y in range(int(offset[1] // self.tile_size // self.chunk_size - 1), int((offset[1] + surf.get_height()) // self.tile_size // self.chunk_size + 1)):
@@ -156,13 +156,39 @@ class Tilemap:
                 
                 if chk in self._tile_map.keys():
                     chunk = self._tile_map[chk]
-                    for block_type, variant in chunk:
+                    print(chk, count)
+                    
+                    count += 1
+                    if count >= 4:
+                        pass
+
+                    x_offset = 0#both offsets in terms of pixels
+                    y_offset = 0
+                    
+                    for indx, info in enumerate(chunk):
+                        block_type = info[0]
+                        variant = info[1] 
                         cx = chk[0]
                         cy = chk[1]
                         if block_type == BlockType.AIR:
                             continue
                         else:
-                            pos = (cx*16*16%256, cy*16*16)
+                            cx_origin_pixels = cx * 256
+                            cy_origin_pixels = cy * 256
+                            if x_offset >= 256:
+                                x_offset = 0
+                                y_offset += 16
+
+                            if y_offset >= 256:
+                                y_offset = 0
+                            
+                            tile_x = cx_origin_pixels + x_offset
+                            x_offset += 16
+
+                            tile_y = cy_origin_pixels + y_offset
+
+                            pos = [tile_x, tile_y]
+
                             surf.blit(self.game.tiles[block_type][variant], 
                                         (
                                             pos[0] - offset[0], 

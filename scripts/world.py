@@ -48,7 +48,7 @@ class World:
                         else:
                             self.tilemap[chk_key].append([BlockType.GRASS, 0])
 
-        world_limits = [0, 0, self.map_size[0]*16, self.map_size[1]*16]
+        world_limits = [0, 0, self.map_size[0]*16-256, self.map_size[1]*16-256]
 
         self.lh_world_lim = world_limits[0]
         self.rh_world_lim = world_limits[2]
