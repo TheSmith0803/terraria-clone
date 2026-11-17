@@ -130,29 +130,28 @@ def get_chunk():
 #    print(k, v, end='\n\n\n')
 game = "hi"
 t = Tilemap(game)
-w = World(game, "debug", t)
+w = World(game, "small", t)
 
 w.generate_world()
 
 chk_pos = [0, 1]
 
 x_offset = 0
-
+f = open('chunktest.txt', 'w')
+f.close()
+indx = 0
 for chk in t.keys():
+    with open('chunktest.txt', 'a') as f:
+        f.writelines(f"CHUNK: ({chk[0]}, {chk[1]})\n")
     y = chk[1]*16
     for tile in t[chk]:
-        x = chk_pos[0]*16+x_offset
-        
-        print(chk, tile, x*16, y*16)
-        if x >= chk_pos[0]*16+15:
+        x = (chk[0]*16)+x_offset
+
+        with open('chunktest.txt', 'a') as f:
+            f.writelines(f"\tindex {indx} ({x}, {y}) {t[chk][indx%256]}\n")
+        indx += 1
+        if x >= chk[0]*16+15:
             x_offset = 0
             y += 1
             continue
         x_offset += 1
-
-    
-    
-
-        
-
-tile_pos = w.get_tile_pos_world(x=0,y=0)
