@@ -46,9 +46,9 @@ CHUNK ORGANIZATION:
         14,0    14        |
         15,0    15 _______|
 
-        0,1
-        1,1
-        2,1   <- Next row and so on
-        3,1
+        0,1     16
+        1,1     17
+        2,1     18   <- Next row and so on
+        3,1     19
 
         etc...
