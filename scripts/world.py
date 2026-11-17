@@ -89,7 +89,7 @@ class World:
     def load_world(self):
         pass
     
-    def get_tile_pos_world(x, y) -> list [int, int]:
+    def get_tile_pos_world(pos) -> list [int, int]:
         pass
 
 class WorldObject:

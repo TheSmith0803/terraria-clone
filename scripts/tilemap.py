@@ -73,7 +73,8 @@ class Tilemap:
         tiles_around = []
         for adjacent_tile in offsets:
             if (int(pos[0] // self.tile_size) + adjacent_tile[0], int(pos[1] // self.tile_size) + adjacent_tile[1]) in self._tile_map:
-                rect = pygame.Rect(self._tile_map[(int(pos[0] // self.tile_size) + adjacent_tile[0], int(pos[1] // self.tile_size) + adjacent_tile[1]), (self.tile_size, self.tile_size))
+                print("ok")
+                rect = pygame.Rect(self._tile_map[(int(pos[0] // self.tile_size) + adjacent_tile[0], int(pos[1] // self.tile_size) + adjacent_tile[1])], (self.tile_size, self.tile_size))
                 tiles_around.append(rect)
         return tiles_around
     

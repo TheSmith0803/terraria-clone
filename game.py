@@ -128,7 +128,6 @@ class Game:
             self.camera.update()#takes care of all the scroll code
 
             render_scroll = (int(self.scroll[0]), int(self.scroll[1]))
-            print(min(max(0, 20 + self.player.pos[1] // 6), 255))
             self.display.fill((min(max(0, 20 + self.player.pos[1] // 6), 255),
                                min(max(0, 100 + self.player.pos[1] // 6), 255),
                                min(max(0, 200 + self.player.pos[1] // 6), 255)))
