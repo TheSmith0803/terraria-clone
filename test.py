@@ -1,4 +1,6 @@
 from scripts.items import *
+from scripts.world import World
+from scripts.tilemap import Tilemap
 import struct, json
 
 """
@@ -51,8 +53,7 @@ def find_chunk(chks, x, y):
     except KeyError:
         raise KeyError(f"chunk ({chk_x}, {chk_y}) does not exist. Out of range.")
     
-chunks = {}
-chunks, wld_limits = generate_base_world(mapsize=map_size)
+
 
 
 def save_world(filename, size=None):
@@ -121,8 +122,57 @@ def get_chunk():
 
 
 
+#chunks = {}
+#chunks, wld_limits = generate_base_world(mapsize=map_size)
+#save_world('test.world')
+#chunks = load_world('test.world')
+#for k, v in chunks.items():
+#    print(k, v, end='\n\n\n')
+game = "hi"
+t = Tilemap(game)
+w = World(game, "debug", t)
 
-save_world('test.world')
-chunks = load_world('test.world')
-for k, v in chunks.items():
-    print(k, v, end='\n\n\n')
+w.generate_world()
+
+def get_tile(tilemap, x, y):
+    x_offset = 0
+    cx_origin = ((x // 16) * 16) // 16
+    cy_origin = ((y // 16) * 16) // 16
+
+    cx_origin_tile = (x // 16) * 16
+    cy_origin_tile = (y // 16) * 16
+
+    x_indx = x - cx_origin_tile
+    y_indx = y - cy_origin_tile
+
+    indx = 0
+    if y_indx != 0:
+        indx += y_indx*16
+
+    if x_indx != 0:
+        indx += x_indx
+
+    if (cx_origin, cy_origin) in tilemap.keys():
+        tile = tilemap[(cx_origin, cy_origin)][indx]
+    else:
+        raise KeyError(f"({cx_origin},{cy_origin}) is not a chunk! trying to access tile ({x}, {y})")
+    
+    return tile
+    for chk in tilemap.keys():
+
+        y = chk[1]*16
+        for tile in t[chk]:
+            x = (chk[0]*16)+x_offset
+
+            indx += 1
+            if x >= chk[0]*16+15:
+                x_offset = 0
+                y += 1
+                continue
+            x_offset += 1
+
+    return 
+
+
+print(get_tile(t, x=31, y=31))
+
