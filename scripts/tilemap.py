@@ -69,7 +69,7 @@ class Tilemap:
     #this needs to work before we do anything else, fix collisions
     def physics_rects_around(self, pos):
         offsets = [(1, 0), (-1, 0), (0, 1), (0, -1), (-1, -1), (-1, 1), (1, 1), (1, -1), (0, 0)]
-
+        
         tiles_around = []
         for adjacent_tile in offsets:
             if (int(pos[0] // self.tile_size) + adjacent_tile[0], int(pos[1] // self.tile_size) + adjacent_tile[1]) in self._tile_map:
@@ -92,7 +92,7 @@ class Tilemap:
 
         for tileoffset in TILE_OFFSETS:
             curr_tile = (world_tile_pos[0] + tileoffset[0], world_tile_pos[1] + tileoffset[1])
-            if f'{curr_tile[0]};{curr_tile[1]}' in self._tile_map["tiles"]:
+            if curr_tile in self._tile_map.keys():
                 adjacent_tiles.append(curr_tile)
         if not adjacent_tiles:
             return
@@ -122,12 +122,11 @@ class Tilemap:
                 remove_tile = (world_tile_pos[0], world_tile_pos[1])
         #print(remove_tile)
         #maybe make the tile actually pop out into the world later, right now it is just removed
-        #currently gets
         
         if remove_tile != None:
-            removed_item = Block(BLOCK_DATA[self._tile_map["tiles"][remove_tile]['subtype']]['drop'], self.game.tiles[BLOCK_DATA[self._tile_map["tiles"][remove_tile]['subtype']]['drop']][self._tile_map["tiles"][remove_tile]['variant']])
-            self._tile_map["tiles"].pop(remove_tile)
-            self._autotile(world_tile_pos)
+            removed_item = self.game.world.get_tile(world_tile_pos[0], world_tile_pos[1])[0]
+            self.game.world.set_tile(world_tile_pos[0], world_tile_pos[1], BlockType.AIR)
+            #self._autotile(world_tile_pos)
             return removed_item
         else:
             return None

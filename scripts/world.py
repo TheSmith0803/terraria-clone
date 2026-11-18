@@ -2,13 +2,21 @@ import pygame, random, math, struct
 from .items import *
 from .objects import *
 
-"""
-This class will be responsible for world generation,
-and possibly how the player will interact with the world
-random spawning and spawning rules will take place here.
-"""
+class CoordinateSpace(IntEnum):
+    PIXEL = 0
+    TILE = 1
+    CHUNK = 2
+    SCREEN = 3
+    WORLD = 4
+
+
 
 class World:
+    """
+    This class will be responsible for world generation,
+    and possibly how the player will interact with the world
+    random spawning and spawning rules will take place here.
+    """
     def __init__(self, game, map_size, tilemap):
         self.game = game
         self.tilemap = tilemap
@@ -60,6 +68,60 @@ class World:
         
         pass
 
+    def get_tile(self, x, y):
+        """
+        Returns a particular tiles location, in either tile coords, or pixel coords
+
+        Args:
+            x: tiles world positin in x axis
+            y: tiles world positin in y axis
+        """
+
+        cx_origin = ((x // 16) * 16) // 16
+        cy_origin = ((y // 16) * 16) // 16
+
+        cx_origin_tile = (x // 16) * 16
+        cy_origin_tile = (y // 16) * 16
+
+        x_indx = x - cx_origin_tile
+        y_indx = y - cy_origin_tile
+
+        indx = 0
+        if y_indx != 0:
+            indx += y_indx*16
+
+        if x_indx != 0:
+            indx += x_indx
+
+        if (cx_origin, cy_origin) in self.tilemap.keys():
+            tile = self.tilemap[(cx_origin, cy_origin)][indx]
+        else:
+            raise KeyError(f"({cx_origin},{cy_origin}) is not a chunk! trying to access tile ({x}, {y})")
+        
+        return tile
+
+    def set_tile(self, x, y, type=BlockType.AIR):
+        cx_origin = ((x // 16) * 16) // 16
+        cy_origin = ((y // 16) * 16) // 16
+
+        cx_origin_tile = (x // 16) * 16
+        cy_origin_tile = (y // 16) * 16
+
+        x_indx = x - cx_origin_tile
+        y_indx = y - cy_origin_tile
+
+        indx = 0
+        if y_indx != 0:
+            indx += y_indx*16
+
+        if x_indx != 0:
+            indx += x_indx
+
+        if (cx_origin, cy_origin) in self.tilemap.keys():
+            self.tilemap[(cx_origin, cy_origin)][indx] = [type, 0]
+        else:
+            raise KeyError(f"({cx_origin},{cy_origin}) is not a chunk! trying to access tile ({x}, {y})")
+    
     def generate_world(self):
         """Generates the world. Includes all noise passes."""
         self._generate_tiles()

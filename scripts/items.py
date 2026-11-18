@@ -9,11 +9,12 @@ ITEM_TYPES = {
 }
 
 class BlockType(IntEnum):
-    AIR = 0
-    GRASS = 1
-    DIRT = 2
-    STONE = 3
-    WOOD = 4
+    NONE = 0
+    AIR = 1
+    GRASS = 2
+    DIRT = 3
+    STONE =4
+    WOOD = 5
 
 #this dict will define different behaviors for the different block types
 BLOCK_DATA = {

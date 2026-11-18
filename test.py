@@ -134,8 +134,36 @@ w = World(game, "debug", t)
 
 w.generate_world()
 
-def get_tile(tilemap, x, y):
+x_offset = 0
+y_offset = 0
+indx = 0
+for chk in t.keys():
+    y = chk[1]*16
+    for tile in t[chk]:
+        x = (chk[0]*16)+x_offset
+        indx += 1
+        if x >= chk[0]*16+15:
+            x_offset = 0
+            y += 1
+            continue
+        x_offset += 1
+
+class CoordinateSpace(IntEnum):
+    PIXEL = 0
+    TILE = 1
+    CHUNK = 2
+    SCREEN = 3
+    WORLD = 4
+
+def get_tile(tilemap, x, y, ret=CoordinateSpace.TILE):
+    """
+    Returns a particular tiles location, in either tile coords, or pixel coords
+
+    Args:
+
+    """
     x_offset = 0
+
     cx_origin = ((x // 16) * 16) // 16
     cy_origin = ((y // 16) * 16) // 16
 
@@ -154,25 +182,36 @@ def get_tile(tilemap, x, y):
 
     if (cx_origin, cy_origin) in tilemap.keys():
         tile = tilemap[(cx_origin, cy_origin)][indx]
+        print(indx)
     else:
         raise KeyError(f"({cx_origin},{cy_origin}) is not a chunk! trying to access tile ({x}, {y})")
     
     return tile
-    for chk in tilemap.keys():
 
-        y = chk[1]*16
-        for tile in t[chk]:
-            x = (chk[0]*16)+x_offset
+def set_tile(tilemap, x, y, tile):
+    cx_origin = ((x // 16) * 16) // 16
+    cy_origin = ((y // 16) * 16) // 16
 
-            indx += 1
-            if x >= chk[0]*16+15:
-                x_offset = 0
-                y += 1
-                continue
-            x_offset += 1
+    cx_origin_tile = (x // 16) * 16
+    cy_origin_tile = (y // 16) * 16
 
-    return 
+    x_indx = x - cx_origin_tile
+    y_indx = y - cy_origin_tile
 
+    indx = 0
+    if y_indx != 0:
+        indx += y_indx*16
 
-print(get_tile(t, x=31, y=31))
+    if x_indx != 0:
+        indx += x_indx
 
+    if (cx_origin, cy_origin) in tilemap.keys():
+        tile = tilemap[(cx_origin, cy_origin)][indx]
+        print(indx)
+    else:
+        raise KeyError(f"({cx_origin},{cy_origin}) is not a chunk! trying to access tile ({x}, {y})")
+
+def get_tiles(tilemap, x1, y1, x2, y2):
+    pass
+
+print(get_tile(t, x=16, y=16))

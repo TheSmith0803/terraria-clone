@@ -1,5 +1,5 @@
 import pygame
-from .items import Item, Block, ITEM_TYPES, BLOCK_DATA
+from .items import Item, Block, BlockType, ITEM_TYPES, BLOCK_DATA
 
 TILE_TYPES = {'grass'}
 
@@ -43,7 +43,7 @@ class Inventory:
     #specific to the player                
     def render_contents(self, surf):
         for index, item in enumerate(self.contents):
-            if item[0].type != None: #item[0] contains item obj, item[1] is just the quanity of that item
+            if item[0].type != BlockType.AIR: #item[0] contains item obj, item[1] is just the quanity of that item
                 if item[1] == 0:
                     self.contents[index][0] = Item(None, None)  
                 if item[0].type in ITEM_TYPES and item[0].subtype != None:
