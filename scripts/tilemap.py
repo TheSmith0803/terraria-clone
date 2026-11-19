@@ -99,7 +99,6 @@ class Tilemap:
     #just putting the autotile code in one place for both removing and placing tiles
     def _autotile(self, world_tile_pos, place=False):
         adjacent_tiles = []
-
         if place:
             adjacent_tiles.append(world_tile_pos)
 
@@ -112,20 +111,23 @@ class Tilemap:
             return
 
         for tile in adjacent_tiles:
+            curr_tile = None
             check_tiles = []
             for tile_offset in TILE_OFFSETS:
-                curr_tile = (tile[0] + tile_offset[0], tile[1] + tile_offset[1])
-                if f'{curr_tile[0]};{curr_tile[1]}' in self._tile_map["tiles"]:
+                tile_coords = (tile[0] + tile_offset[0], tile[1] + tile_offset[1])
+                curr_tile = self.game.world.get_tile(*tile_coords)
+                if curr_tile is not None and curr_tile[0] != BlockType.AIR:
                     check_tiles.append(tile_offset)
+                else:
+                    continue
             
             check_tiles = tuple(sorted(check_tiles))
             for autotile in AUTOTILE_MAP:
                 if check_tiles == autotile:
-                    self._tile_map["tiles"][f'{tile[0]};{tile[1]}']['variant'] = AUTOTILE_MAP[autotile]
+                    self.game.world.set_tile(*tile, self.game.world.get_tile(*tile)[0], AUTOTILE_MAP[autotile])
 
-                
-                    if AUTOTILE_MAP[autotile] == 8 and self._tile_map["tiles"][f'{tile[0]};{tile[1]}']['subtype'] == BlockType.GRASS:
-                        self._tile_map["tiles"][f'{tile[0]};{tile[1]}']['subtype'] = BlockType.DIRT
+                    if AUTOTILE_MAP[autotile] == 8 and curr_tile[0] == BlockType.GRASS:
+                        self.game.world.set_tile(*tile, BlockType.DIRT, AUTOTILE_MAP[autotile])
 
 
     #will take in a tile coord string and remove that particular tile from the tilemap will handle tile sprite changes, same with the place tile

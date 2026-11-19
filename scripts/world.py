@@ -49,6 +49,8 @@ class World:
             for cx in range(self.map_size[0]//16):
                 chk_key = (cx, cy)
                 self.tilemap[chk_key] = []
+                y_pos = 0
+                x_pos = 0
                 for y in range(cy*16,cy*16+16):
                     for x in range(cx*16,cx*16+16):
                         if y < self.surface_height:
@@ -56,6 +58,14 @@ class World:
                         else:
                             self.tilemap[chk_key].append([BlockType.GRASS, 15])
 
+        for chk in self.tilemap:
+            x_offset = chk[0] * 16
+            y_offset = chk[1] * 16
+            for x in range(x_offset, x_offset+16):
+                for y in range(y_offset, y_offset+16):
+                    self.tilemap._autotile((x, y))
+
+        
         self.lh_world_lim = 0
         self.upr_world_lim = 0
         self.rh_world_lim = (self.map_size[0] * 16) - self.game.display.get_width()
@@ -75,6 +85,9 @@ class World:
             y: tiles world positin in y axis
         """
 
+        if x < 0 or y < 0:
+            return None
+
         cx_origin = ((x // 16) * 16) // 16
         cy_origin = ((y // 16) * 16) // 16
 
@@ -92,13 +105,14 @@ class World:
             indx += x_indx
 
         if (cx_origin, cy_origin) in self.tilemap.keys():
+
             tile = self.tilemap[(cx_origin, cy_origin)][indx]
         else:
             return None
         
         return tile
 
-    def set_tile(self, x, y, type=BlockType.AIR):
+    def set_tile(self, x, y, type=BlockType.AIR, variant=0):
         cx_origin = ((x // 16) * 16) // 16
         cy_origin = ((y // 16) * 16) // 16
 
@@ -116,9 +130,9 @@ class World:
             indx += x_indx
 
         if (cx_origin, cy_origin) in self.tilemap.keys():
-            self.tilemap[(cx_origin, cy_origin)][indx] = [type, 0]
+            self.tilemap[(cx_origin, cy_origin)][indx] = [type, variant]
         else:
-            raise KeyError(f"({cx_origin},{cy_origin}) is not a chunk! trying to access tile ({x}, {y})")
+            return None
     
     def generate_world(self):
         """Generates the world. Includes all noise passes."""
