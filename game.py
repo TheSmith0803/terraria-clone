@@ -79,7 +79,7 @@ class Game:
 
         
         self.tilemap = Tilemap(self)
-        self.world = World(self, 'debug', self.tilemap)
+        self.world = World(self, 'large', self.tilemap)
         self.world_size_pix = (self.world.map_size[0] * self.tilemap.tile_size, self.world.map_size[1] * self.tilemap.tile_size)
         
         success = self.tilemap.load("map.json")

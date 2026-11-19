@@ -51,19 +51,34 @@ class World:
                 x_pos = 0
                 for y in range(cy*16,cy*16+16):
                     for x in range(cx*16,cx*16+16):
+                        #these init variants are set just so that initial world data gen doesnt take forever
+                        #top
+                        variant = 0
+                        if y == self.surface_height and x != 0 and x != self.map_size[0] - 1:
+                            variant = 0
+                        elif y == self.surface_height and x == 0:
+                            variant = 1
+                        elif y == self.surface_height and x == self.map_size[0] - 1:
+                            variant = 2
+                        #bottom
+                        elif y == self.map_size[1] - 1 and x != 0 and x != self.map_size[0] - 1:
+                            variant = 7
+                        elif y == self.map_size[1] - 1 and x == 0:
+                            variant = 3
+                        elif y == self.map_size[1] - 1 and x == self.map_size[0] - 1:
+                            variant = 4
+                        #sides
+                        elif x == 0:
+                            variant = 6
+                        elif x == self.map_size[0] - 1:
+                            variant = 5
+                        else:
+                            variant = 8
+
                         if y < self.surface_height:
                             self.tilemap[chk_key].append([BlockType.AIR, 0]) 
                         else:
-                            self.tilemap[chk_key].append([BlockType.GRASS, 15])
-
-        for chk in self.tilemap:
-            x_offset = chk[0] * 16
-            y_offset = chk[1] * 16
-            for x in range(x_offset, x_offset+16):
-                for y in range(y_offset, y_offset+16):
-                    if self.get_tile(x,y)[0] != BlockType.AIR:
-                        self.tilemap._autotile((x, y))
-
+                            self.tilemap[chk_key].append([BlockType.GRASS, variant])
         
         self.lh_world_lim = 0
         self.upr_world_lim = 0

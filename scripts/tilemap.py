@@ -126,6 +126,7 @@ class Tilemap:
                 if check_tiles == autotile:
                     self.game.world.set_tile(*tile, self.game.world.get_tile(*tile)[0], AUTOTILE_MAP[autotile])
 
+                    #converts grass to dirt if completely surrounded
                     if AUTOTILE_MAP[autotile] == 8 and curr_tile[0] == BlockType.GRASS:
                         self.game.world.set_tile(*tile, BlockType.DIRT, AUTOTILE_MAP[autotile])
 
