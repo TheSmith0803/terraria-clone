@@ -40,12 +40,10 @@ class Tilemap:
 
         self.tile_coords = {}        
 
-    #this is probably broken at the moment, will eventually implement a "get tile" function in the world class
+    #just iterate the chunks for now :o
     def __iter__(self):
-        for chunk in self._tile_map.keys(): # chunk == key == Ex. (15, 21)
-            for indx, tile in enumerate(self._tile_map[chunk]):
-                coord = tuple([chunk[0]+indx*chunk[0],chunk[1]+indx*chunk[1]])
-                yield coord
+        for chunk in self._tile_map: 
+            yield chunk
 
     def __getitem__(self, key):
         return self._tile_map[key]
@@ -148,17 +146,11 @@ class Tilemap:
     def render_map(self, surf , offset=(0, 0)):
         count = 0
         #this is da way
-        for x in range(int(offset[0] // self.tile_size // self.chunk_size - 1), int((offset[0] + surf.get_width()) // self.tile_size // self.chunk_size + 1)):
-            for y in range(int(offset[1] // self.tile_size // self.chunk_size - 1), int((offset[1] + surf.get_height()) // self.tile_size // self.chunk_size + 1)):
+        for x in range(int((offset[0] // self.tile_size - 1) // self.chunk_size), int(((offset[0] + surf.get_width()) // self.tile_size + 1) // self.chunk_size)):
+            for y in range(int((offset[1] // self.tile_size - 1) // self.chunk_size), int(((offset[1] + surf.get_height()) // self.tile_size + 1) // self.chunk_size)):
                 chk = (x, y)
-                
                 if chk in self._tile_map.keys():
                     chunk = self._tile_map[chk]
-                    print(chk, count)
-                    
-                    count += 1
-                    if count >= 4:
-                        pass
 
                     x_offset = 0#both offsets in terms of pixels
                     y_offset = 0
@@ -193,6 +185,7 @@ class Tilemap:
                                             pos[1] - offset[1]
                                         )
                                     )
+
     #maybe implement chunking? also make world saving async
     def save(self, filename=r'map.json'):
             

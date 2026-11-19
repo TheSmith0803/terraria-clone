@@ -106,10 +106,6 @@ class Game:
         #self.player.speed, self.player.grip, self.player.friction = 10, 10, 10
         self.clock = pygame.time.Clock()
 
-        self.player.gravity = 0
-        self.player.friction = 100
-        self.player.air_acceleration = 2
-
     def _tile(self, coords: tuple) -> str: #maybe ill use this?
         return f"{coords[0]};{coords[1]}"
 

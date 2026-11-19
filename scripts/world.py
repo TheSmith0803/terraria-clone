@@ -56,12 +56,12 @@ class World:
                         else:
                             self.tilemap[chk_key].append([BlockType.GRASS, 0])
 
-        world_limits = [0, 0, self.map_size[0]*16-256, self.map_size[1]*16-256]
+        world_limits = [0, 0, self.map_size[0]*16, self.map_size[1]*16]
 
-        self.lh_world_lim = -16
-        self.rh_world_lim = world_limits[2]
+        self.lh_world_lim = 0
         self.upr_world_lim = 0
-        self.lwr_world_lim = world_limits[3]
+        self.rh_world_lim = world_limits[2] - self.game.display.get_width()
+        self.lwr_world_lim = world_limits[3] - self.game.display.get_height()
 
     def _surface_noise_pass(self):
         """Creates dynamic terrain on the surface. Will eventually change based upon biome"""
