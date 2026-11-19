@@ -158,7 +158,7 @@ class Player(PhysicsEntity):
         #FIGURE OUT HOW TO USE THIS ^^^^^ TO MAP THE MOUSE POS TO THE TILE GRID LOL
     
     def mine_tile(self):
-        item = self.tilemap.rmv_tile(self.world_mpos_tile)
+        item = self.tilemap.rmv_tile((int(self.world_mpos_tile[0]), int(self.world_mpos_tile[1])))
         if item == None:
             return
         else:

@@ -122,12 +122,11 @@ class Tilemap:
                 remove_tile = (world_tile_pos[0], world_tile_pos[1])
         #print(remove_tile)
         #maybe make the tile actually pop out into the world later, right now it is just removed
-        
-        if remove_tile != None:
-            removed_item = self.game.world.get_tile(world_tile_pos[0], world_tile_pos[1])[0]
+        removed_item = self.game.world.get_tile(world_tile_pos[0], world_tile_pos[1])
+        if remove_tile != None and removed_item[0] != BlockType.AIR:
             self.game.world.set_tile(world_tile_pos[0], world_tile_pos[1], BlockType.AIR)
             #self._autotile(world_tile_pos)
-            return removed_item
+            return Block(removed_item[0], self.game.tiles[removed_item[0]])
         else:
             return None
 

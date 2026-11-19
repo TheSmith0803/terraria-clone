@@ -23,7 +23,7 @@ class Inventory:
         elif isinstance(new_item, Block):
             for index, item in enumerate(self.contents):
                 if item[0].type == None:
-                    self.contents[index] = [new_item, 1]
+                    self.contents[index] = [Block(new_item, self.game.tiles[new_item]), 1]
                     break
                 elif item[0].stackable and new_item.subtype == self.contents[index][0].subtype and item[1] < BLOCK_DATA[new_item.subtype]['stack limit']:
                     self.contents[index][1] += 1
@@ -43,7 +43,7 @@ class Inventory:
     #specific to the player                
     def render_contents(self, surf):
         for index, item in enumerate(self.contents):
-            if item[0].type != BlockType.AIR: #item[0] contains item obj, item[1] is just the quanity of that item
+            if item[0] != BlockType.AIR: #item[0] contains item obj, item[1] is just the quanity of that item
                 if item[1] == 0:
                     self.contents[index][0] = Item(None, None)  
                 if item[0].type in ITEM_TYPES and item[0].subtype != None:
