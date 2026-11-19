@@ -54,7 +54,7 @@ class World:
                         if y < self.surface_height:
                             self.tilemap[chk_key].append([BlockType.AIR, 0]) 
                         else:
-                            self.tilemap[chk_key].append([BlockType.GRASS, 0])
+                            self.tilemap[chk_key].append([BlockType.GRASS, 15])
 
         self.lh_world_lim = 0
         self.upr_world_lim = 0

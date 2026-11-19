@@ -25,6 +25,7 @@ AUTOTILE_MAP = {                                            #exposed sides
     tuple(sorted([])): 15,                                  #none
 }
 
+
 TILE_OFFSETS = tuple(sorted([(-1, 0), (1, 0), (0, -1), (0, 1)]))
 AUTOTILE_TPYE = {'grass', 'stone'}
 
