@@ -68,13 +68,27 @@ class Tilemap:
     #this needs to work before we do anything else, fix collisions
     def physics_rects_around(self, pos):
         offsets = [(1, 0), (-1, 0), (0, 1), (0, -1), (-1, -1), (-1, 1), (1, 1), (1, -1), (0, 0)]
-        
+
+        pos_cx = int(pos[0] // 256)
+        pos_cy = int(pos[1] // 256)
+
+        pos_tile_x = int(pos[0] // self.tile_size)
+        pos_tile_y = int(pos[1] // self.tile_size)
+
+        if (pos_cx, pos_cy) not in self._tile_map:
+            return []
         tiles_around = []
         for adjacent_tile in offsets:
-            if (int(pos[0] // self.tile_size) + adjacent_tile[0], int(pos[1] // self.tile_size) + adjacent_tile[1]) in self._tile_map:
-                print("ok")
-                rect = pygame.Rect(self._tile_map[(int(pos[0] // self.tile_size) + adjacent_tile[0], int(pos[1] // self.tile_size) + adjacent_tile[1])], (self.tile_size, self.tile_size))
+            curr_tile = (pos_tile_x + adjacent_tile[0], pos_tile_y + adjacent_tile[1])
+            tile = self.game.world.get_tile(curr_tile[0], curr_tile[1])
+            if tile is None:
+                continue
+            if tile[0] == BlockType.AIR:
+                continue
+            if tile:
+                rect = pygame.Rect((curr_tile[0]*16, curr_tile[1]*16), (self.tile_size, self.tile_size))
                 tiles_around.append(rect)
+
         return tiles_around
     
 
@@ -91,7 +105,8 @@ class Tilemap:
 
         for tileoffset in TILE_OFFSETS:
             curr_tile = (world_tile_pos[0] + tileoffset[0], world_tile_pos[1] + tileoffset[1])
-            if curr_tile in self._tile_map.keys():
+            curr_chk = (curr_tile[0] // 16, curr_tile[1] // 16)
+            if curr_chk in self._tile_map.keys():
                 adjacent_tiles.append(curr_tile)
         if not adjacent_tiles:
             return
@@ -147,8 +162,8 @@ class Tilemap:
     def render_map(self, surf , offset=(0, 0)):
         count = 0
         #this is da way
-        for x in range(int((offset[0] // self.tile_size - 1) // self.chunk_size), int(((offset[0] + surf.get_width()) // self.tile_size + 1) // self.chunk_size)):
-            for y in range(int((offset[1] // self.tile_size - 1) // self.chunk_size), int(((offset[1] + surf.get_height()) // self.tile_size + 1) // self.chunk_size)):
+        for x in range(int((offset[0] // self.tile_size) // self.chunk_size - 1), int(((offset[0] + surf.get_width()) // self.tile_size) // self.chunk_size + 1)):
+            for y in range(int((offset[1] // self.tile_size) // self.chunk_size - 1), int(((offset[1] + surf.get_height()) // self.tile_size) // self.chunk_size + 1)):
                 chk = (x, y)
                 if chk in self._tile_map.keys():
                     chunk = self._tile_map[chk]

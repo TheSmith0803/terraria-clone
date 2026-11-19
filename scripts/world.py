@@ -94,7 +94,7 @@ class World:
         if (cx_origin, cy_origin) in self.tilemap.keys():
             tile = self.tilemap[(cx_origin, cy_origin)][indx]
         else:
-            raise KeyError(f"({cx_origin},{cy_origin}) is not a chunk! trying to access tile ({x}, {y})")
+            return None
         
         return tile
 

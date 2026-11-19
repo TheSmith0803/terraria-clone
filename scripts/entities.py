@@ -52,6 +52,7 @@ class PhysicsEntity:
         #resolve y collisions
         for rect in self.tilemap.physics_rects_around(self.pos):
             if entity_rect.colliderect(rect):
+                print('collision')
                 if self.velocity[1] > 0 and prev_y_bottom <= rect.top:
                     entity_rect.bottom = rect.top
                     self.collisions['down'] = True

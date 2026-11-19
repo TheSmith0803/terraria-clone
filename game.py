@@ -89,7 +89,7 @@ class Game:
 
         self.running = True
 
-        self.pos = [(self.world.map_size[0] // 2) * self.tilemap.tile_size, 0] #temporary so i dont fall 
+        self.pos = [(self.world.map_size[0] // 2) * self.tilemap.tile_size, (self.world.surface_height*16)-16] #surface hieght in terms of tiles so x16 needed, also -16 so not spawn in ground (character is 16 pix tall)
         self.movement = [False, False]
 
         self.scroll = [0, 0]
