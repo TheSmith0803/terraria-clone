@@ -26,8 +26,8 @@ class World:
 
         #tile size of world
         if map_size == 'debug':
-            self.map_size = (32, 32)
-            self.surface_height = 16
+            self.map_size = (128, 64)
+            self.surface_height = 32
         if map_size == 'small':
             self.map_size = (2800, 1200) 
             self.surface_height = 1000
@@ -43,8 +43,6 @@ class World:
         Base tile generation.
         Generates a base block of grass and dirt tiles.
         """
-
-        
         for cy in range(self.map_size[1]//16):
             for cx in range(self.map_size[0]//16):
                 chk_key = (cx, cy)
@@ -63,7 +61,8 @@ class World:
             y_offset = chk[1] * 16
             for x in range(x_offset, x_offset+16):
                 for y in range(y_offset, y_offset+16):
-                    self.tilemap._autotile((x, y))
+                    if self.get_tile(x,y)[0] != BlockType.AIR:
+                        self.tilemap._autotile((x, y))
 
         
         self.lh_world_lim = 0

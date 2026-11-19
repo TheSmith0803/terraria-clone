@@ -161,48 +161,51 @@ class Tilemap:
             return False
 
 
-    def render_map(self, surf , offset=(0, 0)):
+    def render_map(self, surf , offset=(0, 0), debug=False):
         count = 0
         #this is da way
-        for x in range(int((offset[0] // self.tile_size) // self.chunk_size - 1), int(((offset[0] + surf.get_width()) // self.tile_size) // self.chunk_size + 1)):
-            for y in range(int((offset[1] // self.tile_size) // self.chunk_size - 1), int(((offset[1] + surf.get_height()) // self.tile_size) // self.chunk_size + 1)):
+        for x in range((int(offset[0]) // self.tile_size) // self.chunk_size - 1, ((int(offset[0]) + surf.get_width()) // self.tile_size) // self.chunk_size + 1):
+            for y in range((int(offset[1]) // self.tile_size) // self.chunk_size - 1, ((int(offset[1]) + surf.get_height()) // self.tile_size) // self.chunk_size + 1):
                 chk = (x, y)
-                if chk in self._tile_map.keys():
+                if chk in self._tile_map:
                     chunk = self._tile_map[chk]
 
                     x_offset = 0#both offsets in terms of pixels
                     y_offset = 0
+
+                    cx_origin_pixels = chk[0] * 256
+                    cy_origin_pixels = chk[1] * 256
                     
                     for indx, info in enumerate(chunk):
                         block_type = info[0]
                         variant = info[1] 
-                        cx = chk[0]
-                        cy = chk[1]
                         if block_type == BlockType.AIR:
                             continue
-                        else:
-                            cx_origin_pixels = cx * 256
-                            cy_origin_pixels = cy * 256
-                            if x_offset >= 256:
-                                x_offset = 0
-                                y_offset += 16
+                    
+                        local_x = indx % 16
+                        local_y = int(indx / 16)
+                                        
+                        tile_x = cx_origin_pixels + local_x * 16
+                        tile_y = cy_origin_pixels + local_y * 16
 
-                            if y_offset >= 256:
-                                y_offset = 0
-                            
-                            tile_x = cx_origin_pixels + x_offset
-                            x_offset += 16
-
-                            tile_y = cy_origin_pixels + y_offset
-
-                            pos = [tile_x, tile_y]
-
-                            surf.blit(self.game.tiles[block_type][variant], 
-                                        (
-                                            pos[0] - offset[0], 
-                                            pos[1] - offset[1]
-                                        )
+                        surf.blit(self.game.tiles[block_type][variant], 
+                                    (
+                                        tile_x - int(offset[0]), 
+                                        tile_y - int(offset[1])
                                     )
+                                )
+                    if debug:
+                        pygame.draw.rect(
+                            surf,
+                            (255,0,0),
+                            (
+                                cx_origin_pixels - offset[0],
+                                cy_origin_pixels - offset[1],
+                                256,
+                                256
+                            ),
+                            1
+                        )
 
     #maybe implement chunking? also make world saving async
     def save(self, filename=r'map.json'):
