@@ -136,9 +136,12 @@ class Tilemap:
     def rmv_tile(self, world_tile_pos) -> BlockType:
         remove_tile = None
 <<<<<<< HEAD
+<<<<<<< HEAD
         if self.game.world.get_tile(*world_tile_pos):
             remove_tile = (world_tile_pos[0], world_tile_pos[1])
 =======
+=======
+>>>>>>> main
         if (world_tile_pos[0]//16, world_tile_pos[1]//16) in self._tile_map.keys():
                 remove_tile = (world_tile_pos[0], world_tile_pos[1])
         #print(remove_tile)
