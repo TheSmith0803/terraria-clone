@@ -135,8 +135,14 @@ class Tilemap:
     #this is specifically for removing block type objects, the logic for that is natrually simpler
     def rmv_tile(self, world_tile_pos) -> BlockType:
         remove_tile = None
+<<<<<<< HEAD
         if self.game.world.get_tile(*world_tile_pos):
             remove_tile = (world_tile_pos[0], world_tile_pos[1])
+=======
+        if (world_tile_pos[0]//16, world_tile_pos[1]//16) in self._tile_map.keys():
+                remove_tile = (world_tile_pos[0], world_tile_pos[1])
+        #print(remove_tile)
+>>>>>>> 9d5c8b8 (maybe this will work? logic for placing tiles)
         #maybe make the tile actually pop out into the world later, right now it is just removed
         removed_item = self.game.world.get_tile(*world_tile_pos)
         if remove_tile != None and removed_item[0] != BlockType.AIR:
@@ -149,12 +155,12 @@ class Tilemap:
     #read comment above remove tile
     def insert_tile(self, world_tile_pos, block: Block) -> None:
         place_tile = None
-        if f'{str(world_tile_pos[0])};{str(world_tile_pos[1])}' not in self._tile_map["tiles"].keys():
-                place_tile = f'{str(world_tile_pos[0])};{str(world_tile_pos[1])}'
-        #print(f"world tile pos: {world_tile_pos[0]}, {world_tile_pos[1]}")
+        chk = (world_tile_pos[0]//16, world_tile_pos[1]//16)
+        if chk in self._tile_map.keys():
+            place_tile = (world_tile_pos[0], world_tile_pos[1])
+
         if place_tile != None:
-            pos = (world_tile_pos[0] * self.tile_size, world_tile_pos[1] * self.tile_size)
-            self._tile_map["tiles"][place_tile] = {'type': block.type, 'subtype': block.subtype, 'variant': 0,'pos': pos,}
+            self.game.world.set_tile(*world_tile_pos, block.type)
             self._autotile(world_tile_pos, place=True)
             return True
         else:
