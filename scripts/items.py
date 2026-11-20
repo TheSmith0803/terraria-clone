@@ -68,21 +68,19 @@ ORE_TYPES = {
 class Item:
     def __init__(self, type, img, stackable=False):
         self.type = type
-        self.subtype = None 
         self.img = img
         self.stackable = stackable
 
 
 class Block(Item):
-    def __init__(self, subtype, img):
+    def __init__(self, type, img):
 
-        if subtype not in BLOCK_DATA.keys():
-            raise RuntimeError('block type not in listed in subtypes')
+        if type not in BLOCK_DATA.keys():
+            raise RuntimeError(f'block type {type} not in listed in BLOCK_DATA')
         
-        super().__init__(ITEM_TYPES['block'], img, True)
+        super().__init__(type, img, True)
 
-        self.type = 'block'
-        self.subtype = subtype
-        self.block_info = BLOCK_DATA[subtype]
+        self.type = type
+        self.block_info = BLOCK_DATA[type]
 
         

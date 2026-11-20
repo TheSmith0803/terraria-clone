@@ -15,21 +15,26 @@ class Inventory:
 
     def update(self, new_item=None):
         #add new item to inventory
+        
         if new_item == None:
             if self.contents[self.ui.selected].type == None:
                 return
         
         #iterate over all items in hotbar/inventory to see if there are matching stacks
-        elif isinstance(new_item, Block):
+        elif isinstance(new_item, BlockType):
+            
             for index, item in enumerate(self.contents):
+                print(new_item, self.contents[index][0].type)
                 if item[0].type == None:
-                    self.contents[index] = [Block(new_item, self.game.tiles[new_item]), 1]
+                    blk_drop = BLOCK_DATA[new_item]['drop']
+                    self.contents[index] = [Block(blk_drop, self.game.tiles[blk_drop]), 1]
                     break
-                elif item[0].stackable and new_item.subtype == self.contents[index][0].subtype and item[1] < BLOCK_DATA[new_item.subtype]['stack limit']:
+                elif item[0].stackable and BLOCK_DATA[new_item]['drop'] == self.contents[index][0].type and item[1] < BLOCK_DATA[new_item]['stack limit']:
                     self.contents[index][1] += 1
                     break
                 else:
                     continue
+            print()
         else:
             for index, item in enumerate(self.contents):
                 if item[0].type == None:
@@ -46,8 +51,8 @@ class Inventory:
             if item[0] != BlockType.AIR: #item[0] contains item obj, item[1] is just the quanity of that item
                 if item[1] == 0:
                     self.contents[index][0] = Item(None, None)  
-                if item[0].type in ITEM_TYPES and item[0].subtype != None:
-                    surf.blit(pygame.transform.scale_by(self.game.tiles[item[0].subtype][15], 0.75), (self.ui.hotbar_origin[0] + self.ui.hotbar_positions[index] + (self.game.ui_assets['slot'].get_width() / 2 + 1), self.ui.hotbar_origin[1] + (self.game.ui_assets['slot'].get_height() / 2 + 1)))
+                if item[0].type is not None:
+                    surf.blit(pygame.transform.scale_by(self.game.tiles[item[0].type][15], 0.75), (self.ui.hotbar_origin[0] + self.ui.hotbar_positions[index] + (self.game.ui_assets['slot'].get_width() / 2 + 1), self.ui.hotbar_origin[1] + (self.game.ui_assets['slot'].get_height() / 2 + 1)))
                     font = pygame.font.SysFont('Consolas', 8)
                     text_surf = font.render(str(item[1]), True, (255, 255, 255))
                     text_rect = text_surf.get_rect()

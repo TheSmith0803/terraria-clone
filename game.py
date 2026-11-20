@@ -79,7 +79,7 @@ class Game:
 
         
         self.tilemap = Tilemap(self)
-        self.world = World(self, 'large', self.tilemap)
+        self.world = World(self, 'debug', self.tilemap)
         self.world_size_pix = (self.world.map_size[0] * self.tilemap.tile_size, self.world.map_size[1] * self.tilemap.tile_size)
         
         success = self.tilemap.load("map.json")
@@ -125,9 +125,9 @@ class Game:
             self.camera.update()#takes care of all the scroll code
 
             render_scroll = (int(self.scroll[0]), int(self.scroll[1]))
-            self.display.fill((min(max(0, 20 + self.player.pos[1] // 6), 255),
-                               min(max(0, 100 + self.player.pos[1] // 6), 255),
-                               min(max(0, 200 + self.player.pos[1] // 6), 255)))
+            self.display.fill((min(max(0, 20 + self.player.pos[1] // 6 - 400), 255),
+                               min(max(0, 100 + self.player.pos[1] // 6 - 400), 255),
+                               min(max(0, 200 + self.player.pos[1] // 6 - 400), 255)))
             self.background.render_background()
             self.tilemap.render_map(self.display, offset=self.scroll, debug=True)
             self.player.render(self.display, offset=self.scroll)
@@ -138,7 +138,7 @@ class Game:
                 self.ui.update(event=event)
                     
             #render ui stuff at the end of the fram
-            font_surf = self.font.render(f'Player pos\nX: {int(self.player.pos[0]) // self.tilemap.tile_size}\nY: {int(self.player.pos[1]) // self.tilemap.tile_size}', False, (255,255,255))
+            font_surf = self.font.render(f'Player pos\nX: {int(self.player.pos[0]) // self.tilemap.tile_size}\nY: {int(self.player.pos[1]) // self.tilemap.tile_size}', False, (100,100,255))
             self.display.blit(font_surf, (10, 45))
             self.ui.render_hotbar(self.display)
             self.ui.render_healthbar(self.display)

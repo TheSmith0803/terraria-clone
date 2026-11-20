@@ -23,6 +23,7 @@ class World:
         self.start_pos = (0, 0)
         self.map_size_str = map_size
         self.objects = []
+        self.time = 1200
 
         #tile size of world
         if map_size == 'debug':
@@ -30,13 +31,13 @@ class World:
             self.surface_height = 32
         if map_size == 'small':
             self.map_size = (2800, 1200) 
-            self.surface_height = 1000
+            self.surface_height = 200
         if map_size == 'medium':
             self.map_size = (5000, 1488)
-            self.surface_height = 1288
+            self.surface_height = 200
         if map_size == 'large':
             self.map_size = (8000, 2000)
-            self.surface_height = 1800
+            self.surface_height = 200
 
     def _generate_tiles(self):
         """
@@ -53,6 +54,7 @@ class World:
                     for x in range(cx*16,cx*16+16):
                         #these init variants are set just so that initial world data gen doesnt take forever
                         #top
+                        blk_type = BlockType.GRASS
                         variant = 0
                         if y == self.surface_height and x != 0 and x != self.map_size[0] - 1:
                             variant = 0
@@ -74,11 +76,12 @@ class World:
                             variant = 5
                         else:
                             variant = 8
+                            blk_type = BlockType.DIRT
 
                         if y < self.surface_height:
                             self.tilemap[chk_key].append([BlockType.AIR, 0]) 
                         else:
-                            self.tilemap[chk_key].append([BlockType.GRASS, variant])
+                            self.tilemap[chk_key].append([blk_type, variant])
         
         self.lh_world_lim = 0
         self.upr_world_lim = 0

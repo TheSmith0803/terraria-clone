@@ -133,17 +133,16 @@ class Tilemap:
 
     #will take in a tile coord string and remove that particular tile from the tilemap will handle tile sprite changes, same with the place tile
     #this is specifically for removing block type objects, the logic for that is natrually simpler
-    def rmv_tile(self, world_tile_pos) -> Block:
+    def rmv_tile(self, world_tile_pos) -> BlockType:
         remove_tile = None
-        if (world_tile_pos[0], world_tile_pos[1]) in self._tile_map.keys():
-                remove_tile = (world_tile_pos[0], world_tile_pos[1])
-        #print(remove_tile)
+        if self.game.world.get_tile(*world_tile_pos):
+            remove_tile = (world_tile_pos[0], world_tile_pos[1])
         #maybe make the tile actually pop out into the world later, right now it is just removed
-        removed_item = self.game.world.get_tile(world_tile_pos[0], world_tile_pos[1])
+        removed_item = self.game.world.get_tile(*world_tile_pos)
         if remove_tile != None and removed_item[0] != BlockType.AIR:
-            self.game.world.set_tile(world_tile_pos[0], world_tile_pos[1], BlockType.AIR)
-            #self._autotile(world_tile_pos)
-            return Block(removed_item[0], self.game.tiles[removed_item[0]])
+            self.game.world.set_tile(*world_tile_pos, BlockType.AIR)
+            self._autotile(world_tile_pos)
+            return removed_item[0]
         else:
             return None
 

@@ -199,7 +199,7 @@ class Player(PhysicsEntity):
             mpos[1] /= self.game.y_res_ratio 
         
         self.world_mpos_raw = [mpos[0] + offset[0], mpos[1] + offset[1]]
-        self.world_mpos_tile = [mpos[0] // self.tilemap.tile_size, mpos[1] // self.tilemap.tile_size]
+        self.world_mpos_tile = [self.world_mpos_raw[0] // self.tilemap.tile_size, self.world_mpos_raw[1] // self.tilemap.tile_size]
 
         if not self.collisions['down']:
             if self.velocity[1] == self.terminal_velocity:

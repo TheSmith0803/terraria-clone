@@ -44,6 +44,11 @@ class Background:
         self.collection = self.game.background[self.biome]
         self.imgs = [pygame.transform.scale_by(img, (self.game.display.get_width() / img.get_width(), self.game.display.get_height() / img.get_height())) for img in self.game.backgrounds[self.biome].values() if isinstance(img, pygame.Surface)]
 
+class Sky:
+    """will be linked to day night cycle"""
+    def __init__(self):
+        pass
+
 class Cloud:
     def __init__(self):
         pass
