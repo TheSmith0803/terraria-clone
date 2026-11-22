@@ -135,17 +135,11 @@ class Tilemap:
     #this is specifically for removing block type objects, the logic for that is natrually simpler
     def rmv_tile(self, world_tile_pos) -> BlockType:
         remove_tile = None
-<<<<<<< HEAD
-<<<<<<< HEAD
         if self.game.world.get_tile(*world_tile_pos):
             remove_tile = (world_tile_pos[0], world_tile_pos[1])
-=======
-=======
->>>>>>> main
         if (world_tile_pos[0]//16, world_tile_pos[1]//16) in self._tile_map.keys():
                 remove_tile = (world_tile_pos[0], world_tile_pos[1])
         #print(remove_tile)
->>>>>>> 9d5c8b8 (maybe this will work? logic for placing tiles)
         #maybe make the tile actually pop out into the world later, right now it is just removed
         removed_item = self.game.world.get_tile(*world_tile_pos)
         if remove_tile != None and removed_item[0] != BlockType.AIR:
