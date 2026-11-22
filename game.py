@@ -39,7 +39,7 @@ class Game:
 
         self.entities = {
             #player sprite and animations for player
-            'player': load_image('assets\\entities\\player.png'),
+            'player': load_image('assets\\entities\\newplayer.png'),
             'player\\idle': Animation(load_images('assets\\entities\\player\\idle'), img_dur=6),
             'player\\run': Animation(load_images('assets\\entities\\player\\run'), img_dur=5)
         }
@@ -75,7 +75,7 @@ class Game:
         }
         
         self.tilemap = Tilemap(self)
-        self.world = World(self, 'debug', self.tilemap)
+        self.world = World(self, 'small', self.tilemap)
         self.world_size_pix = (self.world.map_size[0] * self.tilemap.tile_size, self.world.map_size[1] * self.tilemap.tile_size)
 
         if os.path.exists("map.dig"):

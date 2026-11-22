@@ -66,8 +66,23 @@ class Tilemap:
         return self._tile_map["tiles"][f'{str(tile_coords[0])};{str(tile_coords[1])}']
 
     #this needs to work before we do anything else, fix collisions
-    def physics_rects_around(self, pos):
-        offsets = [(1, 0), (-1, 0), (0, 1), (0, -1), (-1, -1), (-1, 1), (1, 1), (1, -1), (0, 0)]
+    def physics_rects_around(self, pos, e_size):
+        #this code essentially calculates all possible offsets for every frame
+        taken_tiles = ((e_size[0]+15) // 16, (e_size[1]+15) // 16)
+        offsets = set()
+        for x in range(taken_tiles[0]):
+            for y in range(taken_tiles[1]):
+                offsets.add((x, y))
+                adjacents = ((x - 1, y), 
+                            (x + 1, y), 
+                            (x, y - 1), 
+                            (x, y + 1),
+                            (x-1,y-1),
+                            (x+1,y-1),
+                            (x+1,y+1),
+                            (x-1,y+1))
+                for a in adjacents:
+                    offsets.add(a)
 
         pos_cx = int(pos[0] // 256)
         pos_cy = int(pos[1] // 256)

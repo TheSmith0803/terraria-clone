@@ -50,7 +50,7 @@ class PhysicsEntity:
 
 
         #resolve y collisions
-        for rect in self.tilemap.physics_rects_around(self.pos):
+        for rect in self.tilemap.physics_rects_around(self.pos, self.size):
             if entity_rect.colliderect(rect):
                 if self.velocity[1] > 0 and prev_y_bottom <= rect.top:
                     entity_rect.bottom = rect.top
@@ -80,7 +80,7 @@ class PhysicsEntity:
         entity_rect.x = self.pos[0]
 
         #resolve x collisions
-        for rect in self.tilemap.physics_rects_around(self.pos):
+        for rect in self.tilemap.physics_rects_around(self.pos, self.size):
             if entity_rect.colliderect(rect):
                 if self.velocity[0] > 0:
                     entity_rect.right = rect.left 
