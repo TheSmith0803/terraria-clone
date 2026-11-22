@@ -9,7 +9,10 @@ class CoordinateSpace(IntEnum):
     SCREEN = 3
     WORLD = 4
 
-
+DEBUG_W = (128, 64)
+SMALL_W = (2800, 1200) 
+MEDIUM_W = (5000, 1488)
+LARGE_W = (8000, 2000)
 
 class World:
     """
@@ -27,16 +30,16 @@ class World:
 
         #tile size of world
         if map_size == 'debug':
-            self.map_size = (128, 64)
+            self.map_size = DEBUG_W
             self.surface_height = 32
         if map_size == 'small':
-            self.map_size = (2800, 1200) 
+            self.map_size = SMALL_W
             self.surface_height = 200
         if map_size == 'medium':
-            self.map_size = (5000, 1488)
+            self.map_size = MEDIUM_W
             self.surface_height = 200
         if map_size == 'large':
-            self.map_size = (8000, 2000)
+            self.map_size = LARGE_W
             self.surface_height = 200
 
     def _generate_tiles(self):
@@ -90,7 +93,6 @@ class World:
 
     def _surface_noise_pass(self):
         """Creates dynamic terrain on the surface. Will eventually change based upon biome"""
-        
         pass
 
     def get_tile(self, x, y):
@@ -156,7 +158,7 @@ class World:
         self._generate_tiles()
         self._surface_noise_pass()
 
-    def save_world(self, filename):
+    def save_world(self, filename="map.dig"):
         """saves entire world"""
         with open(filename, "wb") as f:
             WLD_SV_HDR = b"WORLDSTART"
@@ -177,8 +179,56 @@ class World:
                 for block in self.tilemap[k]:
                     f.write(struct.pack("<2I", *block))
 
-    def load_world(self):
-        pass
+    def load_world(self, filename="map.dig"):
+        """ Loads world data.
+        Returns a dictionary of chunks
+        Key:
+            tuple(x, y) chunk coords. Ex. -> (0,0) top left chunk, (0,1) chunk under top left chunk.
+        Value:
+            list(256 tiles) -> each tile represented as [BlockType[IntEnum], variant[int]]"""
+        with open(filename, "rb") as f:
+            #world and map headers are 17 bytes
+            cursor_pos = 17
+            f.seek(cursor_pos)
+
+            #read map size and convert to string ('S'=small, 'M'=medium, 'L'=large, 'D'=debug)
+            map_size = f.read(1)
+            map_size = struct.unpack("<s", map_size)[0].decode('utf-8')
+            if map_size == 'D':
+                map_size = DEBUG_W
+            if map_size == 'S':
+                map_size = SMALL_W
+            if map_size == 'M':
+                map_size = MEDIUM_W
+            if map_size == 'L':
+                map_size = LARGE_W
+            
+            cursor_pos += 1
+            f.seek(cursor_pos)
+            chunk_bytes = f.read()
+            ints = struct.unpack(f"<{len(chunk_bytes)//4}I", chunk_bytes)
+            raw_data = []
+            for i in range(0, len(ints), 2):
+                info = list(ints[i:i+2])
+                info[0] = BlockType(info[0])
+                raw_data.append(info)
+
+        data = {}
+        chk_num = 0
+        for cy in range(map_size[1]//16):
+            for cx in range(map_size[0]//16):
+                data[(cx, cy)] = []
+                for indx in range(chk_num*256, chk_num*256+256):
+                    data[(cx, cy)].append(raw_data[indx])
+                chk_num += 1
+
+        self.tilemap._tile_map = data
+        self.lh_world_lim = 0
+        self.upr_world_lim = 0
+        self.rh_world_lim = (map_size[0] * 16) - self.game.display.get_width()
+        self.lwr_world_lim = (map_size[1] * 16) - self.game.display.get_height()
+
+        
     
     def get_tile_pos_world(pos) -> list [int, int]:
         pass

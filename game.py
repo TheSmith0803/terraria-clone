@@ -73,23 +73,21 @@ class Game:
                 'parallax-mod-y': 2,
             },
         }
-
-        #figure out how to keep this visible but maintain aspect ratio
-        #self.backgrounds['forest'] = pygame.transform.scale_by(self.backgrounds['forest'][], (self.display.get_width() / self.backgrounds['forest'].get_width(), self.display.get_height() / self.backgrounds['forest'].get_height()))
-
         
         self.tilemap = Tilemap(self)
         self.world = World(self, 'debug', self.tilemap)
         self.world_size_pix = (self.world.map_size[0] * self.tilemap.tile_size, self.world.map_size[1] * self.tilemap.tile_size)
-        
-        success = self.tilemap.load("map.json")
-        if not success:
+
+        if os.path.exists("map.dig"):
+            print("loading world")
+            self.world.load_world()
+        else:
             print('generating world')
             self.world.generate_world()
 
         self.running = True
 
-        self.pos = [(self.world.map_size[0] // 2) * self.tilemap.tile_size, (self.world.surface_height*16)-16] #surface hieght in terms of tiles so x16 needed, also -16 so not spawn in ground (character is 16 pix tall)
+        self.pos = [(self.world.map_size[0] // 2) * self.tilemap.tile_size, (self.world.surface_height*16)-20] #surface hieght in terms of tiles so x16 needed, also -16 so not spawn in ground (character is 16 pix tall)
         self.movement = [False, False]
 
         self.scroll = [0, 0]
@@ -124,12 +122,11 @@ class Game:
 
             self.camera.update()#takes care of all the scroll code
 
-            render_scroll = (int(self.scroll[0]), int(self.scroll[1]))
             self.display.fill((min(max(0, 20 + self.player.pos[1] // 6 - 400), 255),
                                min(max(0, 100 + self.player.pos[1] // 6 - 400), 255),
                                min(max(0, 200 + self.player.pos[1] // 6 - 400), 255)))
             self.background.render_background()
-            self.tilemap.render_map(self.display, offset=self.scroll, debug=True)
+            self.tilemap.render_map(self.display, offset=self.scroll)
             self.player.render(self.display, offset=self.scroll)
 
             self.inputs.update()

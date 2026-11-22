@@ -63,7 +63,7 @@ class Input:
                 self.player.inventory.open = not self.player.inventory.open
 
             if event.key == K_o:
-                self.tilemap.save()
+                self.game.world.save_world()
 
             if event.key == K_v:
                 self.player.health_cap += 20
