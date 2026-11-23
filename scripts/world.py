@@ -31,7 +31,7 @@ class World:
         #tile size of world
         if map_size == 'debug':
             self.map_size = DEBUG_W
-            self.surface_height = 32
+            self.surface_height = 64
         if map_size == 'small':
             self.map_size = SMALL_W
             self.surface_height = 200

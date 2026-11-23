@@ -110,7 +110,6 @@ class Game:
             #frame ticker for stuffs sometimes
             #calculate delta time
             self.delta_time = self.clock.tick(60) / 1000.0
-            #self.scroll = [int(self.scroll[0]), int(self.scroll[1])]
             self.player.update(offset=self.scroll)#player must be updated before camera to avoid funny jittery bisuiness
 
             #goofy player death
@@ -131,7 +130,7 @@ class Game:
 
             self.inputs.update()
             for event in pygame.event.get():
-                self.inputs.update_events(event=event)                
+                self.inputs.update_events(event=event)    
                 self.ui.update(event=event)
                     
             #render ui stuff at the end of the fram
