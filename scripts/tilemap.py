@@ -171,7 +171,7 @@ class Tilemap:
         if chk in self._tile_map.keys():
             place_tile = (world_tile_pos[0], world_tile_pos[1])
 
-        if place_tile != None:
+        if place_tile != None and self.game.world.get_tile(*place_tile)[0] == BlockType.AIR:
             self.game.world.set_tile(*world_tile_pos, block.type)
             self._autotile(world_tile_pos, place=True)
             return True
