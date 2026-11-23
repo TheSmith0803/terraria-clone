@@ -9,7 +9,7 @@ class CoordinateSpace(IntEnum):
     SCREEN = 3
     WORLD = 4
 
-DEBUG_W = (128, 64)
+DEBUG_W = (256, 128)
 SMALL_W = (2800, 1200) 
 MEDIUM_W = (5000, 1488)
 LARGE_W = (8000, 2000)
@@ -123,8 +123,9 @@ class World:
         if x_indx != 0:
             indx += x_indx
 
-        if (cx_origin, cy_origin) in self.tilemap.keys():
+        indx = int(indx)
 
+        if (cx_origin, cy_origin) in self.tilemap.keys():
             tile = self.tilemap[(cx_origin, cy_origin)][indx]
         else:
             return None
@@ -147,6 +148,8 @@ class World:
 
         if x_indx != 0:
             indx += x_indx
+
+        indx = int(indx)
 
         if (cx_origin, cy_origin) in self.tilemap.keys():
             self.tilemap[(cx_origin, cy_origin)][indx] = [type, variant]

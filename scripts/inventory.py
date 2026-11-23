@@ -24,7 +24,6 @@ class Inventory:
         elif isinstance(new_item, BlockType):
             
             for index, item in enumerate(self.contents):
-                print(new_item, self.contents[index][0].type)
                 if item[0].type == None:
                     blk_drop = BLOCK_DATA[new_item]['drop']
                     self.contents[index] = [Block(blk_drop, self.game.tiles[blk_drop]), 1]
@@ -34,7 +33,6 @@ class Inventory:
                     break
                 else:
                     continue
-            print()
         else:
             for index, item in enumerate(self.contents):
                 if item[0].type == None:

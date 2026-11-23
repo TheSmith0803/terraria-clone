@@ -182,7 +182,6 @@ def get_tile(tilemap, x, y, ret=CoordinateSpace.TILE):
 
     if (cx_origin, cy_origin) in tilemap.keys():
         tile = tilemap[(cx_origin, cy_origin)][indx]
-        print(indx)
     else:
         raise KeyError(f"({cx_origin},{cy_origin}) is not a chunk! trying to access tile ({x}, {y})")
     
@@ -207,7 +206,6 @@ def set_tile(tilemap, x, y, tile):
 
     if (cx_origin, cy_origin) in tilemap.keys():
         tile = tilemap[(cx_origin, cy_origin)][indx]
-        print(indx)
     else:
         raise KeyError(f"({cx_origin},{cy_origin}) is not a chunk! trying to access tile ({x}, {y})")
 

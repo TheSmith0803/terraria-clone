@@ -27,7 +27,7 @@ class Game:
         self.mixer = pygame.mixer.init()
 
         #these variables are for calculating cursor pos with scaling
-        self.window_size = (1200, 800)
+        self.window_size = (800, 800)
         self.display_res = (self.window_size[0] // 2, self.window_size[1] // 2)
         self.x_res_ratio = self.window_size[0] / self.display_res[0]
         self.y_res_ratio = self.window_size[1] / self.display_res[1]
@@ -75,7 +75,7 @@ class Game:
         }
         
         self.tilemap = Tilemap(self)
-        self.world = World(self, 'small', self.tilemap)
+        self.world = World(self, 'debug', self.tilemap)
         self.world_size_pix = (self.world.map_size[0] * self.tilemap.tile_size, self.world.map_size[1] * self.tilemap.tile_size)
 
         if os.path.exists("map.dig"):
