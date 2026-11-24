@@ -1,4 +1,5 @@
 import pygame
+import math
 from .items import *
 
 TILE_TYPES = {'grass'}
@@ -61,7 +62,8 @@ class Inventory:
                 if is_block:
                     surf.blit(pygame.transform.scale_by(assets[item[0].type][15], 0.75), (self.ui.hotbar_origin[0] + self.ui.hotbar_positions[index] + (self.game.ui_assets['slot'].get_width() / 2 + 1), self.ui.hotbar_origin[1] + (self.game.ui_assets['slot'].get_height() / 2 + 1)))
                 else:
-                    surf.blit(assets[item[0].type], (self.ui.hotbar_origin[0] + self.ui.hotbar_positions[index] + (self.game.ui_assets['slot'].get_width() / 2 + 1), self.ui.hotbar_origin[1] + (self.game.ui_assets['slot'].get_height() / 2 + 1)))
+                    asset_ctr = (assets[item[0].type].get_width() / 2, math.floor(assets[item[0].type].get_height() / 2))
+                    surf.blit(assets[item[0].type], (self.ui.hotbar_origin[0] + self.ui.hotbar_positions[index] + self.game.ui_assets['slot'].get_width() - asset_ctr[0], self.ui.hotbar_origin[1] + self.game.ui_assets['slot'].get_height() - asset_ctr[1]))
 
                 if item[0].stackable:
                     font = pygame.font.SysFont('Consolas', 8)
