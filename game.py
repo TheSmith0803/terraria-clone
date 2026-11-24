@@ -59,10 +59,13 @@ class Game:
         }
         
         #everything else lol
-        self.assets = {
+        self.containers = {
             'chest': load_image('assets\\chests\\chest-regular.png'),
-            'wood sword': load_image('assets\\weapons\\wood-sword.png')
             #'cursor': load_image(),
+        }
+
+        self.weapons = {
+            'wood sword': load_image('assets\\weapons\\wood-sword.png')
         }
 
         self.backgrounds = {
@@ -143,7 +146,7 @@ class Game:
             self.player.inventory.render_contents(self.display)
             angle+=1
             angle%=359
-            self.display.blit(pygame.transform.rotate(pygame.transform.scale_by(self.assets['wood sword'], 1), angle), (self.display.get_width()//2-6, self.display.get_height()//2 - 6))
+            self.display.blit(pygame.transform.rotate(pygame.transform.scale_by(self.weapons['wood sword'], 1), angle), (self.display.get_width()//2-6, self.display.get_height()//2 - 6))
 
             #self.debugger.render_collision_boxes()
             self.screen.blit(pygame.transform.scale(self.display, self.screen.get_size()), (0, 0))

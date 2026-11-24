@@ -16,6 +16,9 @@ class BlockType(IntEnum):
     STONE =4
     WOOD = 5
 
+class WeaponType(IntEnum):
+    WOOD_SWORD = 0
+
 #this dict will define different behaviors for the different block types
 BLOCK_DATA = {
     BlockType.GRASS: {
@@ -64,6 +67,13 @@ ORE_TYPES = {
     }
 }
 
+WEAPON_DATA = {
+    WeaponType.WOOD_SWORD: {
+        'power': 1,
+        'speed': 1
+    }
+}
+
 #generic item class
 class Item:
     def __init__(self, type, img, stackable=False):
@@ -76,11 +86,24 @@ class Block(Item):
     def __init__(self, type, img):
 
         if type not in BLOCK_DATA.keys():
-            raise RuntimeError(f'block type {type} not in listed in BLOCK_DATA')
+            raise RuntimeError(f'Block type {type} not in listed in BLOCK_DATA')
         
         super().__init__(type, img, True)
 
         self.type = type
         self.block_info = BLOCK_DATA[type]
 
-        
+class Tool(Item):
+    def __init__(self, type, img):
+        super().__init__(type, img, stackable=False)
+
+class Weapon(Item):
+    def __init__(self, type, img):
+
+        if type not in WEAPON_DATA.keys():
+            raise RuntimeError(f'Weapon type {type} not in listed in WEAPON_DATA')
+
+        super().__init__(type, img, stackable=False)
+
+        self.type = type
+        self.weapon_info = WEAPON_DATA[type]
