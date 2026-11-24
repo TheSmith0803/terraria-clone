@@ -65,7 +65,7 @@ class Game:
         }
 
         self.weapons = {
-            'wood sword': load_image('assets\\weapons\\wood-sword.png')
+            WeaponType.WOOD_SWORD: load_image('assets\\weapons\\wood-sword.png')
         }
 
         self.backgrounds = {
@@ -99,6 +99,7 @@ class Game:
         self.ui = UI(self,[img for img in self.ui_assets.values()])
         self.background = Background(self, 'forest')
         self.player = Player(self, self.ui, self.tilemap, self.pos)
+        self.player.inventory.update(Weapon(WeaponType.WOOD_SWORD, self.weapons[WeaponType.WOOD_SWORD]))
         self.inputs = Input(self, self.tilemap, self.player)
         self.entites = [] #will hold all active entities
 
@@ -110,7 +111,6 @@ class Game:
         
     def run(self):
         #game loop
-        angle = 0
         while self.running:
             #frame ticker for stuffs sometimes
             #calculate delta time
@@ -144,9 +144,8 @@ class Game:
             self.ui.render_hotbar(self.display)
             self.ui.render_healthbar(self.display)
             self.player.inventory.render_contents(self.display)
-            angle+=1
-            angle%=359
-            self.display.blit(pygame.transform.rotate(pygame.transform.scale_by(self.weapons['wood sword'], 1), angle), (self.display.get_width()//2-6, self.display.get_height()//2 - 6))
+            
+            #self.display.blit(pygame.transform.rotate(pygame.transform.scale_by(self.weapons['wood sword'], 1), angle), (self.display.get_width()//2-6, self.display.get_height()//2 - 6))
 
             #self.debugger.render_collision_boxes()
             self.screen.blit(pygame.transform.scale(self.display, self.screen.get_size()), (0, 0))

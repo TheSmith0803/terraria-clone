@@ -1,5 +1,5 @@
 import pygame
-from .items import Item, Block, BlockType, ITEM_TYPES, BLOCK_DATA
+from .items import *
 
 TILE_TYPES = {'grass'}
 
@@ -49,12 +49,26 @@ class Inventory:
             if item[0] != BlockType.AIR: #item[0] contains item obj, item[1] is just the quanity of that item
                 if item[1] == 0:
                     self.contents[index][0] = Item(None, None)  
-                if item[0].type is not None:
-                    surf.blit(pygame.transform.scale_by(self.game.tiles[item[0].type][15], 0.75), (self.ui.hotbar_origin[0] + self.ui.hotbar_positions[index] + (self.game.ui_assets['slot'].get_width() / 2 + 1), self.ui.hotbar_origin[1] + (self.game.ui_assets['slot'].get_height() / 2 + 1)))
+                if item[0].type is None:
+                    return
+                is_block = False    
+                if item[0].type in BLOCK_DATA.keys():
+                    assets = self.game.tiles
+                    is_block = True
+                elif item[0].type in WEAPON_DATA.keys():
+                    assets = self.game.weapons
+
+                if is_block:
+                    surf.blit(pygame.transform.scale_by(assets[item[0].type][15], 0.75), (self.ui.hotbar_origin[0] + self.ui.hotbar_positions[index] + (self.game.ui_assets['slot'].get_width() / 2 + 1), self.ui.hotbar_origin[1] + (self.game.ui_assets['slot'].get_height() / 2 + 1)))
+                else:
+                    surf.blit(assets[item[0].type], (self.ui.hotbar_origin[0] + self.ui.hotbar_positions[index] + (self.game.ui_assets['slot'].get_width() / 2 + 1), self.ui.hotbar_origin[1] + (self.game.ui_assets['slot'].get_height() / 2 + 1)))
+
+                if item[0].stackable:
                     font = pygame.font.SysFont('Consolas', 8)
                     text_surf = font.render(str(item[1]), True, (255, 255, 255))
                     text_rect = text_surf.get_rect()
                     hotbar_offset = (self.ui.hotbar_positions[index] + self.ui.x_offset, self.ui.y_offset)
                     text_rect.bottomright = (self.ui.hotbar_origin[0] + hotbar_offset[0] + self.game.ui_assets['slot'].get_width() + 5, self.ui.hotbar_origin[1] + hotbar_offset[1] + self.game.ui_assets['slot'].get_height() + 5)
                     surf.blit(text_surf, text_rect)
+                
                       

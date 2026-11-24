@@ -166,6 +166,10 @@ class Tilemap:
 
     #read comment above remove tile
     def insert_tile(self, world_tile_pos, block: Block) -> None:
+
+        if not isinstance(block, Block):
+            return False
+
         place_tile = None
         chk = (world_tile_pos[0]//16, world_tile_pos[1]//16)
         if chk in self._tile_map.keys():
