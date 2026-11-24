@@ -16,12 +16,18 @@ class BlockType(IntEnum):
     STONE =4
     WOOD = 5
 
+class ToolType(IntEnum):
+    HAND = 0
+    WOOD_PICKAXE = 1
+    WOOD_AXE = 2
+
 class WeaponType(IntEnum):
     WOOD_SWORD = 0
 
 #this dict will define different behaviors for the different block types
 BLOCK_DATA = {
     BlockType.GRASS: {
+        'name': 'grass block',
         'drop': BlockType.DIRT,
         'autotile': True,
         'stackable': True,
@@ -30,6 +36,7 @@ BLOCK_DATA = {
         'tools': {'hand', 'pickaxe'}
     },
     BlockType.DIRT: {
+        'name': 'dirt block',
         'drop': BlockType.DIRT,
         'autotile': True,
         'stackable': True,
@@ -38,6 +45,7 @@ BLOCK_DATA = {
         'tools': {'hand', 'pickaxe'}
     },
     BlockType.STONE: {
+        'name': 'stone block',
         'drop': BlockType.STONE,
         'autotile': True,
         'stackable': True,
@@ -46,6 +54,7 @@ BLOCK_DATA = {
         'tools': {'pickaxe'}
     },
     BlockType.WOOD: {
+        'name': 'wood',
         'drop': BlockType.WOOD,
         'autotile': True,
         'stackable': True,
@@ -67,8 +76,13 @@ ORE_TYPES = {
     }
 }
 
+TOOL_DATA = {
+
+}
+
 WEAPON_DATA = {
     WeaponType.WOOD_SWORD: {
+        'name': 'Wooden Sword',
         'power': 1,
         'speed': 1
     }
