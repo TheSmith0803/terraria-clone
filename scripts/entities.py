@@ -157,6 +157,16 @@ class Player(PhysicsEntity):
 
         #FIGURE OUT HOW TO USE THIS ^^^^^ TO MAP THE MOUSE POS TO THE TILE GRID LOL
     
+    def process_action_lmb(self):
+        if self.inventory.selected_item.category in (None, ItemCategory.TOOL, ItemCategory.BLOCK, ItemCategory.ORE):
+            self.mine_tile()
+        if self.inventory.selected_item.category is ItemCategory.WEAPON:
+            self.attack()
+            
+    # LMB FUNCTIONS
+    def attack(self):
+        print('attack!')
+
     def mine_tile(self):
         item = self.tilemap.rmv_tile((int(self.world_mpos_tile[0]), int(self.world_mpos_tile[1])))
         if item == None:

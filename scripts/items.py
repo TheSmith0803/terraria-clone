@@ -112,11 +112,11 @@ ITEM_DATA = {
 class Item:
     def __init__(self, typ, img):
 
-        item_empty = False
+        self.item_empty = False
         if typ == None:
-            item_empty = True
+            self.item_empty = True
         
-        if not item_empty and typ not in ITEM_DATA.keys():
+        if not self.item_empty and typ not in ITEM_DATA.keys():
             raise RuntimeError(f'Item type {typ} not in listed in ITEM_DATA')
 
         self.type = typ
@@ -124,17 +124,21 @@ class Item:
 
     @property
     def data(self):
+        if self.item_empty: return None
         return ITEM_DATA[self.type]
 
     @property
     def name(self):
+        if self.item_empty: return None
         return ITEM_DATA[self.type]
 
     @property
     def stackable(self):
+        if self.item_empty: return None
         return ITEM_DATA[self.type]['stackable']
 
     @property
     def category(self):
+        if self.item_empty: return None
         return ITEM_DATA[self.type]['category']
     

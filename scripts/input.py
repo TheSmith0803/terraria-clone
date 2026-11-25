@@ -39,7 +39,7 @@ class Input:
                 pass
         else:
             if pygame.mouse.get_pressed()[0]:
-                self.player.mine_tile()
+                self.player.process_action_lmb()
             if pygame.mouse.get_pressed()[2]:
                 self.player.place_tile()
 

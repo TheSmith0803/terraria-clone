@@ -44,6 +44,10 @@ class Inventory:
                     self.contents[index][1] += 1
                     break
 
+    @property
+    def selected_item(self):
+        return self.contents[self.ui.selected][0]
+    
     #specific to the player                
     def render_contents(self, surf):
         for index, item in enumerate(self.contents):
