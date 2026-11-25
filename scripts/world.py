@@ -9,10 +9,10 @@ class CoordinateSpace(IntEnum):
     SCREEN = 3
     WORLD = 4
 
-DEBUG_W = (256, 128)
-SMALL_W = (2800, 1200) 
-MEDIUM_W = (5000, 1488)
-LARGE_W = (8000, 2000)
+DEBUG_W, DEBUG_SH = (256, 128), 64
+SMALL_W, SMALL_SH = (2800, 1200), 200
+MEDIUM_W, MEDIUM_SH = (5000, 1488), 200
+LARGE_W, LARGE_SH = (8000, 2000), 200
 
 class World:
     """
@@ -166,9 +166,9 @@ class World:
         with open(filename, "wb") as f:
             WLD_SV_HDR = b"WORLDSTART"
             MAP_HDR = b"TILEMAP"
-            MAP_SIZE = b"S" if self.map_size_str == "small" else \
-                       b"M" if self.map_size_str == "medium" else \
-                       b"L" if self.map_size_str == "large" else b"D"
+            MAP_SIZE = b"S" if self.map_size == SMALL_W else \
+                       b"M" if self.map_size == MEDIUM_W else \
+                       b"L" if self.map_size == LARGE_W else b"D"
             wld_hdr_bytes = struct.pack("<10s", WLD_SV_HDR)
             map_hdr_bytes = struct.pack("<7s", MAP_HDR)
             map_size_bytes = struct.pack("<s", MAP_SIZE)
@@ -197,14 +197,19 @@ class World:
             #read map size and convert to string ('S'=small, 'M'=medium, 'L'=large, 'D'=debug)
             map_size = f.read(1)
             map_size = struct.unpack("<s", map_size)[0].decode('utf-8')
+            print(map_size)
             if map_size == 'D':
-                map_size = DEBUG_W
+                self.map_size = DEBUG_W
+                self.surface_height = DEBUG_SH
             if map_size == 'S':
-                map_size = SMALL_W
+                self.map_size = SMALL_W
+                self.surface_height = SMALL_SH
             if map_size == 'M':
-                map_size = MEDIUM_W
+                self.map_size = MEDIUM_W
+                self.surface_height = MEDIUM_SH
             if map_size == 'L':
-                map_size = LARGE_W
+                self.map_size = LARGE_W
+                self.surface_height = LARGE_SH
             
             cursor_pos += 1
             f.seek(cursor_pos)
@@ -213,13 +218,13 @@ class World:
             raw_data = []
             for i in range(0, len(ints), 2):
                 info = list(ints[i:i+2])
-                info[0] = BlockType(info[0])
+                info[0] = ItemID(info[0])
                 raw_data.append(info)
 
         data = {}
         chk_num = 0
-        for cy in range(map_size[1]//16):
-            for cx in range(map_size[0]//16):
+        for cy in range(self.map_size[1]//16):
+            for cx in range(self.map_size[0]//16):
                 data[(cx, cy)] = []
                 for indx in range(chk_num*256, chk_num*256+256):
                     data[(cx, cy)].append(raw_data[indx])
@@ -228,8 +233,8 @@ class World:
         self.tilemap._tile_map = data
         self.lh_world_lim = 0
         self.upr_world_lim = 0
-        self.rh_world_lim = (map_size[0] * 16) - self.game.display.get_width()
-        self.lwr_world_lim = (map_size[1] * 16) - self.game.display.get_height()
+        self.rh_world_lim = (self.map_size[0] * 16) - self.game.display.get_width()
+        self.lwr_world_lim = (self.map_size[1] * 16) - self.game.display.get_height()
 
         
     
