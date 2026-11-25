@@ -1,4 +1,4 @@
-import pygame
+
 from enum import IntEnum
 
 class ItemCategory(IntEnum):
@@ -26,20 +26,18 @@ class ItemID(IntEnum):
 
     WOOD_SWORD = 800
     
-
-#this dict will define different behaviors for the different block types
-
 #### EVERY SINGLE ITEM MUST HAVE THESE DATA FIELDS ####
     # category
     # name
     # stackable
 
-ITEM_DATA = {
 
-    ##########################
-    ##### ALL BLOCK DATA #####
-    ##########################
+#THESE DICTS ARE SEPERATED IN SUCH A WAY
+#THAT IT MAKES IT EASIER TO NAVIGATE THIS FILE
+#FOR ALL DIFFERENT REPRESENTATION TYPES, CHECK ITEM_DATA, 
+#WHICH CONTAINS ALL THE DIFFERENT SUB CATEGORIES 
 
+BLOCK_DATA = {
     ItemID.GRASS_BLK: {
         'category': ItemCategory.BLOCK,
         'drop': ItemID.DIRT_BLK,
@@ -80,11 +78,12 @@ ITEM_DATA = {
         'hardness': 3,
         'tools': {ToolType.AXE}
     },
+}
 
     #########################
     ##### ALL TOOL DATA #####
     #########################
-
+TOOL_DATA = {
     ItemID.WOOD_PICKAXE: {
         'category': ItemCategory.TOOL,
         'stackable': False,
@@ -92,11 +91,11 @@ ITEM_DATA = {
         'power': 1,
         'speed': 1
     },
-
+}
     ###########################
     ##### ALL WEAPON DATA #####
     ###########################
-
+WEAPON_DATA = {
     ItemID.WOOD_SWORD: {
         'category': ItemCategory.WEAPON,
         'stackable': False,
@@ -106,7 +105,11 @@ ITEM_DATA = {
     },
 }
 
-
+ITEM_DATA = {
+    **BLOCK_DATA,
+    **TOOL_DATA,
+    **WEAPON_DATA,
+}
 
 #generic item class
 class Item:
