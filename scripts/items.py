@@ -1,4 +1,4 @@
-
+import pygame
 from enum import IntEnum
 
 class ItemCategory(IntEnum):
@@ -12,6 +12,10 @@ class ToolType(IntEnum):
     PICKAXE = 1
     AXE = 2
     HAMMER = 3
+
+class WeaponType(IntEnum):
+    SHORT_SWORD = 0
+    LONG_SWORD = 1
 
 class ItemID(IntEnum):
     AIR_BLK = 0
@@ -86,6 +90,7 @@ BLOCK_DATA = {
 TOOL_DATA = {
     ItemID.WOOD_PICKAXE: {
         'category': ItemCategory.TOOL,
+        'tool type': ToolType.PICKAXE,
         'stackable': False,
         'name': 'wooden pickaxe',
         'power': 1,
@@ -98,6 +103,7 @@ TOOL_DATA = {
 WEAPON_DATA = {
     ItemID.WOOD_SWORD: {
         'category': ItemCategory.WEAPON,
+        'weapon type': WeaponType.SHORT_SWORD,
         'stackable': False,
         'name': 'wooden sword',
         'power': 1,
@@ -113,13 +119,14 @@ ITEM_DATA = {
 
 #generic item class
 class Item:
-    def __init__(self, typ, img):
+    """Takes in an item ID, and the pygame image to represent an in game item. Mainly to be used in inventories."""
+    def __init__(self, typ:ItemID, img:pygame.Surface):
 
         self.item_empty = False
         if typ == None:
             self.item_empty = True
         
-        if not self.item_empty and typ not in ITEM_DATA.keys():
+        if not self.item_empty and not isinstance(typ, ItemID):
             raise RuntimeError(f'Item type {typ} not in listed in ITEM_DATA')
 
         self.type = typ
@@ -144,4 +151,3 @@ class Item:
     def category(self):
         if self.item_empty: return None
         return ITEM_DATA[self.type]['category']
-    
