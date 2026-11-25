@@ -1,61 +1,64 @@
 import pygame
 from enum import IntEnum
 
-ITEM_TYPES = {
-    'block': {'subtype': ['grass', 'dirt', 'wood', 'stone']},
-    'ore': {'subtype': ['copper', 'iron', 'gold', 'platinum', 'uranium', 'chromium']},
-    'tool': ['pickaxe', 'axe', 'hammer'],
-    'weapon': ['sword'],
-}
+class ItemCategory(IntEnum):
+    TOOL = 0
+    WEAPON = 1
+    BLOCK = 2
+    ORE = 3
 
-class BlockType(IntEnum):
-    NONE = 0
-    AIR = 1
-    GRASS = 2
-    DIRT = 3
-    STONE =4
-    WOOD = 5
 
-class ToolType(IntEnum):
-    HAND = 0
-    WOOD_PICKAXE = 1
-    WOOD_AXE = 2
+class ItemID(IntEnum):
+    AIR_BLK = 0
+    GRASS_BLK = 1
+    DIRT_BLK = 2
+    STONE_BLK = 3
+    WOOD_BLK = 4
 
-class WeaponType(IntEnum):
-    WOOD_SWORD = 0
+    HAND = 500
+    WOOD_PICKAXE = 501
+    WOOD_AXE = 502
+
+    WOOD_SWORD = 800
+    
 
 #this dict will define different behaviors for the different block types
 BLOCK_DATA = {
-    BlockType.GRASS: {
-        'name': 'grass block',
-        'drop': BlockType.DIRT,
+
+    ##########################
+    ##### ALL BLOCK DATA #####
+    ##########################
+    
+    ItemID.GRASS_BLK: {
+        'category': ItemCategory.BLOCK,
+        'drop': ItemID.DIRT_BLK,
         'autotile': True,
         'stackable': True,
         'stack limit': 999,
         'hardness': 2,
         'tools': {'hand', 'pickaxe'}
     },
-    BlockType.DIRT: {
-        'name': 'dirt block',
-        'drop': BlockType.DIRT,
+    ItemID.DIRT_BLK: {
+        'category': ItemCategory.BLOCK,
+        'drop': ItemID.DIRT_BLK,
         'autotile': True,
         'stackable': True,
         'stack limit': 999,
         'hardness': 2,
         'tools': {'hand', 'pickaxe'}
     },
-    BlockType.STONE: {
-        'name': 'stone block',
-        'drop': BlockType.STONE,
+    ItemID.STONE_BLK: {
+        'category': ItemCategory.BLOCK,
+        'drop': ItemID.STONE_BLK,
         'autotile': True,
         'stackable': True,
         'stack limit': 999,
         'hardness': 5,
         'tools': {'pickaxe'}
     },
-    BlockType.WOOD: {
-        'name': 'wood',
-        'drop': BlockType.WOOD,
+    ItemID.WOOD_BLK: {
+        'category': ItemCategory.BLOCK,
+        'drop': ItemID.WOOD_BLK,
         'autotile': True,
         'stackable': True,
         'stack limit': 999,
@@ -64,24 +67,9 @@ BLOCK_DATA = {
     }
 }
 
-ORE_TYPES = {
-    5: {
-        'type': 'copper',
-        'drop': 'copper ore',
-        'autotile': True,
-        'stackable': True,
-        'stack limit': 99,
-        'hardness': 2,
-        'tools': {'pickaxe'}
-    }
-}
-
-TOOL_DATA = {
-
-}
-
 WEAPON_DATA = {
-    WeaponType.WOOD_SWORD: {
+    ItemID.WOOD_SWORD: {
+        'category': ItemCategory.WEAPON,
         'name': 'Wooden Sword',
         'power': 1,
         'speed': 1
