@@ -54,8 +54,8 @@ class Game:
 
         self.tiles = {
             #grass tiles
-            BlockType.GRASS: load_images('assets\\tiles\\grass', numeric=True),
-            BlockType.DIRT: load_images('assets\\tiles\\dirt', numeric=True)
+            ItemID.GRASS_BLK: load_images('assets\\tiles\\grass', numeric=True),
+            ItemID.DIRT_BLK: load_images('assets\\tiles\\dirt', numeric=True)
         }
         
         #everything else lol
@@ -65,7 +65,7 @@ class Game:
         }
 
         self.weapons = {
-            WeaponType.WOOD_SWORD: load_image('assets\\weapons\\wood-sword.png')
+            ItemID.WOOD_SWORD: load_image('assets\\weapons\\wood-sword.png')
         }
 
         self.backgrounds = {
@@ -99,7 +99,7 @@ class Game:
         self.ui = UI(self,[img for img in self.ui_assets.values()])
         self.background = Background(self, 'forest')
         self.player = Player(self, self.ui, self.tilemap, self.pos)
-        self.player.inventory.update(Weapon(WeaponType.WOOD_SWORD, self.weapons[WeaponType.WOOD_SWORD]))
+        self.player.inventory.update(Item(ItemID.WOOD_SWORD, self.weapons[ItemID.WOOD_SWORD]))
         self.inputs = Input(self, self.tilemap, self.player)
         self.entites = [] #will hold all active entities
 

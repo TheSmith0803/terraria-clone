@@ -57,7 +57,7 @@ class World:
                     for x in range(cx*16,cx*16+16):
                         #these init variants are set just so that initial world data gen doesnt take forever
                         #top
-                        blk_type = BlockType.GRASS
+                        blk_type = ItemID.GRASS_BLK
                         variant = 0
                         if y == self.surface_height and x != 0 and x != self.map_size[0] - 1:
                             variant = 0
@@ -79,10 +79,10 @@ class World:
                             variant = 5
                         else:
                             variant = 8
-                            blk_type = BlockType.DIRT
+                            blk_type = ItemID.DIRT_BLK
 
                         if y < self.surface_height:
-                            self.tilemap[chk_key].append([BlockType.AIR, 0]) 
+                            self.tilemap[chk_key].append([ItemID.AIR_BLK, 0]) 
                         else:
                             self.tilemap[chk_key].append([blk_type, variant])
         
@@ -132,7 +132,7 @@ class World:
         
         return tile
 
-    def set_tile(self, x, y, type=BlockType.AIR, variant=0):
+    def set_tile(self, x, y, type=ItemID.AIR_BLK, variant=0):
         cx_origin = ((x // 16) * 16) // 16
         cy_origin = ((y // 16) * 16) // 16
 

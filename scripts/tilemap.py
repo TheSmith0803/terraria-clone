@@ -3,7 +3,7 @@ import json, random, orjson, pickle
 import os
 from .items import *
 
-from .items import Item, Block, BLOCK_DATA, ORE_TYPES
+from .items import *
 
 #rules for spawinging tiles, variants equate to file names --> '0.png'
 AUTOTILE_MAP = {                                            #exposed sides
@@ -98,7 +98,7 @@ class Tilemap:
             tile = self.game.world.get_tile(curr_tile[0], curr_tile[1])
             if tile is None:
                 continue
-            if tile[0] == BlockType.AIR:
+            if tile[0] == ItemID.AIR_BLK:
                 continue
             if tile:
                 rect = pygame.Rect((curr_tile[0]*16, curr_tile[1]*16), (self.tile_size, self.tile_size))
@@ -148,7 +148,7 @@ class Tilemap:
 
     #will take in a tile coord string and remove that particular tile from the tilemap will handle tile sprite changes, same with the place tile
     #this is specifically for removing block type objects, the logic for that is natrually simpler
-    def rmv_tile(self, world_tile_pos) -> BlockType:
+    def rmv_tile(self, world_tile_pos) -> ItemID:
         remove_tile = None
         if self.game.world.get_tile(*world_tile_pos):
             remove_tile = (world_tile_pos[0], world_tile_pos[1])
@@ -157,17 +157,17 @@ class Tilemap:
         #print(remove_tile)
         #maybe make the tile actually pop out into the world later, right now it is just removed
         removed_item = self.game.world.get_tile(*world_tile_pos)
-        if remove_tile != None and removed_item[0] != BlockType.AIR:
-            self.game.world.set_tile(*world_tile_pos, BlockType.AIR)
+        if remove_tile != None and removed_item[0] != ItemID.AIR_BLK:
+            self.game.world.set_tile(*world_tile_pos, ItemID.AIR_BLK)
             self._autotile(world_tile_pos)
             return removed_item[0]
         else:
             return None
 
     #read comment above remove tile
-    def insert_tile(self, world_tile_pos, block: Block) -> None:
+    def insert_tile(self, world_tile_pos, block: Item) -> None:
 
-        if not isinstance(block, Block):
+        if not isinstance(block, Item):
             return False
 
         place_tile = None
@@ -175,7 +175,7 @@ class Tilemap:
         if chk in self._tile_map.keys():
             place_tile = (world_tile_pos[0], world_tile_pos[1])
 
-        if place_tile != None and self.game.world.get_tile(*place_tile)[0] == BlockType.AIR:
+        if place_tile != None and self.game.world.get_tile(*place_tile)[0] == ItemID.AIR_BLK:
             self.game.world.set_tile(*world_tile_pos, block.type)
             self._autotile(world_tile_pos, place=True)
             return True
@@ -201,7 +201,7 @@ class Tilemap:
                     for indx, info in enumerate(chunk):
                         block_type = info[0]
                         variant = info[1] 
-                        if block_type == BlockType.AIR:
+                        if block_type == ItemID.AIR_BLK:
                             continue
                     
                         local_x = indx % 16
