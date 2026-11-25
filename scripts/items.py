@@ -28,7 +28,7 @@ BLOCK_DATA = {
     ##########################
     ##### ALL BLOCK DATA #####
     ##########################
-    
+
     ItemID.GRASS_BLK: {
         'category': ItemCategory.BLOCK,
         'drop': ItemID.DIRT_BLK,
@@ -64,17 +64,32 @@ BLOCK_DATA = {
         'stack limit': 999,
         'hardness': 3,
         'tools': {'axe'}
-    }
-}
+    },
 
-WEAPON_DATA = {
+    #########################
+    ##### ALL TOOL DATA #####
+    #########################
+
+    ItemID.WOOD_PICKAXE: {
+        'category': ItemCategory.TOOL,
+        'name': 'Wooden Pickaxe',
+        'power': 1,
+        'speed': 1
+    },
+
+    ###########################
+    ##### ALL WEAPON DATA #####
+    ###########################
+
     ItemID.WOOD_SWORD: {
         'category': ItemCategory.WEAPON,
         'name': 'Wooden Sword',
         'power': 1,
         'speed': 1
-    }
+    },
 }
+
+
 
 #generic item class
 class Item:
