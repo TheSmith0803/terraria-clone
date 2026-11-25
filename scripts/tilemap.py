@@ -131,7 +131,7 @@ class Tilemap:
             for tile_offset in TILE_OFFSETS:
                 tile_coords = (tile[0] + tile_offset[0], tile[1] + tile_offset[1])
                 curr_tile = self.game.world.get_tile(*tile_coords)
-                if curr_tile is not None and curr_tile[0] != BlockType.AIR:
+                if curr_tile is not None and curr_tile[0] != ItemID.AIR_BLK:
                     check_tiles.append(tile_offset)
                 else:
                     continue
@@ -142,8 +142,8 @@ class Tilemap:
                     self.game.world.set_tile(*tile, self.game.world.get_tile(*tile)[0], AUTOTILE_MAP[autotile])
 
                     #converts grass to dirt if completely surrounded
-                    if AUTOTILE_MAP[autotile] == 8 and curr_tile[0] == BlockType.GRASS:
-                        self.game.world.set_tile(*tile, BlockType.DIRT, AUTOTILE_MAP[autotile])
+                    if AUTOTILE_MAP[autotile] == 8 and curr_tile[0] == ItemID.GRASS_BLK:
+                        self.game.world.set_tile(*tile, ItemID.DIRT_BLK, AUTOTILE_MAP[autotile])
 
 
     #will take in a tile coord string and remove that particular tile from the tilemap will handle tile sprite changes, same with the place tile
@@ -167,7 +167,7 @@ class Tilemap:
     #read comment above remove tile
     def insert_tile(self, world_tile_pos, block: Item) -> None:
 
-        if not isinstance(block, Item):
+        if not block.category == ItemCategory.BLOCK:
             return False
 
         place_tile = None
