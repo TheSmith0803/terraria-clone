@@ -7,6 +7,11 @@ class ItemCategory(IntEnum):
     BLOCK = 2
     ORE = 3
 
+class ToolType(IntEnum):
+    HAND = 0
+    PICKAXE = 1
+    AXE = 2
+    HAMMER = 3
 
 class ItemID(IntEnum):
     AIR_BLK = 0
@@ -23,6 +28,12 @@ class ItemID(IntEnum):
     
 
 #this dict will define different behaviors for the different block types
+
+#### EVERY SINGLE ITEM MUST HAVE THESE DATA FIELDS ####
+    # category
+    # name
+    # stackable
+
 ITEM_DATA = {
 
     ##########################
@@ -32,38 +43,42 @@ ITEM_DATA = {
     ItemID.GRASS_BLK: {
         'category': ItemCategory.BLOCK,
         'drop': ItemID.DIRT_BLK,
+        'name': 'grass',
         'autotile': True,
         'stackable': True,
         'stack limit': 999,
         'hardness': 2,
-        'tools': {'hand', 'pickaxe'}
+        'tools': {ToolType.HAND, ToolType.PICKAXE}
     },
     ItemID.DIRT_BLK: {
         'category': ItemCategory.BLOCK,
         'drop': ItemID.DIRT_BLK,
+        'name': 'dirt',
         'autotile': True,
         'stackable': True,
         'stack limit': 999,
         'hardness': 2,
-        'tools': {'hand', 'pickaxe'}
+        'tools': {ToolType.HAND, ToolType.PICKAXE}
     },
     ItemID.STONE_BLK: {
         'category': ItemCategory.BLOCK,
         'drop': ItemID.STONE_BLK,
+        'name': 'stone',
         'autotile': True,
         'stackable': True,
         'stack limit': 999,
         'hardness': 5,
-        'tools': {'pickaxe'}
+        'tools': {ToolType.PICKAXE}
     },
     ItemID.WOOD_BLK: {
         'category': ItemCategory.BLOCK,
         'drop': ItemID.WOOD_BLK,
+        'name': 'wood',
         'autotile': True,
         'stackable': True,
         'stack limit': 999,
         'hardness': 3,
-        'tools': {'axe'}
+        'tools': {ToolType.AXE}
     },
 
     #########################
@@ -72,7 +87,8 @@ ITEM_DATA = {
 
     ItemID.WOOD_PICKAXE: {
         'category': ItemCategory.TOOL,
-        'name': 'Wooden Pickaxe',
+        'stackable': False,
+        'name': 'wooden pickaxe',
         'power': 1,
         'speed': 1
     },
@@ -83,7 +99,8 @@ ITEM_DATA = {
 
     ItemID.WOOD_SWORD: {
         'category': ItemCategory.WEAPON,
-        'name': 'Wooden Sword',
+        'stackable': False,
+        'name': 'wooden sword',
         'power': 1,
         'speed': 1
     },
@@ -93,13 +110,27 @@ ITEM_DATA = {
 
 #generic item class
 class Item:
-    def __init__(self, type, img, stackable=False):
+    def __init__(self, typ, img):
 
-        if type not in ITEM_DATA.keys():
-            raise RuntimeError(f'Item type {type} not in listed in ITEM_DATA')
+        if typ not in ITEM_DATA.keys():
+            raise RuntimeError(f'Item type {typ} not in listed in ITEM_DATA')
 
-        self.type = type
+        self.type = typ
         self.img = img
-        self.stackable = stackable
 
-        self.category = ITEM_DATA[type]['category']
+    @property
+    def data(self):
+        return ITEM_DATA[self.type]
+
+    @property
+    def name(self):
+        return ITEM_DATA[self.type]
+
+    @property
+    def stackable(self):
+        return ITEM_DATA[self.type]['stackable']
+
+    @property
+    def category(self):
+        return ITEM_DATA[self.type]['category']
+    
