@@ -23,7 +23,7 @@ class ItemID(IntEnum):
     
 
 #this dict will define different behaviors for the different block types
-BLOCK_DATA = {
+ITEM_DATA = {
 
     ##########################
     ##### ALL BLOCK DATA #####
@@ -94,33 +94,12 @@ BLOCK_DATA = {
 #generic item class
 class Item:
     def __init__(self, type, img, stackable=False):
+
+        if type not in ITEM_DATA.keys():
+            raise RuntimeError(f'Item type {type} not in listed in ITEM_DATA')
+
         self.type = type
         self.img = img
         self.stackable = stackable
 
-
-class Block(Item):
-    def __init__(self, type, img):
-
-        if type not in BLOCK_DATA.keys():
-            raise RuntimeError(f'Block type {type} not in listed in BLOCK_DATA')
-        
-        super().__init__(type, img, True)
-
-        self.type = type
-        self.block_info = BLOCK_DATA[type]
-
-class Tool(Item):
-    def __init__(self, type, img):
-        super().__init__(type, img, stackable=False)
-
-class Weapon(Item):
-    def __init__(self, type, img):
-
-        if type not in WEAPON_DATA.keys():
-            raise RuntimeError(f'Weapon type {type} not in listed in WEAPON_DATA')
-
-        super().__init__(type, img, stackable=False)
-
-        self.type = type
-        self.weapon_info = WEAPON_DATA[type]
+        self.category = ITEM_DATA[type]['category']
