@@ -9,7 +9,7 @@ import os
 from scripts.camera import Camera
 from scripts.world import World
 from scripts.tilemap import Tilemap
-from scripts.entities import Player
+from scripts.entities import Player, Enemy
 from scripts.input import Input
 from scripts.ui import UI
 from scripts.background import Background
@@ -27,7 +27,7 @@ class Game:
         self.mixer = pygame.mixer.init()
 
         #these variables are for calculating cursor pos with scaling
-        self.window_size = (800, 800)
+        self.window_size = (1200, 800)
         self.display_res = (self.window_size[0] // 2, self.window_size[1] // 2)
         self.x_res_ratio = self.window_size[0] / self.display_res[0]
         self.y_res_ratio = self.window_size[1] / self.display_res[1]
@@ -37,11 +37,14 @@ class Game:
         
         self.font = pygame.font.SysFont('Consolas', 15)
 
-        self.entities = {
+        self.entity_sprites = {
             #player sprite and animations for player
             'player': load_image('assets\\entities\\newplayer.png'),
             'player\\idle': Animation(load_images('assets\\entities\\player\\idle'), img_dur=6),
-            'player\\run': Animation(load_images('assets\\entities\\player\\run'), img_dur=5)
+            'player\\run': Animation(load_images('assets\\entities\\player\\run'), img_dur=5),
+
+            'green_slime': load_image('assets\\entities\\enemies\\green_slime\\green_slime.png'),
+            'green_slime\\idle': Animation(load_images('assets\\entities\\enemies\\green_slime\\idle'))
         }
 
         self.ui_assets = {
@@ -100,9 +103,12 @@ class Game:
         self.player = Player(self, self.ui, self.tilemap, self.pos)
         self.player.inventory.update(Item(ItemID.WOOD_SWORD, self.weapons[ItemID.WOOD_SWORD]))
         self.inputs = Input(self, self.tilemap, self.player)
-        self.entites = [] #will hold all active entities
 
-        self.camera = Camera(self, self.display, self.scroll, self.world, self.player, self.entites)
+        self.ENTITIES = [] #will hold all active entities
+
+        self.ENTITIES.append(Enemy(self, self.tilemap, 'green_slime', [self.pos[0] + 100, self.pos[1] - 50]))
+
+        self.camera = Camera(self, self.display, self.scroll, self.world, self.player, self.ENTITIES)
         self.console = Console(self)
         self.debugger = Debugger(self)
         #self.player.speed, self.player.grip, self.player.friction = 10, 10, 10
@@ -114,6 +120,7 @@ class Game:
             #frame ticker for stuffs sometimes
             #calculate delta time
             self.delta_time = self.clock.tick(60) / 1000.0
+
             self.player.update(offset=self.scroll)#player must be updated before camera to avoid funny jittery bisuiness
 
             #goofy player death
@@ -130,7 +137,15 @@ class Game:
                                min(max(0, 200 + self.player.pos[1] // 6 - 400), 255)))
             self.background.render_background()
             self.tilemap.render_map(self.display, offset=self.scroll)
+
+            
+
             self.player.render(self.display, offset=self.scroll)
+
+            if self.ENTITIES:
+                for e in self.ENTITIES:
+                    e.render(self.display, offset=self.scroll)
+                    e.update()
 
             self.inputs.update()
             for event in pygame.event.get():

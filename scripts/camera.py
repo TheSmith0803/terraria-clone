@@ -6,7 +6,7 @@ class Camera:
         self.scroll = scroll
         self.world = world
         self.player = player
-        self.entities = entities
+        self.entity_sprites = entities
 
     def update(self):
         #locks the camera when world limit is reached

@@ -3,6 +3,7 @@ import pygame
 from .physics import swept_aabb
 from .items import *
 from .inventory import Inventory
+from .data.enemy_data import *
 
 class PhysicsEntity:
     def __init__(self, game, tilemap, e_type, img, pos, size):
@@ -16,6 +17,7 @@ class PhysicsEntity:
         self.collisions = {'up': False, 'down': False, 'left': False, 'right': False}
 
         self.type = e_type
+        self.is_enemy = False
         self.action = ''
 
         self.acceleration = 1
@@ -35,60 +37,60 @@ class PhysicsEntity:
     def set_animation(self, action):
         if action != self.action:
             self.action = action
-            self.animation = self.game.entities[self.type + "\\" + self.action].copy()
+            self.animation = self.game.entity_sprites[self.type + "\\" + self.action].copy()
 
     def update(self):
-        entity_rect = self.rect()        
+        self.entity_rect = self.rect()        
         self.collisions = {'up': False, 'down': False, 'left': False, 'right': False}
 
         self.velocity[1] = min(self.terminal_velocity, self.velocity[1] + self.gravity) #gravity
         
-        prev_y_bottom = entity_rect.bottom
+        prev_y_bottom = self.entity_rect.bottom
 
         self.pos[1] += self.velocity[1] * self.game.delta_time
-        entity_rect.y = self.pos[1]
+        self.entity_rect.y = self.pos[1]
 
 
         #resolve y collisions
         for rect in self.tilemap.physics_rects_around(self.pos, self.size):
-            if entity_rect.colliderect(rect):
+            if self.entity_rect.colliderect(rect):
                 if self.velocity[1] > 0 and prev_y_bottom <= rect.top:
-                    entity_rect.bottom = rect.top
+                    self.entity_rect.bottom = rect.top
                     self.collisions['down'] = True
                 else:
                     self.collisions['down'] = False                    
                 if self.velocity[1] < 0:
-                    entity_rect.top = rect.bottom
+                    self.entity_rect.top = rect.bottom
                     self.collisions['up'] = True
-                self.pos[1] = entity_rect.y
+                self.pos[1] = self.entity_rect.y
                 self.velocity[1] = 0
                 break
 
             #variable to ensure that contact is only checked once
-            touching_top = (entity_rect.bottom == rect.top 
-                            and entity_rect.left < rect.right 
-                            and entity_rect.right > rect.left)
+            touching_top = (self.entity_rect.bottom == rect.top 
+                            and self.entity_rect.left < rect.right 
+                            and self.entity_rect.right > rect.left)
             if touching_top:
                 self.collisions['down'] = True
-                self.pos[1] = entity_rect.y
+                self.pos[1] = self.entity_rect.y
                 self.velocity[1] = 0
                 break
             else:
                 self.collisions['down'] = False
 
         self.pos[0] += self.velocity[0] * self.game.delta_time
-        entity_rect.x = self.pos[0]
+        self.entity_rect.x = self.pos[0]
 
         #resolve x collisions
         for rect in self.tilemap.physics_rects_around(self.pos, self.size):
-            if entity_rect.colliderect(rect):
+            if self.entity_rect.colliderect(rect):
                 if self.velocity[0] > 0:
-                    entity_rect.right = rect.left 
+                    self.entity_rect.right = rect.left 
                     self.collisions['right'] = True
                 if self.velocity[0] < 0:
-                    entity_rect.left = rect.right 
+                    self.entity_rect.left = rect.right 
                     self.collisions['left'] = True
-                self.pos[0] = entity_rect.x
+                self.pos[0] = self.entity_rect.x
                 self.velocity[0] = 0
                 break
 
@@ -125,7 +127,7 @@ class PhysicsEntity:
 
 class Player(PhysicsEntity):
     def __init__(self, game, ui, tilemap, pos):
-        super().__init__(game, tilemap, 'player', game.entities['player'], pos, game.entities['player'].get_size())
+        super().__init__(game, tilemap, 'player', game.entity_sprites['player'], pos, game.entity_sprites['player'].get_size())
         self.game = game
         self.ui = ui
         self.inventory = Inventory(game, self.ui)
@@ -154,8 +156,6 @@ class Player(PhysicsEntity):
         for coord in self.tilemap:
             self.tile_pos_origin = coord
             break
-
-        #FIGURE OUT HOW TO USE THIS ^^^^^ TO MAP THE MOUSE POS TO THE TILE GRID LOL
     
     def process_action_lmb(self):
         if self.inventory.selected_item.category in (None, ItemCategory.TOOL, ItemCategory.BLOCK, ItemCategory.ORE):
@@ -185,14 +185,12 @@ class Player(PhysicsEntity):
             else:
                 return
 
-
     #maybe put all player based actions in here, like mine tile, switch tool, ect...or maybe all in update? idk lol
     def update_player_actions(self):
         pass
 
     def update(self, offset):
         #health regen
-        
         if self.health < self.health_cap:
             self.frames += 1
             if self.frames % self.health_regen_rate == 0: # 90 frames (every second and a half)
@@ -247,6 +245,15 @@ class Player(PhysicsEntity):
             self.health = 0
         
         super().update()
+
+        #collisions with entity
+        for e in self.game.ENTITIES:
+            if e.is_enemy and self.entity_rect.colliderect(e.rect()):
+                push_dir = pygame.Vector2(self.entity_rect.center[0] - e.entity_rect.center[0], self.entity_rect.center[1] - e.entity_rect.center[1])
+                push_dir.normalize()
+                push_dir *= e.pushback
+                self.velocity[0], self.velocity[1] = push_dir[0], push_dir[1]
+                self.health -= e.damage
         
     def render(self, surf, offset=(0, 0)):
         self.offset = offset
@@ -254,7 +261,7 @@ class Player(PhysicsEntity):
 
 class NPC(PhysicsEntity):
     def __init__(self, game, tilemap, e_name, inventory, pos):
-        super().__init__(game, tilemap, e_name, game.entities[e_name], pos, game.entities[e_name].get_size())
+        super().__init__(game, tilemap, e_name, game.entity_sprites[e_name], pos, game.entity_sprites[e_name].get_size())
         self.game = game
         self.tilemap = tilemap
         self.entity_name = e_name
@@ -263,10 +270,20 @@ class NPC(PhysicsEntity):
         
 
 class Enemy(PhysicsEntity):
-    def __init__(self, game, tilemap, e_name, inventory, pos):
-        super().__init__(game, tilemap, e_name, game.entities[e_name], pos, game.entities[e_name].get_size())
+    def __init__(self, game, tilemap, e_name, pos, inventory=None):
+        super().__init__(game, tilemap, e_name, game.entity_sprites[e_name], pos, game.entity_sprites[e_name].get_size())
+        self.set_animation('idle')
         self.game = game
         self.tilemap = tilemap
         self.entity_name = e_name
-        self.inventory = inventory
+
+        self.is_enemy = True
+        #super fun enemy attributes
+        self.health   = ENEMY_DATA[e_name]['health']
+        self.damage   = ENEMY_DATA[e_name]['damage']
+        self.pushback = ENEMY_DATA[e_name]['pushback']
+
+        if inventory is not None:
+            self.inventory = inventory
+
         self.pos = pos
