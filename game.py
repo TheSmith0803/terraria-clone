@@ -5,6 +5,7 @@ import math
 import sys
 import time
 import os
+import random
 
 from scripts.camera import Camera
 from scripts.world import World
@@ -105,8 +106,9 @@ class Game:
         self.inputs = Input(self, self.tilemap, self.player)
 
         self.ENTITIES = [] #will hold all active entities
-
-        self.ENTITIES.append(Enemy(self, self.tilemap, 'green_slime', [self.pos[0] + 100, self.pos[1] - 50]))
+        for i in range(1):
+            rand_x = random.randint(100, 200)
+            self.ENTITIES.append(Enemy(self, self.tilemap, 'green_slime', [self.pos[0] + rand_x, self.pos[1] - 100]))
 
         self.camera = Camera(self, self.display, self.scroll, self.world, self.player, self.ENTITIES)
         self.console = Console(self)
@@ -132,9 +134,9 @@ class Game:
 
             self.camera.update()#takes care of all the scroll code
 
-            self.display.fill((min(max(0, 20 + self.player.pos[1] // 6 - 400), 255),
-                               min(max(0, 100 + self.player.pos[1] // 6 - 400), 255),
-                               min(max(0, 200 + self.player.pos[1] // 6 - 400), 255)))
+            self.display.fill((min(max(0, 20 + self.player.pos[1] // 6 - self.world.surface_height*2), 255),
+                               min(max(0, 100 + self.player.pos[1] // 6 - self.world.surface_height*2), 255),
+                               min(max(0, 200 + self.player.pos[1] // 6 - self.world.surface_height*2), 255)))
             self.background.render_background()
             self.tilemap.render_map(self.display, offset=self.scroll)
 

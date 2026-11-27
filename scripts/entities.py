@@ -108,7 +108,7 @@ class PhysicsEntity:
 
         if self.velocity[0] > 0:
             self.flip = False
-        if self.velocity[0] < 0:
+        if self.velocity[0] < 0 and not self.game.inputs.no_flip:
             self.flip = True
         
         #just in case you are somehow flipped right up against a wall
@@ -252,8 +252,12 @@ class Player(PhysicsEntity):
                 push_dir = pygame.Vector2(self.entity_rect.center[0] - e.entity_rect.center[0], self.entity_rect.center[1] - e.entity_rect.center[1])
                 push_dir.normalize()
                 push_dir *= e.pushback
-                self.velocity[0], self.velocity[1] = push_dir[0], push_dir[1]
-                self.health -= e.damage
+                self.velocity[0] = push_dir[0]
+                self.velocity[1] = push_dir[1]
+                if e.damage_cooldown == 0:
+                    self.health -= e.damage
+                    e.damage_cooldown = e.damage_wait_time
+
         
     def render(self, surf, offset=(0, 0)):
         self.offset = offset
@@ -277,6 +281,9 @@ class Enemy(PhysicsEntity):
         self.tilemap = tilemap
         self.entity_name = e_name
 
+        self.damage_cooldown = 0
+        self.damage_wait_time = ENEMY_DATA[e_name]['attack_cooldownn']
+
         self.is_enemy = True
         #super fun enemy attributes
         self.health   = ENEMY_DATA[e_name]['health']
@@ -287,3 +294,23 @@ class Enemy(PhysicsEntity):
             self.inventory = inventory
 
         self.pos = pos
+
+    def update(self):
+        super().update()
+
+        if self.damage_cooldown > 0:
+            self.damage_cooldown -= 1
+        if self.damage_cooldown < 0:
+            self.damage_cooldown = 0
+
+    def render(self, surf, offset=(0, 0)):
+        print(self.pos[0] - offset[0] < self.game.display.get_width())
+        print(self.pos[1] - offset[1] < self.game.display.get_height())
+        print()
+        if (self.pos[0] - offset[0] < self.game.display.get_width() and 
+            self.pos[0] - offset[0] + self.size[0] > 0 and
+            self.pos[1] - offset[1] < self.game.display.get_height() and
+            self.pos[1] - offset[1] + self.size[1] > 0):
+            super().render(surf, offset)
+        else:
+            pass
