@@ -112,7 +112,7 @@ class Game:
         self.ENTITIES.append(Slime(self, self.tilemap, 'green', 'slime', [self.player.pos[0] + random.choice([-100, 100]), self.world.surface_height*16 - 20]))
         self.camera = Camera(self, self.display, self.scroll, self.world, self.player, self.ENTITIES)
         self.console = Console(self)
-        self.spawner = Spawner(self)
+        self.spawner = Spawner(self, self.world, self.tilemap, self.player, self.ENTITIES)
         self.debugger = Debugger(self)
         #self.player.speed, self.player.grip, self.player.friction = 10, 10, 10
         self.clock = pygame.time.Clock()
@@ -175,7 +175,8 @@ class Game:
             )
             
             self.world.update()
-
+            self.spawner.spawn()
+            self.spawner.distance_check()
             #print(self.player.velocity, self.player.pos)
             #print(self.player.velocity)
             #print(self.player.pos)
