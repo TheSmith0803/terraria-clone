@@ -9,6 +9,7 @@ import random
 
 from scripts.camera import Camera
 from scripts.world import World
+from scripts.spawner import Spawner
 from scripts.tilemap import Tilemap
 from scripts.entities import Player, Slime
 from scripts.input import Input
@@ -36,7 +37,7 @@ class Game:
         self.screen = pygame.display.set_mode(self.window_size)
         self.display = pygame.Surface(self.display_res)
         
-        self.font = pygame.font.SysFont('Consolas', 15)
+        self.font = pygame.font.SysFont('Consolas', 12)
 
         self.entity_sprites = {
             #player sprite and animations for player
@@ -111,6 +112,7 @@ class Game:
         self.ENTITIES.append(Slime(self, self.tilemap, 'green', 'slime', [self.player.pos[0] + random.choice([-100, 100]), self.world.surface_height*16 - 20]))
         self.camera = Camera(self, self.display, self.scroll, self.world, self.player, self.ENTITIES)
         self.console = Console(self)
+        self.spawner = Spawner(self)
         self.debugger = Debugger(self)
         #self.player.speed, self.player.grip, self.player.friction = 10, 10, 10
         self.clock = pygame.time.Clock()
@@ -161,7 +163,7 @@ class Game:
                 self.ui.update(event=event)
                     
             #render ui stuff at the end of the fram
-            font_surf = self.font.render(f'Player pos\nX: {int(self.player.pos[0]) // self.tilemap.tile_size}\nY: {int(self.player.pos[1]) // self.tilemap.tile_size}', False, (100,100,255))
+            font_surf = self.font.render(f'Player pos\nX: {int(self.player.pos[0]) // self.tilemap.tile_size}\nY: {int(self.player.pos[1]) // self.tilemap.tile_size}\nBiome: {self.world.biome.name}', False, (100,100,255))
             self.display.blit(font_surf, (10, 45))
             self.ui.render_hotbar(self.display)
             self.ui.render_healthbar(self.display)
@@ -177,7 +179,7 @@ class Game:
                 f"FPS: {self.clock.get_fps():.1f}"
             )
             
-            
+            self.world.update_biome()
 
             #print(self.player.velocity, self.player.pos)
             #print(self.player.velocity)

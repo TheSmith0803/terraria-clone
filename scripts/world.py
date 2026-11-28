@@ -2,17 +2,37 @@ import pygame, random, math, struct
 from .items import *
 from .objects import *
 
+class BiomeType(IntEnum):
+    SPACE        = 0
+    SKY          = 1
+    OVERWORLD    = 2
+    UNDERGROUND  = 3
+    CAVERNS      = 4
+    DEEP_CAVERNS = 5
+    UNDERWORLD   = 6
+    
+
 class CoordinateSpace(IntEnum):
-    PIXEL = 0
-    TILE = 1
-    CHUNK = 2
+    PIXEL  = 0
+    TILE   = 1
+    CHUNK  = 2
     SCREEN = 3
-    WORLD = 4
+    WORLD  = 4
 
 DEBUG_W, DEBUG_SH = (256, 128), 64
 SMALL_W, SMALL_SH = (2800, 1200), 200
 MEDIUM_W, MEDIUM_SH = (5000, 1488), 200
 LARGE_W, LARGE_SH = (8000, 2000), 200
+
+BIOMES = {
+    BiomeType.SPACE: (0, 12),
+    BiomeType.SKY: (12, 8),
+    BiomeType.OVERWORLD: (8, 3),
+    BiomeType.UNDERGROUND: (3, 2),
+    BiomeType.CAVERNS: (2, 1.5),
+    BiomeType.DEEP_CAVERNS: (1.5, 1.2),
+    BiomeType.UNDERWORLD: (1.2, 1),
+}
 
 class World:
     """
@@ -27,6 +47,7 @@ class World:
         self.map_size_str = map_size
         self.objects = []
         self.time = 1200
+        self.biome = BiomeType.OVERWORLD
 
         #tile size of world
         if map_size == 'debug':
@@ -95,6 +116,29 @@ class World:
         """Creates dynamic terrain on the surface. Will eventually change based upon biome"""
         pass
 
+    def update_biome(self):
+        """Function to update biome type"""
+        player_tile_pos = (self.game.player.pos[0] // self.tilemap.tile_size, self.game.player.pos[1] // self.tilemap.tile_size)
+
+        if player_tile_pos[1] <= 0:
+            self.biome = BiomeType.SPACE
+        if player_tile_pos[1] >= 0 and player_tile_pos[1] < self.map_size[1] // BIOMES[BiomeType.SPACE][1]:
+            self.biome = BiomeType.SPACE
+        if player_tile_pos[1] >= self.map_size[1] // BIOMES[BiomeType.SKY][0] and player_tile_pos[1] < self.map_size[1] // BIOMES[BiomeType.SKY][1]:
+            self.biome = BiomeType.SKY
+        if player_tile_pos[1] >= self.map_size[1] // BIOMES[BiomeType.OVERWORLD][0] and player_tile_pos[1] < self.map_size[1] // BIOMES[BiomeType.OVERWORLD][1]:
+            self.biome = BiomeType.OVERWORLD
+        if player_tile_pos[1] >= self.map_size[1] // BIOMES[BiomeType.UNDERGROUND][0] and player_tile_pos[1] < self.map_size[1] // BIOMES[BiomeType.UNDERGROUND][1]:
+            self.biome = BiomeType.UNDERGROUND
+        if player_tile_pos[1] >= self.map_size[1] // BIOMES[BiomeType.CAVERNS][0] and player_tile_pos[1] < self.map_size[1] // BIOMES[BiomeType.CAVERNS][1]:
+            self.biome = BiomeType.CAVERNS
+        if player_tile_pos[1] >= self.map_size[1] // BIOMES[BiomeType.DEEP_CAVERNS][0] and player_tile_pos[1] < self.map_size[1] // BIOMES[BiomeType.DEEP_CAVERNS][1]:
+            self.biome = BiomeType.DEEP_CAVERNS
+        if player_tile_pos[1] >= self.map_size[1] // BIOMES[BiomeType.UNDERWORLD][0] and player_tile_pos[1] < self.map_size[1] // BIOMES[BiomeType.UNDERWORLD][1]:
+            self.biome = BiomeType.UNDERWORLD                                            
+        if player_tile_pos[1] >= self.map_size[1] // BIOMES[BiomeType.UNDERWORLD][1]:
+            self.game.player.dead = True
+    
     def get_tile(self, x, y):
         """
         Returns a particular tiles location, in either tile coords, or pixel coords

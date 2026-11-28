@@ -1,1 +1,6 @@
-"""this files job is to spawn some shtuff"""
+
+
+class Spawner:
+    """The spawner class. Handles spawning of entites."""
+    def __init__(self, game):
+        pass
