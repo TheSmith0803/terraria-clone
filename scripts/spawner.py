@@ -14,11 +14,13 @@ class Spawner:
         self.dist_check_count = 0
 
     def spawn(self):
-        slime_spawn_chance = random.randint(1, 200)
-        if slime_spawn_chance == 100 and self.world.biome == BiomeType.OVERWORLD:
-            print('spawn')
-            self.entities.append(Slime(self.game, self.tilemap, 'green', 'slime', [self.player.pos[0] + random.choice([-self.game.display_res[0], self.game.display_res[0]]), self.world.surface_height*16 - 20]))
-    
+        
+        if self.world.biome == BiomeType.OVERWORLD:
+            slime_spawn_chance = random.randint(1, 1500)
+            if slime_spawn_chance == 750:
+                print('spawn')
+                self.entities.append(Slime(self.game, self.tilemap, 'green', 'slime', [self.player.pos[0] + random.choice([-self.game.display_res[0], self.game.display_res[0]]), self.world.surface_height*16 - 20]))
+        
     def distance_check(self):
 
         if self.dist_check_count == 120:
