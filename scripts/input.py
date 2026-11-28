@@ -77,4 +77,8 @@ class Input:
                 self.player.health_cap -= 20
                 self.player.ui.amt_hearts -= 1
                 print(self.player.health)
+
+            if event.key == K_k:
+                for e in self.game.ENTITIES:
+                    e.health = 0
             

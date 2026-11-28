@@ -287,6 +287,7 @@ class Slime(PhysicsEntity):
         self.game = game
         self.tilemap = tilemap
         self.entity_name = f"{color}_{e_name}"
+        self.dead = False
 
         self.damage_cooldown = 0
         self.damage_wait_time = ENEMY_DATA[self.entity_name]['attack_cooldownn']
@@ -316,11 +317,15 @@ class Slime(PhysicsEntity):
         if self.damage_cooldown < 0:
             self.damage_cooldown = 0
 
-        if not self.collisions['down']:
+        if self.health <= 0 and not self.dead:
+            self.dead = True
+            self.set_animation('death')
+
+        if not self.collisions['down'] and not self.dead:
             self.animation.frame = 0
 
         random_jump = random.randint(1, 500)
-        if random_jump == 500:
+        if random_jump == 500 and not self.dead:
             self.boing()
 
     def render(self, surf, offset=(0, 0)):

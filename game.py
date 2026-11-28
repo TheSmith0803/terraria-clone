@@ -47,6 +47,7 @@ class Game:
             'green_slime': load_image('assets\\entities\\enemies\\green_slime\\green_slime.png'),
             'green_slime\\idle': Animation(load_images('assets\\entities\\enemies\\green_slime\\idle')),
             'green_slime\\pre_attack': Animation(load_images('assets\\entities\\enemies\\green_slime\\pre_attack')),
+            'green_slime\\death': Animation(load_images('assets\\entities\\enemies\\green_slime\\death'), img_dur=3, loop=False),
         }
 
         self.ui_assets = {
@@ -107,10 +108,7 @@ class Game:
         self.inputs = Input(self, self.tilemap, self.player)
 
         self.ENTITIES = [] #will hold all active entities
-        for i in range(20):
-            rand_x = random.randint(100, 1500)
-            self.ENTITIES.append(Slime(self, self.tilemap, 'green', 'slime', [self.pos[0] + rand_x, self.pos[1] - (10 * random.randint(1,150))]))
-
+        self.ENTITIES.append(Slime(self, self.tilemap, 'green', 'slime', [self.player.pos[0] + random.choice([-100, 100]), self.world.surface_height*16 - 20]))
         self.camera = Camera(self, self.display, self.scroll, self.world, self.player, self.ENTITIES)
         self.console = Console(self)
         self.debugger = Debugger(self)
@@ -123,6 +121,11 @@ class Game:
             #frame ticker for stuffs sometimes
             #calculate delta time
             self.delta_time = self.clock.tick(60) / 1000.0
+
+            slime_spawn_chance = random.randint(1, 200)
+            if slime_spawn_chance == 100:
+                print('spawn')
+                self.ENTITIES.append(Slime(self, self.tilemap, 'green', 'slime', [self.player.pos[0] + random.choice([-400, 400]), self.world.surface_height*16 - 20]))
 
             self.player.update(offset=self.scroll)#player must be updated before camera to avoid funny jittery bisuiness
 
@@ -145,9 +148,11 @@ class Game:
             self.player.render(self.display, offset=self.scroll)
 
             if self.ENTITIES:
-                for e in self.ENTITIES:
+                for indx, e in enumerate(self.ENTITIES):
                     e.update()     
                     e.render(self.display, offset=self.scroll)
+                    if e.dead and e.animation.done:
+                        self.ENTITIES.pop(indx)
                            
 
             self.inputs.update()
