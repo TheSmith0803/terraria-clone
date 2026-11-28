@@ -95,7 +95,7 @@ class Game:
 
         self.running = True
 
-        self.pos = [(self.world.map_size[0] // 2) * self.tilemap.tile_size, (self.world.surface_height*16)-20] #surface hieght in terms of tiles so x16 needed, also -16 so not spawn in ground (character is 16 pix tall)
+        self.pos = [(self.world.map_size[0] // 2) * self.tilemap.tile_size, (self.world.surface_height*self.tilemap.tile_size) - self.entity_sprites['player'].get_height()] #surface hieght in terms of tiles so x16 needed, also -16 so not spawn in ground (character is 16 pix tall)
         self.movement = [False, False]
 
         self.scroll = [0, 0]
@@ -107,9 +107,9 @@ class Game:
         self.inputs = Input(self, self.tilemap, self.player)
 
         self.ENTITIES = [] #will hold all active entities
-        for i in range(50):
-            rand_x = random.randint(100, 1500)
-            self.ENTITIES.append(Slime(self, self.tilemap, 'green', 'slime', [self.pos[0] + rand_x, self.pos[1] - (10 * random.randint(1,10))]))
+        for i in range(40):
+            rand_x = random.randint(100, 200)
+            self.ENTITIES.append(Slime(self, self.tilemap, 'green', 'slime', [self.pos[0] + rand_x, self.pos[1] - (10 * random.randint(1,150))]))
 
         self.camera = Camera(self, self.display, self.scroll, self.world, self.player, self.ENTITIES)
         self.console = Console(self)

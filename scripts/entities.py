@@ -300,6 +300,7 @@ class Slime(PhysicsEntity):
             self.inventory = inventory
 
         self.pos = pos
+        self.terminal_velocity = 1000
 
     def update(self):
         super().update()
