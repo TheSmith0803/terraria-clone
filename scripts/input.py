@@ -8,7 +8,6 @@ class Input:
         self.game = game
         self.tilemap = tilemap
         self.player = player
-        self.no_flip = True
 
     def update(self):
         keys_pressed = pygame.key.get_pressed()
@@ -22,20 +21,18 @@ class Input:
 
         #player x axis logic
         if keys_pressed[K_a]:
-            self.no_flip = False
+            
             if self.player.collisions['down']:
                 self.player.velocity[0] = max(-self.player.acceleration + self.player.velocity[0], -self.player.speed)
             else:
                 self.player.velocity[0] = max(-self.player.air_acceleration + self.player.velocity[0], -self.player.speed)
         if keys_pressed[K_d]:
-            self.no_flip = True
+
             if self.player.collisions['down']:
                 self.player.velocity[0] = min(self.player.acceleration + self.player.velocity[0], self.player.speed)
             else:
                 self.player.velocity[0] = min(self.player.air_acceleration + self.player.velocity[0], self.player.speed)
 
-        if self.no_flip and self.player.velocity[0] == 0:
-            self.no_flip = False
 
         #player mouse logic if interacting with inventories
         if self.player.inventory.open:

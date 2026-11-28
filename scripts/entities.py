@@ -108,7 +108,7 @@ class PhysicsEntity:
 
         if self.velocity[0] > 0:
             self.flip = False
-        if self.velocity[0] < 0 and not self.game.inputs.no_flip:
+        if self.velocity[0] < 0:
             self.flip = True
         
         #just in case you are somehow flipped right up against a wall
@@ -252,8 +252,14 @@ class Player(PhysicsEntity):
                 push_dir = pygame.Vector2(self.entity_rect.center[0] - e.entity_rect.center[0], self.entity_rect.center[1] - e.entity_rect.center[1])
                 push_dir.normalize()
                 push_dir *= e.pushback
+                
+                #push player away from entity and visa versa
                 self.velocity[0] = push_dir[0]
-                self.velocity[1] = push_dir[1]
+                e.velocity[0] = -push_dir[0]
+                if not self.collisions['down']:
+                    self.velocity[1] = push_dir[1]
+                if not e.collisions['down']:
+                    e.velocity[1] = -push_dir[1]
                 if e.damage_cooldown == 0:
                     self.health -= e.damage
                     e.damage_cooldown = e.damage_wait_time
@@ -311,6 +317,6 @@ class Enemy(PhysicsEntity):
             self.pos[0] - offset[0] + self.size[0] > 0 and
             self.pos[1] - offset[1] < self.game.display.get_height() and
             self.pos[1] - offset[1] + self.size[1] > 0):
-            super().render(surf, offset)
+            super().render(surf, (int(offset[0]),int(offset[1])))
         else:
             pass

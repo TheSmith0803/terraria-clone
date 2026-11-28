@@ -138,16 +138,15 @@ class Game:
                                min(max(0, 100 + self.player.pos[1] // 6 - self.world.surface_height*2), 255),
                                min(max(0, 200 + self.player.pos[1] // 6 - self.world.surface_height*2), 255)))
             self.background.render_background()
-            self.tilemap.render_map(self.display, offset=self.scroll)
-
             
+            self.tilemap.render_map(self.display, offset=self.scroll)
 
             self.player.render(self.display, offset=self.scroll)
 
             if self.ENTITIES:
                 for e in self.ENTITIES:
                     e.render(self.display, offset=self.scroll)
-                    e.update()
+                    e.update()            
 
             self.inputs.update()
             for event in pygame.event.get():
