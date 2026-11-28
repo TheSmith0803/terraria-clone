@@ -10,7 +10,7 @@ import random
 from scripts.camera import Camera
 from scripts.world import World
 from scripts.tilemap import Tilemap
-from scripts.entities import Player, Enemy
+from scripts.entities import Player, Slime
 from scripts.input import Input
 from scripts.ui import UI
 from scripts.background import Background
@@ -45,7 +45,8 @@ class Game:
             'player\\run': Animation(load_images('assets\\entities\\player\\run'), img_dur=5),
 
             'green_slime': load_image('assets\\entities\\enemies\\green_slime\\green_slime.png'),
-            'green_slime\\idle': Animation(load_images('assets\\entities\\enemies\\green_slime\\idle'))
+            'green_slime\\idle': Animation(load_images('assets\\entities\\enemies\\green_slime\\idle')),
+            'green_slime\\pre_attack': Animation(load_images('assets\\entities\\enemies\\green_slime\\pre_attack')),
         }
 
         self.ui_assets = {
@@ -106,9 +107,9 @@ class Game:
         self.inputs = Input(self, self.tilemap, self.player)
 
         self.ENTITIES = [] #will hold all active entities
-        for i in range(1):
-            rand_x = random.randint(100, 200)
-            self.ENTITIES.append(Enemy(self, self.tilemap, 'green_slime', [self.pos[0] + rand_x, self.pos[1] - 100]))
+        for i in range(50):
+            rand_x = random.randint(100, 1500)
+            self.ENTITIES.append(Slime(self, self.tilemap, 'green', 'slime', [self.pos[0] + rand_x, self.pos[1] - (10 * random.randint(1,10))]))
 
         self.camera = Camera(self, self.display, self.scroll, self.world, self.player, self.ENTITIES)
         self.console = Console(self)

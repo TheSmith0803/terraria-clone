@@ -279,22 +279,22 @@ class NPC(PhysicsEntity):
         self.pos = pos
         
 
-class Enemy(PhysicsEntity):
-    def __init__(self, game, tilemap, e_name, pos, inventory=None):
-        super().__init__(game, tilemap, e_name, game.entity_sprites[e_name], pos, game.entity_sprites[e_name].get_size())
+class Slime(PhysicsEntity):
+    def __init__(self, game, tilemap, color, e_name, pos, inventory=None):
+        super().__init__(game, tilemap, f"{color}_{e_name}", game.entity_sprites[f"{color}_{e_name}"], pos, game.entity_sprites[f"{color}_{e_name}"].get_size())
         self.set_animation('idle')
         self.game = game
         self.tilemap = tilemap
-        self.entity_name = e_name
+        self.entity_name = f"{color}_{e_name}"
 
         self.damage_cooldown = 0
-        self.damage_wait_time = ENEMY_DATA[e_name]['attack_cooldownn']
+        self.damage_wait_time = ENEMY_DATA[self.entity_name]['attack_cooldownn']
 
         self.is_enemy = True
         #super fun enemy attributes
-        self.health   = ENEMY_DATA[e_name]['health']
-        self.damage   = ENEMY_DATA[e_name]['damage']
-        self.pushback = ENEMY_DATA[e_name]['pushback']
+        self.health   = ENEMY_DATA[self.entity_name]['health']
+        self.damage   = ENEMY_DATA[self.entity_name]['damage']
+        self.pushback = ENEMY_DATA[self.entity_name]['pushback']
 
         if inventory is not None:
             self.inventory = inventory
@@ -308,6 +308,9 @@ class Enemy(PhysicsEntity):
             self.damage_cooldown -= 1
         if self.damage_cooldown < 0:
             self.damage_cooldown = 0
+
+        if not self.collisions['down']:
+            self.animation.frame = 0
 
     def render(self, surf, offset=(0, 0)):
         print(self.pos[0] - offset[0] < self.game.display.get_width())
