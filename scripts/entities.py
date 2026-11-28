@@ -249,7 +249,7 @@ class Player(PhysicsEntity):
 
         #collisions with entity
         for e in self.game.ENTITIES:
-            if e.is_enemy and self.entity_rect.colliderect(e.rect()):
+            if e.is_enemy and not e.dead and self.entity_rect.colliderect(e.rect()):
                 push_dir = pygame.Vector2(self.entity_rect.center[0] - e.entity_rect.center[0], self.entity_rect.center[1] - e.entity_rect.center[1])
                 push_dir.normalize()
                 push_dir *= e.pushback
