@@ -84,7 +84,7 @@ class Game:
         }
         
         self.tilemap = Tilemap(self)
-        self.world = World(self, 'debug', self.tilemap)
+        self.world = World(self, 'small', self.tilemap)
 
         if os.path.exists("map.dig"):
             print("loading world")
@@ -107,8 +107,8 @@ class Game:
         self.inputs = Input(self, self.tilemap, self.player)
 
         self.ENTITIES = [] #will hold all active entities
-        for i in range(40):
-            rand_x = random.randint(100, 200)
+        for i in range(20):
+            rand_x = random.randint(100, 1500)
             self.ENTITIES.append(Slime(self, self.tilemap, 'green', 'slime', [self.pos[0] + rand_x, self.pos[1] - (10 * random.randint(1,150))]))
 
         self.camera = Camera(self, self.display, self.scroll, self.world, self.player, self.ENTITIES)
@@ -146,8 +146,9 @@ class Game:
 
             if self.ENTITIES:
                 for e in self.ENTITIES:
+                    e.update()     
                     e.render(self.display, offset=self.scroll)
-                    e.update()            
+                           
 
             self.inputs.update()
             for event in pygame.event.get():

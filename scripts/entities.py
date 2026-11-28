@@ -1,4 +1,5 @@
 import pygame
+import random
 
 from .physics import swept_aabb
 from .items import *
@@ -20,11 +21,11 @@ class PhysicsEntity:
         self.is_enemy = False
         self.action = ''
 
-        self.acceleration = 1
+        self.acceleration = 2.3
         self.air_acceleration = self.acceleration * 0.2
-        self.friction = 1
+        self.friction = 2
         self.deadzone = 5
-        self.speed = 50
+        self.speed = 75
         
         self.gravity = 5
         self.terminal_velocity = 160
@@ -295,12 +296,17 @@ class Slime(PhysicsEntity):
         self.health   = ENEMY_DATA[self.entity_name]['health']
         self.damage   = ENEMY_DATA[self.entity_name]['damage']
         self.pushback = ENEMY_DATA[self.entity_name]['pushback']
+        self.friction = 5
 
         if inventory is not None:
             self.inventory = inventory
 
         self.pos = pos
-        self.terminal_velocity = 1000
+
+    def boing(self):
+        if self.collisions['down']:
+            self.velocity[1] -= random.randint(75, 150)
+            self.velocity[0] += random.choice([random.randint(-100, -50), random.randint(50, 100)])
 
     def update(self):
         super().update()
@@ -313,10 +319,12 @@ class Slime(PhysicsEntity):
         if not self.collisions['down']:
             self.animation.frame = 0
 
+        random_jump = random.randint(1, 500)
+        if random_jump == 500:
+            self.boing()
+
     def render(self, surf, offset=(0, 0)):
-        print(self.pos[0] - offset[0] < self.game.display.get_width())
-        print(self.pos[1] - offset[1] < self.game.display.get_height())
-        print()
+
         if (self.pos[0] - offset[0] < self.game.display.get_width() and 
             self.pos[0] - offset[0] + self.size[0] > 0 and
             self.pos[1] - offset[1] < self.game.display.get_height() and
