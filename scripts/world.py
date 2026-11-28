@@ -21,14 +21,14 @@ class CoordinateSpace(IntEnum):
 
 DEBUG_W, DEBUG_SH = (256, 128), 64
 SMALL_W, SMALL_SH = (2800, 1200), 200
-MEDIUM_W, MEDIUM_SH = (5000, 1488), 200
-LARGE_W, LARGE_SH = (8000, 2000), 200
+MEDIUM_W, MEDIUM_SH = (5000, 1488), 248
+LARGE_W, LARGE_SH = (8000, 2000), 330
 
 BIOMES = {
     BiomeType.SPACE: (0, 12),
     BiomeType.SKY: (12, 8),
-    BiomeType.OVERWORLD: (8, 3),
-    BiomeType.UNDERGROUND: (3, 2),
+    BiomeType.OVERWORLD: (8, 4.8),
+    BiomeType.UNDERGROUND: (4.8, 2),
     BiomeType.CAVERNS: (2, 1.5),
     BiomeType.DEEP_CAVERNS: (1.5, 1.2),
     BiomeType.UNDERWORLD: (1.2, 1),
@@ -52,16 +52,16 @@ class World:
         #tile size of world
         if map_size == 'debug':
             self.map_size = DEBUG_W
-            self.surface_height = 64
+            self.surface_height = DEBUG_SH
         if map_size == 'small':
             self.map_size = SMALL_W
-            self.surface_height = 200
+            self.surface_height = SMALL_SH
         if map_size == 'medium':
             self.map_size = MEDIUM_W
-            self.surface_height = 200
+            self.surface_height = MEDIUM_SH
         if map_size == 'large':
             self.map_size = LARGE_W
-            self.surface_height = 200
+            self.surface_height = LARGE_SH
 
     def _generate_tiles(self):
         """
@@ -116,7 +116,7 @@ class World:
         """Creates dynamic terrain on the surface. Will eventually change based upon biome"""
         pass
 
-    def update_biome(self):
+    def _update_biome(self):
         """Function to update biome type"""
         player_tile_pos = (self.game.player.pos[0] // self.tilemap.tile_size, self.game.player.pos[1] // self.tilemap.tile_size)
 
@@ -138,7 +138,10 @@ class World:
             self.biome = BiomeType.UNDERWORLD                                            
         if player_tile_pos[1] >= self.map_size[1] // BIOMES[BiomeType.UNDERWORLD][1]:
             self.game.player.dead = True
-    
+
+    def update(self):
+        self._update_biome()
+
     def get_tile(self, x, y):
         """
         Returns a particular tiles location, in either tile coords, or pixel coords

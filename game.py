@@ -8,7 +8,7 @@ import os
 import random
 
 from scripts.camera import Camera
-from scripts.world import World
+from scripts.world import World, BiomeType
 from scripts.spawner import Spawner
 from scripts.tilemap import Tilemap
 from scripts.entities import Player, Slime
@@ -124,11 +124,6 @@ class Game:
             #calculate delta time
             self.delta_time = self.clock.tick(60) / 1000.0
 
-            slime_spawn_chance = random.randint(1, 200)
-            if slime_spawn_chance == 100:
-                print('spawn')
-                self.ENTITIES.append(Slime(self, self.tilemap, 'green', 'slime', [self.player.pos[0] + random.choice([-400, 400]), self.world.surface_height*16 - 20]))
-
             self.player.update(offset=self.scroll)#player must be updated before camera to avoid funny jittery bisuiness
 
             #goofy player death
@@ -163,7 +158,7 @@ class Game:
                 self.ui.update(event=event)
                     
             #render ui stuff at the end of the fram
-            font_surf = self.font.render(f'Player pos\nX: {int(self.player.pos[0]) // self.tilemap.tile_size}\nY: {int(self.player.pos[1]) // self.tilemap.tile_size}\nBiome: {self.world.biome.name}', False, (100,100,255))
+            font_surf = self.font.render(f'Player pos\nX: {int(self.player.pos[0] + (self.player.size[0] / 2)) // self.tilemap.tile_size}\nY: {int(self.player.pos[1] + self.player.size[1]) // self.tilemap.tile_size}\nBiome: {self.world.biome.name}', False, (100,100,255))
             self.display.blit(font_surf, (10, 45))
             self.ui.render_hotbar(self.display)
             self.ui.render_healthbar(self.display)
@@ -179,7 +174,7 @@ class Game:
                 f"FPS: {self.clock.get_fps():.1f}"
             )
             
-            self.world.update_biome()
+            self.world.update()
 
             #print(self.player.velocity, self.player.pos)
             #print(self.player.velocity)
